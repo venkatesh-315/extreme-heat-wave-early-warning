@@ -1,4 +1,13 @@
 import React, { useState } from 'react';
+import {
+  FlameIcon,
+  PhoneIcon,
+  AmbulanceIcon,
+  ShieldAlertIcon,
+  SatelliteIcon,
+  ActivityIcon,
+  XIcon
+} from './icons';
 import './Navbar.css';
 
 function Navbar({ onOpenImdModal, isLive = true }) {
@@ -10,20 +19,26 @@ function Navbar({ onOpenImdModal, isLive = true }) {
       <div className="gov-top-bar">
         <div className="gov-top-inner">
           <div className="gov-brand-unit">
-            <span className="gov-flag">🇮🇳</span>
-            <span className="gov-emblem">Government of India · Ministry of Earth Sciences (MoES)</span>
-            <span className="gov-portal-tag">NDMA &amp; IMD Unified Early Warning Network</span>
+            <span className="gov-badge-icon">
+              <ShieldAlertIcon size={14} color="#1e40af" />
+            </span>
+            <span className="gov-emblem">Government of India &middot; Ministry of Earth Sciences (MoES)</span>
+            <span className="gov-portal-tag">National Early Warning Network</span>
           </div>
+
           <div className="gov-helplines">
-            <span className="helpline-label">Emergency Helplines:</span>
+            <span className="helpline-label">24x7 Helplines:</span>
             <a href="tel:108" className="helpline-pill" title="National Ambulance Service">
-              🚑 Ambulance: <strong>108</strong>
+              <AmbulanceIcon size={13} color="#dc2626" />
+              <span>Ambulance: <strong>108</strong></span>
             </a>
             <a href="tel:1077" className="helpline-pill" title="Disaster Control Room">
-              🚨 Disaster Helpline: <strong>1077</strong>
+              <ShieldAlertIcon size={13} color="#ea580c" />
+              <span>Disaster: <strong>1077</strong></span>
             </a>
-            <a href="tel:104" className="helpline-pill" title="Heat Illness Advisory">
-              🩺 Health: <strong>104</strong>
+            <a href="tel:104" className="helpline-pill" title="Health Information Helpline">
+              <PhoneIcon size={13} color="#2563eb" />
+              <span>Health: <strong>104</strong></span>
             </a>
           </div>
         </div>
@@ -34,20 +49,21 @@ function Navbar({ onOpenImdModal, isLive = true }) {
         <div className="navbar-inner">
           <a href="#home" className="navbar-brand">
             <div className="brand-logo-badge">
-              <span className="brand-icon">🔥</span>
+              <FlameIcon size={22} color="#ffffff" />
             </div>
             <div className="brand-text">
               <div className="brand-name-row">
                 <span className="brand-name">HeatGuard India</span>
                 <span className="brand-badge">Summer 2026</span>
               </div>
-              <span className="brand-sub">National Extreme Heatwave Early Warning &amp; Response Portal</span>
+              <span className="brand-sub">Extreme Heatwave Early Warning &amp; Response Portal</span>
             </div>
           </a>
 
           <div className="navbar-right">
             <div className="live-status-chip">
               <span className={`live-pulse-dot ${isLive ? 'online' : ''}`} />
+              <ActivityIcon size={14} color="#16a34a" />
               <span>{isLive ? 'IMD Live Feed Active' : 'Climatological Model'}</span>
             </div>
 
@@ -57,7 +73,7 @@ function Navbar({ onOpenImdModal, isLive = true }) {
               onClick={onOpenImdModal}
               title="Configure IMD API Key and Data Sources"
             >
-              <span>🛰️</span>
+              <SatelliteIcon size={15} color="#1e40af" />
               <span>IMD API Settings</span>
             </button>
 
@@ -66,7 +82,13 @@ function Navbar({ onOpenImdModal, isLive = true }) {
               onClick={() => setMenuOpen((o) => !o)}
               aria-label="Toggle navigation menu"
             >
-              {menuOpen ? '✕' : '☰'}
+              {menuOpen ? <XIcon size={20} /> : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -76,10 +98,22 @@ function Navbar({ onOpenImdModal, isLive = true }) {
             <div className="mobile-menu-section">
               <span className="mobile-menu-title">Emergency Helplines (Toll-Free)</span>
               <div className="mobile-helpline-grid">
-                <a href="tel:108" className="helpline-pill">🚑 Ambulance: <strong>108</strong></a>
-                <a href="tel:1077" className="helpline-pill">🚨 Disaster: <strong>1077</strong></a>
-                <a href="tel:104" className="helpline-pill">🩺 Health Info: <strong>104</strong></a>
-                <a href="tel:112" className="helpline-pill">👮 National Emergency: <strong>112</strong></a>
+                <a href="tel:108" className="helpline-pill">
+                  <AmbulanceIcon size={14} color="#dc2626" />
+                  <span>Ambulance: <strong>108</strong></span>
+                </a>
+                <a href="tel:1077" className="helpline-pill">
+                  <ShieldAlertIcon size={14} color="#ea580c" />
+                  <span>Disaster: <strong>1077</strong></span>
+                </a>
+                <a href="tel:104" className="helpline-pill">
+                  <PhoneIcon size={14} color="#2563eb" />
+                  <span>Health: <strong>104</strong></span>
+                </a>
+                <a href="tel:112" className="helpline-pill">
+                  <ShieldAlertIcon size={14} color="#16a34a" />
+                  <span>Unified: <strong>112</strong></span>
+                </a>
               </div>
             </div>
             <button
@@ -89,7 +123,8 @@ function Navbar({ onOpenImdModal, isLive = true }) {
                 if (onOpenImdModal) onOpenImdModal();
               }}
             >
-              🛰️ Configure IMD Weather API Key
+              <SatelliteIcon size={15} color="#ffffff" />
+              <span>Configure IMD Weather API Key</span>
             </button>
           </div>
         )}

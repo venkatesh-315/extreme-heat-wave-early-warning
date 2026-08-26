@@ -1,10 +1,22 @@
 import React from 'react';
+import {
+  ThermometerIcon,
+  FlameIcon,
+  WaterIcon,
+  SunIcon,
+  WindIcon,
+  ActivityIcon,
+  SatelliteIcon,
+  ShieldAlertIcon
+} from './icons';
 import './WeatherMetrics.css';
 
-const MetricCard = ({ id, icon, label, value, unit, subValue, color, alertLevel }) => (
-  <div className={`metric-card card ${alertLevel || ''}`} id={id}>
+const MetricCard = ({ id, icon: IconComponent, label, value, unit, subValue, color, iconColor }) => (
+  <div className="metric-card card" id={id}>
     <div className="metric-header">
-      <span className="metric-icon">{icon}</span>
+      <div className="metric-icon-box" style={{ background: `${iconColor || '#2563eb'}12` }}>
+        <IconComponent size={18} color={iconColor || '#2563eb'} />
+      </div>
       <span className="metric-label">{label}</span>
     </div>
     <div className="metric-body">
@@ -33,15 +45,20 @@ function WeatherMetrics({ weather, location, thermalMetrics, sourceInfo }) {
       {/* Executive Location & Alert Strip */}
       <div className="location-summary-card card">
         <div className="loc-main-info">
-          <div className="loc-icon-flag">🇮🇳</div>
+          <div className="loc-icon-flag">
+            <ShieldAlertIcon size={24} color="#1e40af" />
+          </div>
           <div className="loc-text-block">
             <div className="loc-name-row">
               <h2 className="loc-heading">{location.name}</h2>
               <span className="loc-state-tag">{location.state || 'India'}</span>
-              <span className="loc-source-badge">📡 {sourceInfo || 'Live IMD Meteorological Feed'}</span>
+              <span className="loc-source-badge">
+                <SatelliteIcon size={12} color="#1e40af" />
+                <span>{sourceInfo || 'Live IMD Feed'}</span>
+              </span>
             </div>
             <p className="loc-coords-text">
-              Coordinates: {location.lat?.toFixed(4)}°N, {location.lon?.toFixed(4)}°E · Pop: {(location.population ? (location.population / 1e6).toFixed(2) + 'M' : 'Metropolitan Zone')}
+              Coordinates: {location.lat?.toFixed(4)}&deg;N, {location.lon?.toFixed(4)}&deg;E &middot; Population: {(location.population ? (location.population / 1e6).toFixed(2) + 'M' : 'Metropolitan Zone')}
             </p>
           </div>
         </div>
@@ -59,7 +76,8 @@ function WeatherMetrics({ weather, location, thermalMetrics, sourceInfo }) {
       <div className="metrics-grid">
         <MetricCard
           id="metric-temp"
-          icon="🌡️"
+          icon={ThermometerIcon}
+          iconColor="#ea580c"
           label="Dry Bulb Air Temperature"
           value={weather.temperature}
           unit="°C"
@@ -69,7 +87,8 @@ function WeatherMetrics({ weather, location, thermalMetrics, sourceInfo }) {
 
         <MetricCard
           id="metric-wbgt"
-          icon="🔥"
+          icon={FlameIcon}
+          iconColor="#dc2626"
           label="Outdoor WBGT Index"
           value={thermalMetrics?.wbgt}
           unit="°C"
@@ -79,7 +98,8 @@ function WeatherMetrics({ weather, location, thermalMetrics, sourceInfo }) {
 
         <MetricCard
           id="metric-humidity"
-          icon="💧"
+          icon={WaterIcon}
+          iconColor="#0284c7"
           label="Relative Humidity"
           value={weather.humidity}
           unit="%"
@@ -89,7 +109,8 @@ function WeatherMetrics({ weather, location, thermalMetrics, sourceInfo }) {
 
         <MetricCard
           id="metric-solar"
-          icon="☀️"
+          icon={SunIcon}
+          iconColor="#d97706"
           label="Direct Solar Irradiance"
           value={weather.solarRadiation}
           unit=" W/m²"
@@ -99,7 +120,8 @@ function WeatherMetrics({ weather, location, thermalMetrics, sourceInfo }) {
 
         <MetricCard
           id="metric-wind"
-          icon="💨"
+          icon={WindIcon}
+          iconColor="#7c3aed"
           label="Wind Speed (10m)"
           value={weather.windSpeed}
           unit=" km/h"
@@ -109,7 +131,8 @@ function WeatherMetrics({ weather, location, thermalMetrics, sourceInfo }) {
 
         <MetricCard
           id="metric-pressure"
-          icon="🌐"
+          icon={ActivityIcon}
+          iconColor="#059669"
           label="Atmospheric Pressure"
           value={weather.pressure}
           unit=" hPa"

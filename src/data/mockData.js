@@ -1,6 +1,6 @@
 // ============================================================
 // Summer 2026 Indian Climatological Dataset & NDMA HAP Standards
-// Extreme Heatwave Early Warning System (SIH26083)
+// Extreme Heatwave Early Warning & Emergency Response System
 // ============================================================
 
 import { CURATED_INDIAN_LOCATIONS } from '../services/geocodingService';
@@ -114,7 +114,6 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
     recs.push({
       priority: 'CRITICAL',
       category: 'Labour & Industry',
-      icon: '👷',
       title: 'Mandatory Suspension of Peak Outdoor Labour',
       action: 'Enforce strict halt on construction, agriculture and brick-kiln work between 11:00 AM and 4:30 PM. Mandate shaded rest sheds with electrolyte solution.',
       authority: 'District Magistrate & Labour Commissioner',
@@ -122,7 +121,6 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
     recs.push({
       priority: 'CRITICAL',
       category: 'Public Health & Hospitals',
-      icon: '🏥',
       title: 'Activate Heat-Stroke Protocol in All ICUs',
       action: 'Pre-position cold IV normal saline, ice-bath submersion bags, and dantrolene. Ensure 24x7 power backup for mortuaries and critical wards.',
       authority: 'Chief Medical Officer (CMO)',
@@ -130,7 +128,6 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
     recs.push({
       priority: 'CRITICAL',
       category: 'Water & Civic Municipalities',
-      icon: '💧',
       title: 'Emergency Water Tanker & Pyaau Deployment',
       action: 'Double tanker supply trips to slums, urban heat islands, bus terminuses, and homeless clusters. Refill all public drinking water stations every 3 hours.',
       authority: 'Municipal Corporation / Jal Board',
@@ -138,7 +135,6 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
     recs.push({
       priority: 'CRITICAL',
       category: 'Schools & Vulnerable Groups',
-      icon: '🏫',
       title: 'Reschedule / Close Educational Institutions',
       action: 'Mandate early morning school timings (close by 10:30 AM) or switch to virtual mode. Ban outdoor sports and open morning assemblies.',
       authority: 'Director of School Education',
@@ -147,7 +143,6 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
     recs.push({
       priority: 'HIGH',
       category: 'Public Health',
-      icon: '🏥',
       title: 'Open Free Municipal Cooling Shelters',
       action: 'Open air-conditioned/cooled government halls, libraries, and night shelters (Rain Basera) for public respite from 10 AM to 6 PM.',
       authority: 'Disaster Management Authority',
@@ -155,7 +150,6 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
     recs.push({
       priority: 'HIGH',
       category: 'Workers Advisory',
-      icon: '👷',
       title: 'Mandate Work-Rest Cycles (45 min work / 15 min rest)',
       action: 'Employers must provide 1 liter cool drinking water per worker per hour and shaded rest zones.',
       authority: 'Factory Inspectorate',
@@ -163,7 +157,6 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
     recs.push({
       priority: 'HIGH',
       category: 'Power Grid',
-      icon: '⚡',
       title: 'Zero Load-Shedding Directive for Health Facilities',
       action: 'Alert State DISCOMs to prevent rolling blackouts in residential zones and critical public infrastructure.',
       authority: 'State Electricity Regulatory Commission',
@@ -175,7 +168,6 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
     recs.push({
       priority: 'CRITICAL',
       category: 'Civil Defence & NDRF',
-      icon: '🚨',
       title: `Catastrophic Heat Threat · Approx ${estExcess.toLocaleString()} Excess Vulnerable Exposure`,
       action: 'Deploy Civil Defence volunteers and Red Cross mobile medical vans in high-density informal colonies for active heat-stress screening.',
       authority: 'State Disaster Response Force (SDRF)',
@@ -186,7 +178,6 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
     recs.push({
       priority: 'LOW',
       category: 'General Public Advisory',
-      icon: '☀️',
       title: 'Normal Heatwave Precautions',
       action: 'Stay hydrated, carry water bottles, avoid direct sunlight during peak hours (12 PM - 3 PM), wear loose cotton clothing.',
       authority: 'NDMA Public Health Advisory',
@@ -205,35 +196,35 @@ export const MULTILINGUAL_SMS_TEMPLATES = [
     lang: 'English',
     label: 'Public Heat Emergency Advisory',
     recipient: 'General Public (Mobile Broadcast / WEA)',
-    content: '🌡️ NDMA HEAT ALERT: Extreme heatwave warning in your district. Avoid outdoor activities between 11 AM–4:30 PM. Drink plenty of water and ORS. Call 108 for medical emergency, 1077 for shelter locations. — District Disaster Management Authority',
+    content: 'NDMA HEAT ALERT: Extreme heatwave warning in your district. Avoid outdoor activities between 11 AM–4:30 PM. Drink plenty of water and ORS. Call 108 for medical emergency, 1077 for shelter locations. — District Disaster Management Authority',
   },
   {
     id: 'sms-general-hi',
     lang: 'Hindi',
     label: 'सार्वजनिक लू चेतावनी (Hindi)',
     recipient: 'आम नागरिक / एसएमएस अलर्ट',
-    content: '🌡️ लू चेतावनी (NDMA): आपके क्षेत्र में भीषण गर्मी व लू का रेड अलर्ट। दोपहर 11 से 4:30 बजे तक धूप में निकलने से बचें। लगातार पानी व ओआरएस (ORS) पिएं। आपातकाल में 108 या 1077 पर कॉल करें। — जिला आपदा प्रबंधन प्राधिकरण',
+    content: 'लू चेतावनी (NDMA): आपके क्षेत्र में भीषण गर्मी व लू का रेड अलर्ट। दोपहर 11 से 4:30 बजे तक धूप में निकलने से बचें। लगातार पानी व ओआरएस (ORS) पिएं। आपातकाल में 108 या 1077 पर कॉल करें। — जिला आपदा प्रबंधन प्राधिकरण',
   },
   {
     id: 'sms-workers-en',
     lang: 'English',
     label: 'Outdoor Worker Safety Directive',
     recipient: 'Contractors, Factory Owners, Farm Workers',
-    content: '⚠️ LABOUR DEPT DIRECTIVE: All strenuous outdoor and rooftop construction work suspended 11 AM - 4 PM. Mandatory cool water and shade breaks every 30 mins. Report violations to 1800-11-2526.',
+    content: 'LABOUR DEPT DIRECTIVE: All strenuous outdoor and rooftop construction work suspended 11 AM - 4 PM. Mandatory cool water and shade breaks every 30 mins. Report violations to 1800-11-2526.',
   },
   {
     id: 'sms-workers-hi',
     lang: 'Hindi',
     label: 'श्रमिक सुरक्षा निर्देश (Hindi)',
     recipient: 'ठेकेदार, निर्माण श्रमिक, फैक्ट्री',
-    content: '⚠️ श्रम विभाग निर्देश: भीषण गर्मी के कारण सुबह 11 से शाम 4 बजे तक खुले में भारी निर्माण कार्य प्रतिबंधित है। श्रमिकों हेतु छांव व ठंडे पेयजल का अनिवार्य प्रबंध करें। — श्रम मंत्रालय',
+    content: 'श्रम विभाग निर्देश: भीषण गर्मी के कारण सुबह 11 से शाम 4 बजे तक खुले में भारी निर्माण कार्य प्रतिबंधित है। श्रमिकों हेतु छांव व ठंडे पेयजल का अनिवार्य प्रबंध करें। — श्रम मंत्रालय',
   },
   {
     id: 'sms-hospital-en',
     lang: 'English',
     label: 'Hospital & CMO Preparedness Notice',
     recipient: 'All PHCs, CHCs, Private & Govt Hospitals',
-    content: '🏥 CMO HEALTH ALERT: Activate Heat-Stroke protocol immediately. Reserve dedicated cooling beds, stock IV fluids, ORS, and ice packs. Report daily heat morbidity to IDSP portal by 6 PM.',
+    content: 'CMO HEALTH ALERT: Activate Heat-Stroke protocol immediately. Reserve dedicated cooling beds, stock IV fluids, ORS, and ice packs. Report daily heat morbidity to IDSP portal by 6 PM.',
   },
 ];
 

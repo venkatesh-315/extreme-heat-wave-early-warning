@@ -1,4 +1,15 @@
 import React, { useState } from 'react';
+import {
+  CalendarIcon,
+  ThermometerIcon,
+  FlameIcon,
+  WaterIcon,
+  SunIcon,
+  WindIcon,
+  ActivityIcon,
+  ShieldAlertIcon,
+  GaugeIcon
+} from './icons';
 import './RiskForecast.css';
 
 const STRESS_COLORS = {
@@ -21,11 +32,11 @@ function RiskForecast({ forecast = [], location }) {
       <div className="forecast-header">
         <div>
           <div className="forecast-badge">
-            <span>📅</span>
+            <CalendarIcon size={13} color="#1e40af" />
             <span>7-Day IMD Synoptic Outlook</span>
           </div>
           <h3 className="section-title">
-            Summer 2026 Thermal Risk Forecast — {location?.name}
+            Summer 2026 Thermal Risk Forecast &mdash; {location?.name}
           </h3>
           <p className="section-desc">
             Day-by-day maximum temperature, humidity, WBGT, and mortality risk projections.
@@ -52,7 +63,7 @@ function RiskForecast({ forecast = [], location }) {
               </div>
 
               <div className="fc-temp-block">
-                <span className="fc-temp-val">{day.temperature}°</span>
+                <span className="fc-temp-val">{day.temperature}&deg;</span>
                 <span className="fc-temp-unit">C Max</span>
               </div>
 
@@ -82,7 +93,7 @@ function RiskForecast({ forecast = [], location }) {
         <div className="day-detail-header">
           <div className="day-detail-titles">
             <span className="day-detail-date">Detailed Advisory for {selected.day} ({selected.date})</span>
-            <h4>{selected.temperature}°C Max Air Temperature · {selected.wbgt}°C WBGT</h4>
+            <h4>{selected.temperature}&deg;C Max Air Temperature &middot; {selected.wbgt}&deg;C WBGT</h4>
           </div>
           <span
             className="detail-alert-badge"
@@ -92,45 +103,55 @@ function RiskForecast({ forecast = [], location }) {
               border: `1px solid ${STRESS_COLORS[selected.stressCategory?.label]}44`,
             }}
           >
-            ● {selected.stressCategory?.label} Thermal Burden ({selected.stressCategory?.text || 'Alert'})
+            {selected.stressCategory?.label} Thermal Burden ({selected.stressCategory?.text || 'Alert'})
           </span>
         </div>
 
         <div className="day-detail-grid">
           <div className="dd-item">
-            <span className="dd-icon">🌡️</span>
+            <div className="dd-icon-box" style={{ background: '#fff7ed' }}>
+              <ThermometerIcon size={18} color="#ea580c" />
+            </div>
             <div className="dd-texts">
               <span className="dd-label">Max Temperature</span>
-              <strong className="dd-value" style={{ color: '#ea580c' }}>{selected.temperature}°C</strong>
+              <strong className="dd-value" style={{ color: '#ea580c' }}>{selected.temperature}&deg;C</strong>
             </div>
           </div>
 
           <div className="dd-item">
-            <span className="dd-icon">🔥</span>
+            <div className="dd-icon-box" style={{ background: '#fef2f2' }}>
+              <FlameIcon size={18} color="#dc2626" />
+            </div>
             <div className="dd-texts">
               <span className="dd-label">Wet-Bulb Globe (WBGT)</span>
-              <strong className="dd-value" style={{ color: '#dc2626' }}>{selected.wbgt}°C</strong>
+              <strong className="dd-value" style={{ color: '#dc2626' }}>{selected.wbgt}&deg;C</strong>
             </div>
           </div>
 
           <div className="dd-item">
-            <span className="dd-icon">♨️</span>
+            <div className="dd-icon-box" style={{ background: '#fff1f2' }}>
+              <GaugeIcon size={18} color="#b91c1c" />
+            </div>
             <div className="dd-texts">
               <span className="dd-label">Heat Index</span>
-              <strong className="dd-value" style={{ color: '#b91c1c' }}>{selected.heatIndex}°C</strong>
+              <strong className="dd-value" style={{ color: '#b91c1c' }}>{selected.heatIndex}&deg;C</strong>
             </div>
           </div>
 
           <div className="dd-item">
-            <span className="dd-icon">🌐</span>
+            <div className="dd-icon-box" style={{ background: '#f5f3ff' }}>
+              <ActivityIcon size={18} color="#7c3aed" />
+            </div>
             <div className="dd-texts">
               <span className="dd-label">UTCI Perceived</span>
-              <strong className="dd-value" style={{ color: '#7c3aed' }}>{selected.utci}°C</strong>
+              <strong className="dd-value" style={{ color: '#7c3aed' }}>{selected.utci}&deg;C</strong>
             </div>
           </div>
 
           <div className="dd-item">
-            <span className="dd-icon">💧</span>
+            <div className="dd-icon-box" style={{ background: '#f0f9ff' }}>
+              <WaterIcon size={18} color="#0284c7" />
+            </div>
             <div className="dd-texts">
               <span className="dd-label">Relative Humidity</span>
               <strong className="dd-value" style={{ color: '#0284c7' }}>{selected.humidity}%</strong>
@@ -138,7 +159,9 @@ function RiskForecast({ forecast = [], location }) {
           </div>
 
           <div className="dd-item">
-            <span className="dd-icon">☀️</span>
+            <div className="dd-icon-box" style={{ background: '#fffbeb' }}>
+              <SunIcon size={18} color="#d97706" />
+            </div>
             <div className="dd-texts">
               <span className="dd-label">Solar Irradiance</span>
               <strong className="dd-value" style={{ color: '#d97706' }}>{selected.solarRadiation} W/m²</strong>
@@ -146,7 +169,9 @@ function RiskForecast({ forecast = [], location }) {
           </div>
 
           <div className="dd-item">
-            <span className="dd-icon">💨</span>
+            <div className="dd-icon-box" style={{ background: '#f8fafc' }}>
+              <WindIcon size={18} color="#64748b" />
+            </div>
             <div className="dd-texts">
               <span className="dd-label">Wind Speed</span>
               <strong className="dd-value" style={{ color: '#64748b' }}>{selected.windSpeed} km/h</strong>
@@ -154,7 +179,9 @@ function RiskForecast({ forecast = [], location }) {
           </div>
 
           <div className="dd-item">
-            <span className="dd-icon">⚠️</span>
+            <div className="dd-icon-box" style={{ background: '#fef2f2' }}>
+              <ShieldAlertIcon size={18} color={STRESS_COLORS[selected.stressCategory?.label]} />
+            </div>
             <div className="dd-texts">
               <span className="dd-label">Excess Mortality Risk</span>
               <strong className="dd-value" style={{ color: STRESS_COLORS[selected.stressCategory?.label] }}>
@@ -167,23 +194,23 @@ function RiskForecast({ forecast = [], location }) {
 
       {/* ISO & IMD Warning Matrix Reference */}
       <div className="forecast-matrix-ref">
-        <h4 className="matrix-title">📋 NDMA / IMD Heat Action Matrix Guidance (Summer 2026)</h4>
+        <h4 className="matrix-title">NDMA / IMD Heat Action Matrix Guidance (Summer 2026)</h4>
         <div className="matrix-chips">
           <div className="matrix-chip green">
             <span className="chip-badge">GREEN</span>
-            <span className="chip-desc">&lt;40°C: Normal. No special advisory.</span>
+            <span className="chip-desc">&lt;40&deg;C: Normal conditions. Standard hydration advisory.</span>
           </div>
           <div className="matrix-chip yellow">
             <span className="chip-badge">YELLOW</span>
-            <span className="chip-desc">40-42°C: Be Updated. Outdoor workers stay hydrated.</span>
+            <span className="chip-desc">40-42&deg;C: Be Updated. Outdoor workers stay hydrated.</span>
           </div>
           <div className="matrix-chip orange">
             <span className="chip-badge">ORANGE</span>
-            <span className="chip-desc">42-44°C: Be Prepared. Halt work 12-3 PM. Open cooling shelters.</span>
+            <span className="chip-desc">42-44&deg;C: Be Prepared. Halt work 12-3 PM. Open cooling shelters.</span>
           </div>
           <div className="matrix-chip red">
             <span className="chip-badge">RED</span>
-            <span className="chip-desc">&gt;44°C or WBGT &gt;32°: Take Action. Emergency protocols active.</span>
+            <span className="chip-desc">&gt;44&deg;C or WBGT &gt;32&deg;: Take Action. Emergency protocols active.</span>
           </div>
         </div>
       </div>

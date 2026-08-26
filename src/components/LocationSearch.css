@@ -1,4 +1,4 @@
-/* LocationSearch.css — Clean Light Theme Search Widget */
+/* LocationSearch.css — Clean Mobile-Optimized Light Theme Search Widget */
 
 .search-widget {
   position: relative;
@@ -14,17 +14,17 @@
   display: flex;
   align-items: center;
   background: #ffffff;
-  border: 2px solid var(--border-strong);
+  border: 1.5px solid #cbd5e1;
   border-radius: var(--radius-lg);
-  padding: 6px 12px 6px 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  transition: var(--transition);
-  gap: 10px;
+  padding: 6px 8px 6px 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 8px;
 }
 
 .search-input-wrapper:focus-within {
   border-color: var(--primary-blue);
-  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.12), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
 }
 
 .search-input-wrapper.dropdown-open {
@@ -33,7 +33,9 @@
 }
 
 .search-icon-left {
-  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-muted);
   flex-shrink: 0;
 }
@@ -46,12 +48,13 @@
   font-size: 0.95rem;
   color: var(--text-primary);
   outline: none;
-  min-width: 100px;
+  min-width: 0;
+  padding: 4px 0;
 }
 
 .search-input::placeholder {
   color: #94a3b8;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .search-spinner {
@@ -69,7 +72,6 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  font-size: 0.75rem;
   color: var(--text-muted);
   cursor: pointer;
   display: flex;
@@ -94,10 +96,10 @@
   padding: 8px 14px;
   border-radius: var(--radius-md);
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.825rem;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -123,21 +125,21 @@
   left: 0;
   right: 0;
   background: #ffffff;
-  border: 2px solid var(--border-strong);
+  border: 1.5px solid #cbd5e1;
   border-top: none;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-  z-index: 100;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
   max-height: 340px;
   overflow-y: auto;
 }
 
 .dropdown-meta-header {
-  padding: 8px 16px;
+  padding: 8px 14px;
   background: #f8fafc;
   border-bottom: 1px solid var(--border-subtle);
-  font-size: 0.725rem;
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 700;
   color: var(--text-muted);
   display: flex;
   justify-content: space-between;
@@ -154,7 +156,7 @@
 .suggestion-item {
   display: flex;
   align-items: center;
-  padding: 10px 16px;
+  padding: 10px 14px;
   gap: 12px;
   cursor: pointer;
   transition: var(--transition);
@@ -178,7 +180,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
   flex-shrink: 0;
 }
 
@@ -190,7 +191,7 @@
 }
 
 .suggestion-name {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
@@ -199,7 +200,7 @@
 }
 
 .suggestion-address {
-  font-size: 0.775rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -207,7 +208,7 @@
 }
 
 .suggestion-coords {
-  font-size: 0.725rem;
+  font-size: 0.7rem;
   color: #94a3b8;
   white-space: nowrap;
 }
@@ -217,14 +218,15 @@
   background: #fef2f2;
   color: #b91c1c;
   border: 1px solid #fecaca;
-  padding: 6px 12px;
+  padding: 8px 12px;
   border-radius: var(--radius-md);
   font-size: 0.8rem;
+  font-weight: 500;
 }
 
 /* Hotspots strip */
 .hotspots-strip {
-  margin-top: 16px;
+  margin-top: 14px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -232,7 +234,7 @@
 }
 
 .hotspots-title {
-  font-size: 0.775rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -243,7 +245,7 @@
 .hotspots-pills {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -253,14 +255,14 @@
   gap: 6px;
   background: #ffffff;
   border: 1px solid var(--border-subtle);
-  padding: 5px 12px;
+  padding: 4px 10px;
   border-radius: var(--radius-full);
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.775rem;
   font-weight: 600;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.15s ease;
 }
 
 .hotspot-pill:hover {
@@ -284,12 +286,32 @@
 
 .pill-state {
   color: var(--text-muted);
-  font-size: 0.725rem;
+  font-size: 0.7rem;
   font-weight: 400;
 }
 
+/* Mobile Responsiveness Improvements */
 @media (max-width: 640px) {
-  .search-input-wrapper { flex-wrap: wrap; }
-  .locate-me-btn { width: 100%; justify-content: center; }
-  .suggestion-coords { display: none; }
+  .search-input-wrapper {
+    flex-wrap: wrap;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .search-input {
+    font-size: 0.875rem;
+    min-width: 150px;
+  }
+  .locate-me-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px;
+  }
+  .suggestion-coords {
+    display: none;
+  }
+  .hotspots-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
 }

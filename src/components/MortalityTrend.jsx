@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { HISTORICAL_MORTALITY } from '../data/mockData';
+import { BarChartIcon, ThermometerIcon, UsersIcon, ShieldAlertIcon } from './icons';
 import './MortalityTrend.css';
 
 function MortalityTrend({ mortalityRisk = 45 }) {
@@ -15,7 +16,7 @@ function MortalityTrend({ mortalityRisk = 45 }) {
       <div className="trend-header">
         <div>
           <div className="trend-badge">
-            <span>📈</span>
+            <BarChartIcon size={13} color="#1e40af" />
             <span>Climatological Vulnerability Analytics</span>
           </div>
           <h3 className="section-title">
@@ -40,7 +41,7 @@ function MortalityTrend({ mortalityRisk = 45 }) {
             <Tooltip
               contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
               labelStyle={{ color: '#0f172a', fontWeight: 700 }}
-              formatter={(v, name, props) => [`${v.toLocaleString()} deaths`, props.payload.projected ? '2026 Projection' : 'Recorded Excess Deaths']}
+              formatter={(v, _name, props) => [`${v.toLocaleString()} casualties`, props.payload.projected ? '2026 Projection' : 'Recorded Excess Casualties']}
             />
             <ReferenceLine y={2000} stroke="#dc2626" strokeDasharray="4 3" label={{ value: 'National Severe Threshold (2,000)', fill: '#dc2626', fontSize: 10, position: 'top' }} />
             <Bar dataKey="deaths" radius={[4, 4, 0, 0]} maxBarSize={48}>
@@ -57,7 +58,9 @@ function MortalityTrend({ mortalityRisk = 45 }) {
 
       <div className="mortality-insights-grid">
         <div className="insight-card">
-          <span className="ins-icon">🌡️</span>
+          <div className="ins-icon-box" style={{ background: '#fef2f2' }}>
+            <ThermometerIcon size={18} color="#dc2626" />
+          </div>
           <div className="ins-texts">
             <span className="ins-lbl">Severe Spells Trend</span>
             <strong className="ins-val" style={{ color: '#dc2626' }}>21+ Spells in 2026</strong>
@@ -66,7 +69,9 @@ function MortalityTrend({ mortalityRisk = 45 }) {
         </div>
 
         <div className="insight-card">
-          <span className="ins-icon">👥</span>
+          <div className="ins-icon-box" style={{ background: '#fff7ed' }}>
+            <UsersIcon size={18} color="#ea580c" />
+          </div>
           <div className="ins-texts">
             <span className="ins-lbl">Highest Risk Demographic</span>
             <strong className="ins-val" style={{ color: '#ea580c' }}>Informal Workers &amp; Elderly</strong>
@@ -75,7 +80,9 @@ function MortalityTrend({ mortalityRisk = 45 }) {
         </div>
 
         <div className="insight-card">
-          <span className="ins-icon">🛡️</span>
+          <div className="ins-icon-box" style={{ background: '#f0fdf4' }}>
+            <ShieldAlertIcon size={18} color="#16a34a" />
+          </div>
           <div className="ins-texts">
             <span className="ins-lbl">Heat Action Plan Efficacy</span>
             <strong className="ins-val" style={{ color: '#16a34a' }}>-35% Mortality Reduction</strong>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { FlameIcon, GaugeIcon } from './icons';
 import './ThermalStressPanel.css';
 
 const GaugeArc = ({ value, max, color, label, sublabel, unit = '°C' }) => {
@@ -19,7 +20,6 @@ const GaugeArc = ({ value, max, color, label, sublabel, unit = '°C' }) => {
   return (
     <div className="gauge-wrap">
       <svg viewBox="0 0 160 90" className="gauge-svg">
-        {/* Background Track */}
         <path
           d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
           fill="none"
@@ -27,7 +27,6 @@ const GaugeArc = ({ value, max, color, label, sublabel, unit = '°C' }) => {
           strokeWidth="10"
           strokeLinecap="round"
         />
-        {/* Value Arc */}
         {pct > 0 && (
           <path
             d={`M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`}
@@ -37,7 +36,6 @@ const GaugeArc = ({ value, max, color, label, sublabel, unit = '°C' }) => {
             strokeLinecap="round"
           />
         )}
-        {/* Value text */}
         <text
           x={cx}
           y={cy - 6}
@@ -123,14 +121,17 @@ function ThermalStressPanel({ thermalMetrics }) {
     <div className="thermal-panel card" id="thermal-stress-panel">
       <div className="panel-header">
         <div>
-          <h3 className="section-title">🔥 Human Thermal Stress &amp; Biometeorology Indices</h3>
+          <h3 className="section-title">
+            <FlameIcon size={20} color="#ea580c" />
+            <span>Human Thermal Stress &amp; Biometeorology Indices</span>
+          </h3>
           <p className="section-desc">Multi-parameter physiological heat burden evaluated for Summer 2026</p>
         </div>
         <div
           className="stress-category-tag"
           style={{ background: stressCategory.bg, border: `1px solid ${stressCategory.border}`, color: stressCategory.color }}
         >
-          ● {stressCategory.label} Thermal Stress ({stressCategory.text})
+          {stressCategory.label} Thermal Stress ({stressCategory.text})
         </div>
       </div>
 
@@ -140,27 +141,27 @@ function ThermalStressPanel({ thermalMetrics }) {
           <div className="gauge-card card" id="gauge-wbgt">
             <GaugeArc value={wbgt} max={45} color="#ea580c" label="WBGT OUTDOOR" sublabel="Wet-Bulb Globe Temperature" />
             <div className="gauge-scale-legend">
-              <span style={{ color: '#16a34a' }}>● &lt;26° Safe</span>
-              <span style={{ color: '#ca8a04' }}>● 28-30° Caution</span>
-              <span style={{ color: '#dc2626' }}>● &gt;32° Danger</span>
+              <span style={{ color: '#16a34a' }}>&lt;26&deg; Safe</span>
+              <span style={{ color: '#ca8a04' }}>28-30&deg; Caution</span>
+              <span style={{ color: '#dc2626' }}>&gt;32&deg; Danger</span>
             </div>
           </div>
 
           <div className="gauge-card card" id="gauge-utci">
             <GaugeArc value={utci} max={60} color="#7c3aed" label="UTCI INDEX" sublabel="Universal Thermal Climate Index" />
             <div className="gauge-scale-legend">
-              <span style={{ color: '#16a34a' }}>● &lt;26° No Stress</span>
-              <span style={{ color: '#ea580c' }}>● 32-38° Strong</span>
-              <span style={{ color: '#991b1b' }}>● &gt;46° Extreme</span>
+              <span style={{ color: '#16a34a' }}>&lt;26&deg; No Stress</span>
+              <span style={{ color: '#ea580c' }}>32-38&deg; Strong</span>
+              <span style={{ color: '#991b1b' }}>&gt;46&deg; Extreme</span>
             </div>
           </div>
 
           <div className="gauge-card card" id="gauge-hi">
             <GaugeArc value={hi} max={70} color="#dc2626" label="HEAT INDEX" sublabel="NOAA Rothfusz Apparent Temp" />
             <div className="gauge-scale-legend">
-              <span style={{ color: '#16a34a' }}>● &lt;32° Normal</span>
-              <span style={{ color: '#ea580c' }}>● 41-54° Danger</span>
-              <span style={{ color: '#dc2626' }}>● &gt;54° Extreme</span>
+              <span style={{ color: '#16a34a' }}>&lt;32&deg; Normal</span>
+              <span style={{ color: '#ea580c' }}>41-54&deg; Danger</span>
+              <span style={{ color: '#dc2626' }}>&gt;54&deg; Extreme</span>
             </div>
           </div>
         </div>
@@ -172,11 +173,14 @@ function ThermalStressPanel({ thermalMetrics }) {
 
         {/* Scientific Methodology Explanation */}
         <div className="methodology-card card">
-          <h4 className="meth-title">📐 Biometeorological Calculation Standards</h4>
+          <h4 className="meth-title">
+            <GaugeIcon size={16} color="#1e40af" />
+            <span>Biometeorological Calculation Standards</span>
+          </h4>
           <div className="meth-grid">
             <div className="meth-item">
               <span className="meth-name">WBGT (Outdoor ISO 7933)</span>
-              <span className="meth-formula">0.7·Tw + 0.2·Tg + 0.1·Ta</span>
+              <span className="meth-formula">0.7&middot;Tw + 0.2&middot;Tg + 0.1&middot;Ta</span>
               <p className="meth-desc">Combines evaporative cooling capacity (Tw), direct solar radiation flux (Tg), and air temperature (Ta). Standard for occupational heat regulation.</p>
             </div>
 

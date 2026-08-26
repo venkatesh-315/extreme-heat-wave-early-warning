@@ -12,6 +12,21 @@ import HourlyChart from './components/HourlyChart';
 import MortalityTrend from './components/MortalityTrend';
 import ImdApiModal from './components/ImdApiModal';
 import Footer from './components/Footer';
+import SplitText from './components/SplitText';
+
+import {
+  UserLocationPin,
+  MapIcon,
+  ThermometerIcon,
+  HospitalIcon,
+  CalendarIcon,
+  ShieldAlertIcon,
+  BarChartIcon,
+  BuildingIcon,
+  MessageSquareIcon,
+  SatelliteIcon,
+  FlameIcon
+} from './components/icons';
 
 import { CURATED_INDIAN_LOCATIONS } from './services/geocodingService';
 import { fetchLiveWeatherData } from './services/weatherService';
@@ -32,13 +47,18 @@ function App() {
   const [sourceInfo, setSourceInfo] = useState('');
   const [isCalculating, setIsCalculating] = useState(false);
   const [hasData, setHasData] = useState(false);
-  const [activeSection, setActiveSection] = useState('metrics');
+  const [activeSection, setActiveSection] = useState('map'); // Defaults to map or switches on select
   const [isImdModalOpen, setIsImdModalOpen] = useState(false);
 
   // Load weather and emergency data for a given location
-  const handleLocationSelect = useCallback(async (location) => {
+  const handleLocationSelect = useCallback(async (location, shouldAutoSwitchToMap = true) => {
     setIsCalculating(true);
     setHasData(false);
+
+    // Automatically display the map of user's location
+    if (shouldAutoSwitchToMap) {
+      setActiveSection('map');
+    }
 
     try {
       // 1. Fetch live meteorological weather & thermal indices
@@ -84,10 +104,10 @@ function App() {
   useEffect(() => {
     const defaultCity = CURATED_INDIAN_LOCATIONS[0];
     let isMounted = true;
-    
+
     (async () => {
       if (isMounted) {
-        await handleLocationSelect(defaultCity);
+        await handleLocationSelect(defaultCity, true);
       }
     })();
 
@@ -112,11 +132,24 @@ function App() {
                 <span className="season-badge">
                   <span className="animate-pulse">●</span> {SUMMER_2026_METEOROLOGY.seasonTitle}
                 </span>
-                <span className="portal-code-badge">SIH26083 · Human Thermal Stress Early Warning</span>
+                <span className="portal-code-badge">
+                  <ShieldAlertIcon size={12} color="#1e40af" />
+                  <span>MoES &amp; NDMA &middot; National Civic Biometeorology</span>
+                </span>
               </div>
-              <h1 className="hero-main-title">
-                National Extreme Heatwave Early Warning &amp; Emergency Response System
-              </h1>
+
+              {/* Animated Head Text with GSAP SplitText */}
+              <div className="hero-title-container">
+                <SplitText
+                  text="National Extreme Heatwave Early Warning & Response System"
+                  className="hero-main-title"
+                  tag="h1"
+                  delay={35}
+                  duration={1.1}
+                  ease="power3.out"
+                />
+              </div>
+
               <p className="hero-subtitle">
                 Operational civic biometeorology combining Outdoor WBGT, UTCI, and Heat Index with real-time geocoding, hospital heat-stroke ICUs, and cooling shelters across India.
               </p>
@@ -127,14 +160,14 @@ function App() {
                 className="api-status-btn"
                 onClick={() => setIsImdModalOpen(true)}
               >
-                <span className="status-dot animate-pulse" />
+                <SatelliteIcon size={14} color="#15803d" />
                 <span>IMD &amp; Open-Meteo Gateway: <strong>Operational</strong></span>
               </button>
             </div>
           </div>
 
           <LocationSearch
-            onSelect={handleLocationSelect}
+            onSelect={(loc) => handleLocationSelect(loc, true)}
             isCalculating={isCalculating}
             selectedLocation={selectedLocation}
           />
@@ -154,14 +187,16 @@ function App() {
 
             <div className="active-location-banner card">
               <div className="active-loc-left">
-                <div className="loc-pin-icon">📍</div>
+                <div className="loc-pin-icon-wrap">
+                  <UserLocationPin size={28} color="#0f172a" />
+                </div>
                 <div>
                   <h2 className="loc-title-h2">{selectedLocation.name}</h2>
                   <div className="loc-meta-text">
                     <span>{selectedLocation.state || 'India'}</span>
-                    <span>·</span>
-                    <span>{selectedLocation.lat?.toFixed(4)}°N, {selectedLocation.lon?.toFixed(4)}°E</span>
-                    <span>·</span>
+                    <span>&middot;</span>
+                    <span>{selectedLocation.lat?.toFixed(4)}&deg;N, {selectedLocation.lon?.toFixed(4)}&deg;E</span>
+                    <span>&middot;</span>
                     <span>Source: {sourceInfo}</span>
                   </div>
                 </div>
@@ -171,13 +206,13 @@ function App() {
                 <div className="loc-metric-pill">
                   <span className="loc-metric-label">Air Temp</span>
                   <span className="loc-metric-val" style={{ color: '#ea580c' }}>
-                    {weatherData?.temperature}°C
+                    {weatherData?.temperature}&deg;C
                   </span>
                 </div>
                 <div className="loc-metric-pill">
                   <span className="loc-metric-label">WBGT Stress</span>
                   <span className="loc-metric-val" style={{ color: '#dc2626' }}>
-                    {thermalMetrics?.wbgt}°C
+                    {thermalMetrics?.wbgt}&deg;C
                   </span>
                 </div>
                 <div className="loc-metric-pill">
@@ -200,10 +235,10 @@ function App() {
         {/* LOADING STATE */}
         {isCalculating && (
           <div className="loading-overlay animate-fade-in">
-            <div className="loading-card">
-              <div className="loading-spinner" />
-              <h3 className="loading-title">Computing Thermodynamic Heat Indices</h3>
-              <p className="loading-sub">Integrating WBGT, UTCI, Solar Flux &amp; Locating Emergency Shelters</p>
+            <div className="loading-card card">
+              <div className="loading-spinner animate-spin" />
+              <h3 className="loading-title">Computing Meteorological Heat Indices</h3>
+              <p className="loading-sub">Solving WBGT, UTCI, Solar Irradiance &amp; Locating Facilities for {selectedLocation?.name || 'Selected Location'}...</p>
               <div className="loading-steps">
                 {[
                   'Connecting to IMD / Open-Meteo High-Res India feed...',
@@ -224,33 +259,48 @@ function App() {
         {/* DASHBOARD TABS & CONTENT */}
         {hasData && !isCalculating && (
           <div className="dashboard-root animate-fade-in">
-            {/* Nav Tabs */}
+            {/* Nav Tabs with Pure SVG Icons */}
             <nav className="dashboard-nav" role="tablist">
               {[
-                { id: 'metrics', label: '🌡️ Weather & Thermal Stress' },
-                { id: 'map', label: '🗺️ GIS Heat & Resource Map', badge: `${wardData.length} Wards` },
-                { id: 'emergency', label: '🏥 Emergency Shelters & Hospitals', badge: `${emergencyResources.length} Facilities` },
-                { id: 'forecast', label: '📅 7-Day IMD Forecast' },
-                { id: 'advisories', label: '🚨 Heat Action Plan (HAP)' },
-                { id: 'analytics', label: '📊 Summer 2026 Climate Analytics' },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  id={`tab-${tab.id}`}
-                  className={`nav-tab ${activeSection === tab.id ? 'active' : ''}`}
-                  onClick={() => setActiveSection(tab.id)}
-                  role="tab"
-                  aria-selected={activeSection === tab.id}
-                >
-                  <span>{tab.label}</span>
-                  {tab.badge && <span className="tab-badge">{tab.badge}</span>}
-                </button>
-              ))}
+                { id: 'map', label: 'GIS Heat & Resource Map', icon: MapIcon, badge: `${wardData.length} Wards` },
+                { id: 'metrics', label: 'Weather & Thermal Stress', icon: ThermometerIcon },
+                { id: 'emergency', label: 'Emergency Shelters & Hospitals', icon: HospitalIcon, badge: `${emergencyResources.length} Facilities` },
+                { id: 'forecast', label: '7-Day IMD Forecast', icon: CalendarIcon },
+                { id: 'advisories', label: 'Heat Action Plan (HAP)', icon: ShieldAlertIcon },
+                { id: 'analytics', label: 'Summer 2026 Climate Analytics', icon: BarChartIcon },
+              ].map((tab) => {
+                const TabIcon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    id={`tab-${tab.id}`}
+                    className={`nav-tab ${activeSection === tab.id ? 'active' : ''}`}
+                    onClick={() => setActiveSection(tab.id)}
+                    role="tab"
+                    aria-selected={activeSection === tab.id}
+                  >
+                    <TabIcon size={15} color={activeSection === tab.id ? '#1e40af' : '#64748b'} />
+                    <span>{tab.label}</span>
+                    {tab.badge && <span className="tab-badge">{tab.badge}</span>}
+                  </button>
+                );
+              })}
             </nav>
 
             {/* TAB CONTENT SECTIONS */}
             <div className="dashboard-content-area">
-              {/* 1. WEATHER & THERMAL STRESS */}
+              {/* 1. GIS MAP (Prominently displayed) */}
+              {activeSection === 'map' && (
+                <div className="section-fade">
+                  <GISMap
+                    location={selectedLocation}
+                    wards={wardData}
+                    emergencyResources={emergencyResources}
+                  />
+                </div>
+              )}
+
+              {/* 2. WEATHER & THERMAL STRESS */}
               {activeSection === 'metrics' && (
                 <div className="section-fade">
                   <WeatherMetrics
@@ -261,20 +311,8 @@ function App() {
                   />
                   <ThermalStressPanel
                     thermalMetrics={thermalMetrics}
-                    weather={weatherData}
                   />
                   <HourlyChart data={hourlyData} />
-                </div>
-              )}
-
-              {/* 2. GIS MAP */}
-              {activeSection === 'map' && (
-                <div className="section-fade">
-                  <GISMap
-                    location={selectedLocation}
-                    wards={wardData}
-                    emergencyResources={emergencyResources}
-                  />
                 </div>
               )}
 
@@ -324,19 +362,23 @@ function App() {
 
         {/* SUMMER 2026 OVERVIEW STATS (When not calculating) */}
         {!isCalculating && (
-          <div className="stats-overview" style={{ marginTop: '28px' }}>
+          <div className="stats-overview">
             <div className="stats-grid">
               <div className="overview-stat-card card">
-                <span className="overview-icon">🌡️</span>
+                <div className="overview-icon-wrap" style={{ background: '#fff7ed' }}>
+                  <ThermometerIcon size={22} color="#ea580c" />
+                </div>
                 <div>
-                  <div className="overview-val">+2.4°C</div>
+                  <div className="overview-val">+2.4&deg;C</div>
                   <div className="overview-lbl">Summer 2026 Temperature Anomaly</div>
                   <div className="overview-sub">Above Long-Period Average (LPA)</div>
                 </div>
               </div>
 
               <div className="overview-stat-card card">
-                <span className="overview-icon">🏙️</span>
+                <div className="overview-icon-wrap" style={{ background: '#eff6ff' }}>
+                  <BuildingIcon size={22} color="#2563eb" />
+                </div>
                 <div>
                   <div className="overview-val">100+</div>
                   <div className="overview-lbl">Heatwave Prone Districts Monitored</div>
@@ -345,7 +387,9 @@ function App() {
               </div>
 
               <div className="overview-stat-card card">
-                <span className="overview-icon">🏥</span>
+                <div className="overview-icon-wrap" style={{ background: '#fef2f2' }}>
+                  <HospitalIcon size={22} color="#dc2626" />
+                </div>
                 <div>
                   <div className="overview-val">2,400+</div>
                   <div className="overview-lbl">Cooling Shelters &amp; Heat ICUs Mapped</div>
@@ -354,7 +398,9 @@ function App() {
               </div>
 
               <div className="overview-stat-card card">
-                <span className="overview-icon">📱</span>
+                <div className="overview-icon-wrap" style={{ background: '#f0fdf4' }}>
+                  <MessageSquareIcon size={22} color="#16a34a" />
+                </div>
                 <div>
                   <div className="overview-val">120s</div>
                   <div className="overview-lbl">Emergency Broadcast SLA</div>
@@ -365,20 +411,38 @@ function App() {
 
             <div className="summer-2026-advisory-card card">
               <div className="advisory-header">
-                <span className="advisory-title">
-                  🛰️ India Meteorological Department (IMD) — Summer 2026 Heatwave Outlook
-                </span>
+                <div className="advisory-title-group">
+                  <SatelliteIcon size={18} color="#ea580c" />
+                  <span className="advisory-title">
+                    India Meteorological Department (IMD) &mdash; Summer 2026 Heatwave Outlook
+                  </span>
+                </div>
                 <span className="badge badge-orange">Operational Alert</span>
               </div>
               <p className="advisory-text">
                 During April to June 2026, above-normal maximum temperatures are forecasted across most parts of Central, Northwest, and Peninsular India. Prolonged heatwave spells of 8 to 15 days are anticipated over Rajasthan, Vidarbha, Telangana, Gangetic West Bengal, and Odisha. District administrations are advised to implement Heat Action Plans (HAP) and activate municipal cooling shelters.
               </p>
               <div className="hotspot-tags">
-                <span className="hotspot-tag">🔥 West Rajasthan (Phalodi, Barmer)</span>
-                <span className="hotspot-tag">🔥 Vidarbha (Nagpur, Chandrapur)</span>
-                <span className="hotspot-tag">🔥 Delhi-NCR &amp; Haryana</span>
-                <span className="hotspot-tag">🔥 Gangetic WB &amp; Odisha</span>
-                <span className="hotspot-tag">🔥 Telangana &amp; Rayalaseema</span>
+                <span className="hotspot-tag">
+                  <FlameIcon size={12} color="#c2410c" />
+                  <span>West Rajasthan (Phalodi, Barmer)</span>
+                </span>
+                <span className="hotspot-tag">
+                  <FlameIcon size={12} color="#c2410c" />
+                  <span>Vidarbha (Nagpur, Chandrapur)</span>
+                </span>
+                <span className="hotspot-tag">
+                  <FlameIcon size={12} color="#c2410c" />
+                  <span>Delhi-NCR &amp; Haryana</span>
+                </span>
+                <span className="hotspot-tag">
+                  <FlameIcon size={12} color="#c2410c" />
+                  <span>Gangetic WB &amp; Odisha</span>
+                </span>
+                <span className="hotspot-tag">
+                  <FlameIcon size={12} color="#c2410c" />
+                  <span>Telangana &amp; Rayalaseema</span>
+                </span>
               </div>
             </div>
           </div>
@@ -390,7 +454,7 @@ function App() {
         onClose={() => setIsImdModalOpen(false)}
         onConfigSaved={() => {
           if (selectedLocation) {
-            handleLocationSelect(selectedLocation);
+            handleLocationSelect(selectedLocation, false);
           }
         }}
       />

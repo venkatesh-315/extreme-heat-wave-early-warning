@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
 import { MULTILINGUAL_SMS_TEMPLATES } from '../data/mockData';
+import {
+  ShieldAlertIcon,
+  MessageSquareIcon,
+  CopyIcon,
+  SendIcon,
+  CheckIcon,
+  HospitalIcon,
+  WaterIcon,
+  UsersIcon,
+  BuildingIcon
+} from './icons';
 import './Recommendations.css';
 
 const PRIORITY_CONFIG = {
@@ -36,14 +47,14 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
       <div className="hap-executive-card card">
         <div className="hap-left">
           <div className="hap-badge">
-            <span>📋</span>
+            <ShieldAlertIcon size={13} color="#dc2626" />
             <span>NDMA Heat Action Plan (HAP) Protocols</span>
           </div>
           <h3 className="section-title">
-            Inter-Agency Directive &amp; Public Advisories — {location?.name}
+            Inter-Agency Directives &amp; Public Advisories &mdash; {location?.name}
           </h3>
           <p className="section-desc">
-            Mandatory standard operating procedures triggered for Current WBGT {thermalMetrics?.wbgt}°C &amp; {thermalMetrics?.mortalityRisk}% Excess Mortality Risk.
+            Standard operating procedures triggered for Current WBGT {thermalMetrics?.wbgt}&deg;C &amp; {thermalMetrics?.mortalityRisk}% Excess Mortality Risk.
           </p>
         </div>
 
@@ -53,7 +64,7 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
             <span className="hsp-lbl">Critical Directives</span>
           </div>
           <div className="hap-stat-pill">
-            <span className="hsp-val">{thermalMetrics?.wbgt}°C</span>
+            <span className="hsp-val">{thermalMetrics?.wbgt}&deg;C</span>
             <span className="hsp-lbl">Current WBGT</span>
           </div>
           <div className="hap-stat-pill">
@@ -74,7 +85,7 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
               style={{ borderLeft: `4px solid ${conf.color}` }}
             >
               <div className="action-icon-col">
-                <span className="action-emoji">{item.icon}</span>
+                <ShieldAlertIcon size={20} color={conf.color} />
               </div>
 
               <div className="action-body">
@@ -84,7 +95,7 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
                     className="action-priority-badge"
                     style={{ background: conf.bg, color: conf.color, border: `1px solid ${conf.border}` }}
                   >
-                    ● {conf.label}
+                    {conf.label}
                   </span>
                 </div>
 
@@ -106,7 +117,10 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
       <div className="sms-broadcast-card card" id="sms-dispatcher">
         <div className="sms-card-header">
           <div>
-            <h4 className="section-title">📱 Multi-Lingual Emergency Alert Broadcast Engine</h4>
+            <h4 className="section-title">
+              <MessageSquareIcon size={18} color="#1e40af" />
+              <span>Multi-Lingual Emergency Alert Broadcast Engine</span>
+            </h4>
             <p className="section-desc">
               Pre-approved bi-lingual advisory templates for SMS, WhatsApp, Wireless Emergency Alerts (WEA), and Radio.
             </p>
@@ -120,7 +134,7 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
               className={`sms-lang-tab ${activeSmsIndex === idx ? 'active' : ''}`}
               onClick={() => setActiveSmsIndex(idx)}
             >
-              <span>{tmpl.lang === 'Hindi' ? '🇮🇳 हिन्दी' : '🌐 English'}</span>
+              <span className="sms-lang-tag">{tmpl.lang === 'Hindi' ? 'हिन्दी' : 'English'}</span>
               <span className="sms-tab-name">{tmpl.label}</span>
             </button>
           ))}
@@ -130,12 +144,12 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
           {/* Phone Simulation */}
           <div className="phone-screen-mock">
             <div className="phone-top-bar">
-              <span>National Disaster Alert · 1077</span>
-              <span>📶 5G 100%</span>
+              <span>National Disaster Alert &middot; 1077</span>
+              <span>Cellular Broadcast</span>
             </div>
             <div className="phone-bubble-box">
               <div className="sms-bubble">{selectedTemplate.content}</div>
-              <div className="sms-timestamp">District Disaster Management Authority · Just Now</div>
+              <div className="sms-timestamp">District Disaster Management Authority &middot; Just Now</div>
             </div>
           </div>
 
@@ -147,12 +161,12 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
                 <strong>{selectedTemplate.recipient}</strong>
               </div>
               <div className="aud-row">
-                <span className="aud-lbl">Estimated District Reach:</span>
+                <span className="aud-lbl">Estimated Reach:</span>
                 <strong>~1.85 Million Mobile Subscribers</strong>
               </div>
               <div className="aud-row">
                 <span className="aud-lbl">Delivery SLA:</span>
-                <span className="aud-green">● Under 120 Seconds</span>
+                <span className="aud-green">Under 120 Seconds</span>
               </div>
             </div>
 
@@ -162,7 +176,8 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
                 className="btn btn-secondary btn-sm"
                 onClick={() => handleCopy(selectedTemplate.id, selectedTemplate.content)}
               >
-                {copiedId === selectedTemplate.id ? '✅ Copied to Clipboard!' : '📋 Copy Alert Text'}
+                {copiedId === selectedTemplate.id ? <CheckIcon size={14} color="#16a34a" /> : <CopyIcon size={14} />}
+                <span>{copiedId === selectedTemplate.id ? 'Copied to Clipboard!' : 'Copy Alert Text'}</span>
               </button>
 
               <button
@@ -170,21 +185,24 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
                 className="btn btn-primary btn-sm"
                 onClick={() => handleSimulateDispatch('SMS Gateway')}
               >
-                🚀 Dispatch SMS Broadcast
+                <SendIcon size={14} />
+                <span>Dispatch SMS Broadcast</span>
               </button>
 
               <button
                 type="button"
                 className="btn btn-sm whatsapp-btn"
-                onClick={() => handleSimulateDispatch('WhatsApp Business API')}
+                onClick={() => handleSimulateDispatch('WhatsApp Channel')}
               >
-                💬 WhatsApp Channel Blast
+                <MessageSquareIcon size={14} />
+                <span>WhatsApp Channel Blast</span>
               </button>
             </div>
 
             {dispatchStatus && (
               <div className="dispatch-alert-success animate-fade-in">
-                ✅ {dispatchStatus}
+                <CheckIcon size={16} color="#15803d" />
+                <span>{dispatchStatus}</span>
               </div>
             )}
           </div>
@@ -193,27 +211,35 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
 
       {/* Sector-Wise Operational Checklist */}
       <div className="sector-checklist-card card">
-        <h4 className="section-title">🏛️ Municipal Sector-Wise Readiness Checklist</h4>
+        <h4 className="section-title">
+          <BuildingIcon size={18} color="#1e40af" />
+          <span>Municipal Sector-Wise Readiness Checklist</span>
+        </h4>
         <div className="sector-grid">
           {[
-            { icon: '❄️', title: 'Cooling Centers', status: 'ACTIVE', desc: 'Air-cooled community halls & night shelters open 24/7' },
-            { icon: '💧', title: 'Water Tankers', status: 'DEPLOYED', desc: 'High-frequency refill trips to slums and transit bus stands' },
-            { icon: '⚡', title: 'Power DISCOMs', status: 'ALERTED', desc: 'No load-shedding directives active for hospitals & ICU units' },
-            { icon: '🏥', title: 'Health ICUs', status: 'EQUIPPED', desc: 'Ice baths, cold IV saline, and ORS packets pre-stocked' },
-            { icon: '👷', title: 'Labour Regulators', status: 'ENFORCED', desc: 'Mandatory halt on outdoor construction 11:00 AM - 4:30 PM' },
-            { icon: '🚌', title: 'Public Transport', status: 'CHECKED', desc: 'Cool drinking water & ORS booths at major metro & bus hubs' },
-          ].map((item, i) => (
-            <div key={i} className="sector-item">
-              <span className="sector-icon">{item.icon}</span>
-              <div className="sector-texts">
-                <div className="sector-top">
-                  <span className="sector-name">{item.title}</span>
-                  <span className="sector-status-pill">{item.status}</span>
+            { icon: BuildingIcon, iconColor: '#2563eb', title: 'Cooling Centers', status: 'ACTIVE', desc: 'Air-cooled community halls & night shelters open 24/7' },
+            { icon: WaterIcon, iconColor: '#0891b2', title: 'Water Tankers', status: 'DEPLOYED', desc: 'High-frequency refill trips to vulnerable areas and transit hubs' },
+            { icon: ShieldAlertIcon, iconColor: '#ea580c', title: 'Power Grid Priority', status: 'ALERTED', desc: 'Zero load-shedding directives active for hospitals & ICU units' },
+            { icon: HospitalIcon, iconColor: '#dc2626', title: 'Health ICUs', status: 'EQUIPPED', desc: 'Ice baths, cold IV saline, and ORS packets pre-stocked' },
+            { icon: UsersIcon, iconColor: '#7c3aed', title: 'Labour Regulations', status: 'ENFORCED', desc: 'Mandatory halt on outdoor construction 11:00 AM - 4:30 PM' },
+            { icon: ShieldAlertIcon, iconColor: '#059669', title: 'Public Transit', status: 'CHECKED', desc: 'Cool drinking water & ORS booths at major metro & bus hubs' },
+          ].map((item, i) => {
+            const ItemIcon = item.icon;
+            return (
+              <div key={i} className="sector-item">
+                <div className="sector-icon-wrap" style={{ background: `${item.iconColor}14` }}>
+                  <ItemIcon size={18} color={item.iconColor} />
                 </div>
-                <p className="sector-desc">{item.desc}</p>
+                <div className="sector-texts">
+                  <div className="sector-top">
+                    <span className="sector-name">{item.title}</span>
+                    <span className="sector-status-pill">{item.status}</span>
+                  </div>
+                  <p className="sector-desc">{item.desc}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

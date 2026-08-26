@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getImdApiConfig, saveImdApiConfig } from '../services/weatherService';
+import { SatelliteIcon, CheckCircleIcon, XIcon, ActivityIcon } from './icons';
 import './ImdApiModal.css';
 
 function ImdApiModal({ isOpen, onClose, onConfigSaved }) {
@@ -10,12 +11,11 @@ function ImdApiModal({ isOpen, onClose, onConfigSaved }) {
 
   const handleSave = (e) => {
     e.preventDefault();
-    saveImdApiConfig({
-      ...config,
-      lastVerified: new Date().toISOString(),
-    });
+    saveImdApiConfig(config);
     setSaveStatus('success');
+
     if (onConfigSaved) onConfigSaved(config);
+
     setTimeout(() => {
       setSaveStatus(null);
       onClose();
@@ -23,127 +23,103 @@ function ImdApiModal({ isOpen, onClose, onConfigSaved }) {
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content card" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-backdrop-light" onClick={onClose}>
+      <div className="modal-content-card card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title-group">
-            <span className="modal-icon">🛰️</span>
+            <div className="modal-icon-badge">
+              <SatelliteIcon size={20} color="#1e40af" />
+            </div>
             <div>
-              <h3 className="modal-title">IMD Weather API &amp; Feed Configuration</h3>
-              <p className="modal-subtitle">Configure meteorological sources for Summer 2026 early warnings</p>
+              <h3 className="modal-title">IMD Weather API &amp; Meteorological Gateway</h3>
+              <p className="modal-sub">Configure India Meteorological Department (IMD) / Mausam Data Integration</p>
             </div>
           </div>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Close">✕</button>
+          <button className="modal-close-btn" onClick={onClose} aria-label="Close modal">
+            <XIcon size={18} />
+          </button>
         </div>
 
-        <form onSubmit={handleSave} className="modal-body">
+        <form onSubmit={handleSave} className="modal-form">
           <div className="form-group">
-            <label className="form-label">Meteorological Data Provider</label>
-            <div className="provider-options">
-              <label className={`provider-radio ${config.provider === 'imd_openmeteo_ensemble' ? 'selected' : ''}`}>
-                <input
-                  type="radio"
-                  name="provider"
-                  value="imd_openmeteo_ensemble"
-                  checked={config.provider === 'imd_openmeteo_ensemble'}
-                  onChange={(e) => setConfig({ ...config, provider: e.target.value })}
-                />
-                <div className="provider-info">
-                  <strong>Open-Meteo &amp; IMD High-Resolution Ensemble (Active)</strong>
-                  <span>High-resolution DNI solar flux, wind, humidity, 7-day hourly forecast for India (No key required)</span>
-                </div>
-              </label>
-
-              <label className={`provider-radio ${config.provider === 'imd_mausam_api' ? 'selected' : ''}`}>
-                <input
-                  type="radio"
-                  name="provider"
-                  value="imd_mausam_api"
-                  checked={config.provider === 'imd_mausam_api'}
-                  onChange={(e) => setConfig({ ...config, provider: e.target.value })}
-                />
-                <div className="provider-info">
-                  <strong>IMD Mausam / AWS Official REST API</strong>
-                  <span>Direct AWS telemetry feed from India Meteorological Department AWS stations</span>
-                </div>
-              </label>
-
-              <label className={`provider-radio ${config.provider === 'custom_imd' ? 'selected' : ''}`}>
-                <input
-                  type="radio"
-                  name="provider"
-                  value="custom_imd"
-                  checked={config.provider === 'custom_imd'}
-                  onChange={(e) => setConfig({ ...config, provider: e.target.value })}
-                />
-                <div className="provider-info">
-                  <strong>Custom Enterprise Meteorological Gateway</strong>
-                  <span>State Disaster Management Authority (SDMA) or custom proxy endpoint</span>
-                </div>
-              </label>
-            </div>
+            <label className="form-label" htmlFor="api-provider-select">
+              Meteorological Data Provider / Forecast Model:
+            </label>
+            <select
+              id="api-provider-select"
+              className="form-select"
+              value={config.provider}
+              onChange={(e) => setConfig({ ...config, provider: e.target.value })}
+            >
+              <option value="imd_openmeteo_ensemble">
+                IMD &amp; Open-Meteo High-Resolution Ensemble (Active / 0.1 deg India Grid)
+              </option>
+              <option value="imd_mausam_api">
+                IMD Mausam National API (Requires Departmental API Key)
+              </option>
+              <option value="custom_imd">
+                Custom State Disaster Management Authority (SDMA) Server
+              </option>
+            </select>
           </div>
 
           <div className="form-group">
             <label className="form-label" htmlFor="imd-api-key-input">
-              IMD API Key / Token (Optional)
+              IMD / Mausam API Access Key:
             </label>
             <input
               id="imd-api-key-input"
-              type="text"
+              type="password"
               className="form-input"
-              placeholder="e.g. imd_live_key_2026_xxxxxxx"
-              value={config.apiKey}
+              placeholder="e.g. imd_live_key_xxxxxxxxxxxxxxxx"
+              value={config.apiKey || ''}
               onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
             />
             <span className="form-hint">
-              Leave blank to use the pre-configured high-resolution meteorological ensemble with real-time solar irradiance for WBGT.
+              Leave blank to automatically use the high-resolution calibrated India meteorological feed.
             </span>
           </div>
 
           {config.provider === 'custom_imd' && (
-            <div className="form-group">
+            <div className="form-group animate-fade-in">
               <label className="form-label" htmlFor="custom-endpoint-input">
-                Custom API Gateway URL
+                Custom SDMA / Regional IMD Endpoint URL:
               </label>
               <input
                 id="custom-endpoint-input"
                 type="url"
                 className="form-input"
-                placeholder="https://api.mausam.imd.gov.in/v1/forecast"
-                value={config.customEndpoint}
+                placeholder="https://sdma-telemetry.gov.in/api/v1/weather"
+                value={config.customEndpoint || ''}
                 onChange={(e) => setConfig({ ...config, customEndpoint: e.target.value })}
               />
             </div>
           )}
 
-          <div className="api-health-box">
-            <div className="health-row">
-              <span className="health-label">API Status:</span>
-              <span className="health-val-ok">● Connected &amp; Operational</span>
+          <div className="api-info-box">
+            <div className="info-badge">
+              <ActivityIcon size={14} color="#15803d" />
+              <span>Standard Operational Configuration</span>
             </div>
-            <div className="health-row">
-              <span className="health-label">Model Resolution:</span>
-              <span>1.5 km Hyperlocal Grid (India)</span>
-            </div>
-            <div className="health-row">
-              <span className="health-label">Solar Irradiance (WBGT):</span>
-              <span>Direct Normal + Diffuse Flux (W/m²)</span>
-            </div>
+            <p className="info-text">
+              The portal continuously ingests dry-bulb air temperature, relative humidity, dew point, solar flux, and 10m wind speed to solve psychrometric wet-bulb temperature, outdoor WBGT (ISO 7933), and UTCI in real time.
+            </p>
           </div>
 
           {saveStatus === 'success' && (
-            <div className="save-success-banner">
-              ✅ IMD API Configuration saved successfully!
+            <div className="save-status-alert success animate-fade-in">
+              <CheckCircleIcon size={16} color="#15803d" />
+              <span>IMD Configuration saved. Live meteorological feeds updated.</span>
             </div>
           )}
 
-          <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
+          <div className="modal-actions">
+            <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" id="save-imd-config-btn">
-              Save Configuration
+            <button type="submit" className="btn btn-primary btn-sm">
+              <CheckCircleIcon size={15} color="#ffffff" />
+              <span>Save &amp; Connect Live Feed</span>
             </button>
           </div>
         </form>

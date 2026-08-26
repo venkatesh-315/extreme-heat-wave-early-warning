@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlertTriangleIcon, AmbulanceIcon, PhoneIcon } from './icons';
 import './AlertBanner.css';
 
 function AlertBanner({ location, stressCategory, mortalityRisk, imdAlert }) {
@@ -15,7 +16,7 @@ function AlertBanner({ location, stressCategory, mortalityRisk, imdAlert }) {
       <div className="alert-inner-row">
         <div className="alert-icon-wrap" style={{ background: `${alertColor}15`, color: alertColor }}>
           <span className="alert-pulse" style={{ borderColor: alertColor }} />
-          <span className="alert-emoji">⚠️</span>
+          <AlertTriangleIcon size={20} color={alertColor} />
         </div>
 
         <div className="alert-content-block">
@@ -29,19 +30,21 @@ function AlertBanner({ location, stressCategory, mortalityRisk, imdAlert }) {
           </div>
 
           <p className="alert-body-text">
-            Dangerous thermal stress detected. Mortality Risk: <strong>{mortalityRisk}%</strong>.
+            High thermal burden detected. Mortality Risk: <strong>{mortalityRisk}%</strong>.
             {mortalityRisk >= 60
-              ? ' Outdoor labor suspended 11 AM - 4 PM. Municipal cooling shelters & heat ICUs on immediate active status.'
-              : ' Maintain scheduled hydration, avoid direct sunlight, and check on elderly citizens.'}
+              ? ' Outdoor manual work suspended 11 AM - 4:30 PM. Municipal cooling shelters and heat ICUs on active emergency status.'
+              : ' Maintain scheduled hydration, avoid peak solar exposure, and monitor vulnerable seniors and children.'}
           </p>
         </div>
 
         <div className="alert-quick-actions">
           <a href="tel:108" className="btn btn-danger btn-sm">
-            🚑 Call 108 Ambulance
+            <AmbulanceIcon size={14} color="#ffffff" />
+            <span>Call 108 Ambulance</span>
           </a>
           <a href="tel:1077" className="btn btn-secondary btn-sm">
-            🚨 1077 Disaster Desk
+            <PhoneIcon size={14} />
+            <span>1077 Disaster Desk</span>
           </a>
         </div>
       </div>

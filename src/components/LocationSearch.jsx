@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { searchLocations, reverseGeocode, CURATED_INDIAN_LOCATIONS } from '../services/geocodingService';
+import { UserLocationPin, CrosshairIcon, SearchIcon, XIcon, BuildingIcon } from './icons';
 import './LocationSearch.css';
 
 function LocationSearch({ onSelect, isCalculating, selectedLocation }) {
@@ -122,21 +123,22 @@ function LocationSearch({ onSelect, isCalculating, selectedLocation }) {
     }
   };
 
-  // Top Summer 2026 Hotspots for instant 1-click test
   const quickHotspots = CURATED_INDIAN_LOCATIONS.filter((l) => l.isHotspot).slice(0, 6);
 
   return (
     <div className="search-widget" ref={containerRef}>
       <div className="search-main-row">
         <div className={`search-input-wrapper ${isOpen ? 'dropdown-open' : ''} ${isCalculating ? 'calculating' : ''}`}>
-          <span className="search-icon-left">📍</span>
+          <span className="search-icon-left">
+            <SearchIcon size={18} color="#64748b" />
+          </span>
 
           <input
             ref={inputRef}
             id="location-search-input"
             type="text"
             className="search-input"
-            placeholder="Search any Indian city, district, town, or locality (e.g. Rohini Delhi, Phalodi, Nagpur, Hyderabad...)"
+            placeholder="Search city, district, town, or locality (e.g. Rohini Delhi, Phalodi, Nagpur...)"
             value={query}
             onChange={handleInputChange}
             onFocus={() => { if (suggestions.length > 0) setIsOpen(true); }}
@@ -161,7 +163,7 @@ function LocationSearch({ onSelect, isCalculating, selectedLocation }) {
               }}
               title="Clear search"
             >
-              ✕
+              <XIcon size={13} />
             </button>
           )}
 
@@ -175,11 +177,11 @@ function LocationSearch({ onSelect, isCalculating, selectedLocation }) {
             {isLocatingGps ? (
               <>
                 <span className="mini-spin animate-spin" />
-                <span>Locating...</span>
+                <span>Detecting Location...</span>
               </>
             ) : (
               <>
-                <span>🎯</span>
+                <CrosshairIcon size={15} color="#1d4ed8" />
                 <span>Locate Me</span>
               </>
             )}
@@ -205,14 +207,18 @@ function LocationSearch({ onSelect, isCalculating, selectedLocation }) {
                   onClick={() => handleSelectLocation(item)}
                 >
                   <div className="suggestion-icon-wrap">
-                    <span>{item.isLiveOsm ? '🗺️' : '🏙️'}</span>
+                    {item.isGps ? (
+                      <UserLocationPin size={18} color="#0f172a" />
+                    ) : (
+                      <BuildingIcon size={16} color="#2563eb" />
+                    )}
                   </div>
                   <div className="suggestion-details">
                     <span className="suggestion-name">{item.name}</span>
                     <span className="suggestion-address">{item.formattedAddress || `${item.district}, ${item.state}`}</span>
                   </div>
                   <div className="suggestion-coords">
-                    <span>{item.lat.toFixed(3)}°N, {item.lon.toFixed(3)}°E</span>
+                    <span>{item.lat.toFixed(3)}&deg;N, {item.lon.toFixed(3)}&deg;E</span>
                   </div>
                 </li>
               ))}
@@ -222,14 +228,14 @@ function LocationSearch({ onSelect, isCalculating, selectedLocation }) {
       </div>
 
       {gpsError && (
-        <div className="gps-error-alert">
-          ⚠️ {gpsError}
+        <div className="gps-error-alert animate-fade-in">
+          {gpsError}
         </div>
       )}
 
       {/* Quick Select Hotspot Chips */}
       <div className="hotspots-strip">
-        <span className="hotspots-title">Summer 2026 Heatwave Hotspots:</span>
+        <span className="hotspots-title">Summer 2026 Hotspots:</span>
         <div className="hotspots-pills">
           {quickHotspots.map((city) => (
             <button

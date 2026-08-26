@@ -1,5 +1,6 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ActivityIcon, AlertTriangleIcon } from './icons';
 import './HourlyChart.css';
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -20,14 +21,16 @@ const CustomTooltip = ({ active, payload, label }) => {
 function HourlyChart({ data = [] }) {
   if (!data || data.length === 0) return null;
 
-  // Display every other hour for clean layout on small screens
   const displayData = data.filter((_, i) => i % 2 === 0);
 
   return (
     <div className="hourly-chart-card card" id="hourly-thermal-chart">
       <div className="chart-header">
         <div>
-          <h3 className="section-title">📊 24-Hour Diurnal Thermal Cycle</h3>
+          <h3 className="section-title">
+            <ActivityIcon size={18} color="#1e40af" />
+            <span>24-Hour Diurnal Thermal Profile</span>
+          </h3>
           <p className="section-desc">Hourly dry bulb temperature, WBGT, Heat Index, and humidity trajectory</p>
         </div>
         <div className="chart-legend-row">
@@ -69,7 +72,8 @@ function HourlyChart({ data = [] }) {
 
       <div className="chart-footer-strip">
         <span className="danger-window-tag">
-          ⚠️ <strong>Peak Heat Vulnerability Window:</strong> 11:00 AM – 4:30 PM IST (Direct UV &amp; Solar Irradiance peak &gt;900 W/m²)
+          <AlertTriangleIcon size={14} color="#c2410c" />
+          <span><strong>Peak Heat Vulnerability Window:</strong> 11:00 AM – 4:30 PM IST (Direct Solar Irradiance peak &gt;900 W/m²)</span>
         </span>
       </div>
     </div>

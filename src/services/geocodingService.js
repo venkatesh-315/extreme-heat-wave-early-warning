@@ -177,7 +177,7 @@ export async function reverseGeocode(lat, lon) {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=14&addressdetails=1`;
     const res = await fetch(url, {
-      headers: { 'Accept': 'application/json', 'User-Agent': 'HeatGuard-India-SIH26083' },
+      headers: { 'Accept': 'application/json', 'User-Agent': 'HeatGuard-India-EarlyWarning-Portal' },
       signal: AbortSignal.timeout(3500),
     });
 

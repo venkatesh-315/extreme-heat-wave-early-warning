@@ -1,4 +1,16 @@
 import React, { useState } from 'react';
+import {
+  HospitalIcon,
+  ShelterIcon,
+  WaterIcon,
+  PhoneIcon,
+  NavigationIcon,
+  SearchIcon,
+  CrosshairIcon,
+  BuildingIcon,
+  XIcon,
+  ActivityIcon
+} from './icons';
 import './EmergencyDirectory.css';
 
 function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap }) {
@@ -24,66 +36,72 @@ function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap })
       <div className="directory-header">
         <div className="directory-titles">
           <div className="directory-badge">
-            <span className="live-dot" />
-            <span>Active Emergency Network</span>
+            <ActivityIcon size={13} color="#16a34a" />
+            <span>Active Emergency Infrastructure</span>
           </div>
           <h3 className="section-title">
-            🏥 Emergency Shelters &amp; Hospitals Near {locationName}
+            <HospitalIcon size={20} color="#dc2626" />
+            <span>Emergency Shelters &amp; Hospitals Near {locationName}</span>
           </h3>
           <p className="section-desc">
-            Verified heat-stroke medical centers, municipal cooling shelters (Rain Basera), and drinking water stations.
+            Designated heat-stroke treatment centers, cooling shelters, and public drinking water stations.
           </p>
         </div>
 
         <div className="directory-quick-counts">
           <div className="count-pill hospital">
-            <span className="count-icon">🏥</span>
+            <HospitalIcon size={16} color="#dc2626" />
             <span className="count-num">{hospitals.length}</span>
             <span className="count-lbl">Hospitals</span>
           </div>
           <div className="count-pill shelter">
-            <span className="count-icon">🏠</span>
+            <ShelterIcon size={16} color="#2563eb" />
             <span className="count-num">{shelters.length}</span>
-            <span className="count-lbl">Cooling Shelters</span>
+            <span className="count-lbl">Shelters</span>
           </div>
           <div className="count-pill water">
-            <span className="count-icon">💧</span>
+            <WaterIcon size={16} color="#0891b2" />
             <span className="count-num">{waterPoints.length}</span>
-            <span className="count-lbl">Water Booths</span>
+            <span className="count-lbl">Water Points</span>
           </div>
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
+      {/* Filter and Search Controls */}
       <div className="directory-controls">
         <div className="filter-tabs">
           {[
-            { id: 'all', label: `All Facilities (${resources.length})`, icon: '🏢' },
-            { id: 'hospital', label: `Hospitals & ICUs (${hospitals.length})`, icon: '🏥' },
-            { id: 'shelter', label: `Cooling Shelters (${shelters.length})`, icon: '🏠' },
-            { id: 'water', label: `Water Kiosks (${waterPoints.length})`, icon: '💧' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              className={`filter-btn ${activeFilter === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveFilter(tab.id)}
-            >
-              <span>{tab.icon}</span>
-              <span>{tab.label}</span>
-            </button>
-          ))}
+            { id: 'all', label: `All Facilities (${resources.length})`, icon: BuildingIcon },
+            { id: 'hospital', label: `Hospitals & ICUs (${hospitals.length})`, icon: HospitalIcon },
+            { id: 'shelter', label: `Cooling Shelters (${shelters.length})`, icon: ShelterIcon },
+            { id: 'water', label: `Water Kiosks (${waterPoints.length})`, icon: WaterIcon },
+          ].map((tab) => {
+            const IconComponent = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                className={`filter-btn ${activeFilter === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveFilter(tab.id)}
+              >
+                <IconComponent size={14} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="directory-search-input">
-          <span>🔍</span>
+          <SearchIcon size={15} color="#94a3b8" />
           <input
             type="text"
-            placeholder="Filter by facility name, address, ICU..."
+            placeholder="Search facility name, address, ICU..."
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
           />
           {searchFilter && (
-            <button className="clear-btn" onClick={() => setSearchFilter('')}>✕</button>
+            <button className="clear-btn" onClick={() => setSearchFilter('')} aria-label="Clear filter">
+              <XIcon size={12} />
+            </button>
           )}
         </div>
       </div>
@@ -92,7 +110,7 @@ function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap })
       <div className="resources-grid">
         {filteredResources.length === 0 ? (
           <div className="empty-results card">
-            <span>🔍</span>
+            <SearchIcon size={32} color="#94a3b8" />
             <p>No facilities match your search query in this area.</p>
             <button className="btn btn-secondary btn-sm" onClick={() => { setActiveFilter('all'); setSearchFilter(''); }}>
               Reset Filters
@@ -103,12 +121,14 @@ function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap })
             <div key={item.id} className={`resource-card ${item.type}`}>
               <div className="res-header">
                 <div className="res-icon-wrap">
-                  <span>{item.icon}</span>
+                  {item.type === 'hospital' && <HospitalIcon size={20} color="#dc2626" />}
+                  {item.type === 'shelter' && <ShelterIcon size={20} color="#2563eb" />}
+                  {item.type === 'water' && <WaterIcon size={20} color="#0891b2" />}
                 </div>
                 <div className="res-title-box">
                   <div className="res-badge-row">
                     <span className="res-category-tag">{item.categoryLabel}</span>
-                    <span className="res-distance-badge">📍 {item.distanceKm} km away</span>
+                    <span className="res-distance-badge">{item.distanceKm} km away</span>
                   </div>
                   <h4 className="res-name">{item.name}</h4>
                 </div>
@@ -116,25 +136,25 @@ function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap })
 
               <div className="res-details-list">
                 <div className="res-detail-row">
-                  <span className="detail-label">📍 Address:</span>
+                  <span className="detail-label">Address:</span>
                   <span className="detail-value">{item.address}</span>
                 </div>
 
                 <div className="res-detail-row">
-                  <span className="detail-label">❄️ Cooling Feature:</span>
+                  <span className="detail-label">Cooling Amenities:</span>
                   <span className="detail-value feature">{item.coolingAmenity}</span>
                 </div>
 
                 <div className="res-detail-row">
-                  <span className="detail-label">👥 Capacity:</span>
+                  <span className="detail-label">Capacity:</span>
                   <span className="detail-value"><strong>{item.capacity}</strong></span>
                 </div>
 
                 {item.type === 'hospital' && (
                   <div className="res-detail-row">
-                    <span className="detail-label">🚨 Heat-Stroke ICU:</span>
+                    <span className="detail-label">Heat-Stroke ICU:</span>
                     <span className={`detail-value ${item.icuReady ? 'icu-active' : ''}`}>
-                      {item.icuReady ? '✅ Dedicated Heat ICU Active' : 'Standard Emergency Ward'}
+                      {item.icuReady ? 'Dedicated Heat ICU Active' : 'Emergency Casualty Ward'}
                     </span>
                   </div>
                 )}
@@ -143,7 +163,8 @@ function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap })
               <div className="res-card-actions">
                 {item.phone && item.phone !== 'N/A' && (
                   <a href={`tel:${item.phone.split('/')[0].trim()}`} className="btn btn-secondary btn-sm res-call-btn">
-                    📞 {item.phone}
+                    <PhoneIcon size={13} />
+                    <span>{item.phone}</span>
                   </a>
                 )}
 
@@ -154,7 +175,8 @@ function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap })
                   className="btn btn-primary btn-sm res-dir-btn"
                   title="Open GPS directions in Google Maps"
                 >
-                  🗺️ Get Directions
+                  <NavigationIcon size={13} />
+                  <span>Get Directions</span>
                 </a>
 
                 {onFocusOnMap && (
@@ -164,7 +186,8 @@ function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap })
                     onClick={() => onFocusOnMap(item)}
                     title="View pin on map"
                   >
-                    🔍 View on Map
+                    <CrosshairIcon size={13} />
+                    <span>View on Map</span>
                   </button>
                 )}
               </div>

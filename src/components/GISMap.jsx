@@ -1,4 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
+import {
+  MapIcon,
+  FlameIcon,
+  HospitalIcon,
+  ShelterIcon,
+  WaterIcon,
+  NavigationIcon,
+  PhoneIcon,
+  XIcon,
+  CrosshairIcon
+} from './icons';
 import './GISMap.css';
 
 const getRiskColor = (risk) => {
@@ -57,7 +68,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
           mapInstanceRef.current = null;
         }
 
-        // Initialize new map with Light Positron Tiles
+        // Initialize new map with Light Positron/Voyager Tiles
         const map = L.map(mapRef.current, {
           center: [location.lat, location.lon],
           zoom: 12,
@@ -65,34 +76,36 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
           attributionControl: true,
         });
 
-        // Clean, crisp Light Tile Layer (CartoDB Positron / OSM)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
           subdomains: 'abcd',
           maxZoom: 19,
         }).addTo(map);
 
-        // Center Location Marker (Search Pin)
+        // Center Location Marker: Exact Uploaded SVG Pin Asset
         const centerIcon = L.divIcon({
-          html: `<div class="center-pin-wrap">
-            <div class="center-pulse-ring"></div>
-            <div class="center-dot">📍</div>
+          html: `<div class="user-custom-pin-wrap">
+            <div class="user-pin-pulse"></div>
+            <svg width="36" height="36" viewBox="0 0 100 100" fill="none" class="user-pin-svg">
+              <path d="M50 10C31.22 10 16 25.22 16 44C16 66.5 45.8 88.5 47.1 89.4C48 90 49 90.3 50 90.3C51 90.3 52 90 52.9 89.4C54.2 88.5 84 66.5 84 44C84 25.22 68.78 10 50 10ZM50 81.3C40.6 73.1 23.6 56.6 23.6 44C23.6 29.44 35.44 17.6 50 17.6C64.56 17.6 76.4 29.44 76.4 44C76.4 56.6 59.4 73.1 50 81.3Z" fill="#0f172a"/>
+              <path d="M50 31C42.82 31 37 36.82 37 44C37 51.18 42.82 57 50 57C57.18 57 63 51.18 63 44C63 36.82 57.18 31 50 31ZM50 49.4C47.02 49.4 44.6 46.98 44.6 44C44.6 41.02 47.02 38.6 50 38.6C52.98 38.6 55.4 41.02 55.4 44C55.4 46.98 52.98 49.4 50 49.4Z" fill="#0f172a"/>
+            </svg>
           </div>`,
           className: '',
-          iconSize: [40, 40],
-          iconAnchor: [20, 20],
+          iconSize: [36, 36],
+          iconAnchor: [18, 36],
         });
 
         L.marker([location.lat, location.lon], { icon: centerIcon })
           .addTo(map)
           .bindPopup(`
             <div class="map-light-popup center-popup">
-              <div class="popup-title">📍 ${location.name}</div>
-              <div class="popup-sub">${location.state || 'India'} · ${location.lat.toFixed(4)}°N, ${location.lon.toFixed(4)}°E</div>
+              <div class="popup-title">${location.name}</div>
+              <div class="popup-sub">${location.state || 'India'} &middot; ${location.lat.toFixed(4)}&deg;N, ${location.lon.toFixed(4)}&deg;E</div>
             </div>
           `);
 
-        // Initialize Layer Groups
+        // Layer Groups
         const heatGroup = L.layerGroup();
         const hospitalGroup = L.layerGroup();
         const shelterGroup = L.layerGroup();
@@ -103,25 +116,23 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
           const color = getRiskColor(ward.mortalityRisk);
           const radius = 35 + ward.mortalityRisk * 0.7;
 
-          // Thermal buffer circle
           L.circle([ward.lat, ward.lon], {
             radius: radius * 60,
             color: color,
             fillColor: color,
-            fillOpacity: 0.22,
-            weight: 2,
+            fillOpacity: 0.2,
+            weight: 1.5,
             opacity: 0.8,
           }).addTo(heatGroup);
 
-          // Ward interactive pin
           const wardIcon = L.divIcon({
             html: `<div class="ward-light-pin" style="--pin-color: ${color}">
-              <span class="ward-pin-temp">${ward.wbgt}°</span>
+              <span class="ward-pin-temp">${ward.wbgt}&deg;</span>
               <span class="ward-pin-sub">WBGT</span>
             </div>`,
             className: '',
-            iconSize: [44, 44],
-            iconAnchor: [22, 22],
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
           });
 
           L.marker([ward.lat, ward.lon], { icon: wardIcon })
@@ -141,42 +152,40 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
                 <div class="popup-title">${ward.name}</div>
                 <div class="popup-type">${ward.microclimateType || 'Urban Zone'}</div>
                 <div class="popup-grid">
-                  <div class="pg-item"><span>WBGT</span><strong style="color:${color}">${ward.wbgt}°C</strong></div>
-                  <div class="pg-item"><span>Air Temp</span><strong>${ward.temperature}°C</strong></div>
-                  <div class="pg-item"><span>Heat Index</span><strong style="color:#ea580c">${ward.heatIndex}°C</strong></div>
+                  <div class="pg-item"><span>WBGT</span><strong style="color:${color}">${ward.wbgt}&deg;C</strong></div>
+                  <div class="pg-item"><span>Air Temp</span><strong>${ward.temperature}&deg;C</strong></div>
+                  <div class="pg-item"><span>Heat Index</span><strong style="color:#ea580c">${ward.heatIndex}&deg;C</strong></div>
                   <div class="pg-item"><span>Mortality Risk</span><strong style="color:${color}">${ward.mortalityRisk}%</strong></div>
                 </div>
               </div>
             `);
         });
 
-        // 2. Plot Emergency Resources (Hospitals, Cooling Shelters, Drinking Water)
+        // 2. Plot Emergency Resources with Clean SVG Markers
         emergencyResources.forEach((res) => {
-          let iconHtml = '';
+          let svgInner = '';
           let targetGroup = hospitalGroup;
+          let pinClass = 'hospital';
 
           if (res.type === 'hospital') {
             targetGroup = hospitalGroup;
-            iconHtml = `<div class="res-light-pin hospital">
-              <span>🏥</span>
-            </div>`;
+            pinClass = 'hospital';
+            svgInner = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5"><path d="M12 6v12M6 12h12"/></svg>`;
           } else if (res.type === 'shelter') {
             targetGroup = shelterGroup;
-            iconHtml = `<div class="res-light-pin shelter">
-              <span>🏠</span>
-            </div>`;
+            pinClass = 'shelter';
+            svgInner = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>`;
           } else {
             targetGroup = waterGroup;
-            iconHtml = `<div class="res-light-pin water">
-              <span>💧</span>
-            </div>`;
+            pinClass = 'water';
+            svgInner = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`;
           }
 
           const markerIcon = L.divIcon({
-            html: iconHtml,
+            html: `<div class="res-svg-pin ${pinClass}">${svgInner}</div>`,
             className: '',
-            iconSize: [34, 34],
-            iconAnchor: [17, 17],
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
           });
 
           L.marker([res.lat, res.lon], { icon: markerIcon })
@@ -193,19 +202,18 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
                 </div>
                 <div class="popup-title">${res.name}</div>
                 <div class="popup-address">${res.address}</div>
-                <div class="popup-feature">❄️ ${res.coolingAmenity}</div>
-                <div class="popup-capacity">👥 Capacity: <strong>${res.capacity}</strong></div>
-                ${res.phone ? `<div class="popup-phone">📞 Tel: <strong>${res.phone}</strong></div>` : ''}
+                <div class="popup-feature">${res.coolingAmenity}</div>
+                <div class="popup-capacity">Capacity: <strong>${res.capacity}</strong></div>
+                ${res.phone ? `<div class="popup-phone">Tel: <strong>${res.phone}</strong></div>` : ''}
                 <div class="popup-actions">
                   <a href="${res.mapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn">
-                    🗺️ Get Directions
+                    Get Directions
                   </a>
                 </div>
               </div>
             `);
         });
 
-        // Add layer groups to map
         heatGroup.addTo(map);
         hospitalGroup.addTo(map);
         shelterGroup.addTo(map);
@@ -220,7 +228,6 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
 
         mapInstanceRef.current = map;
       } catch {
-        // Map loading fallback
         setMapError(true);
       }
     };
@@ -236,7 +243,6 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
     };
   }, [location, wards, emergencyResources]);
 
-  // Handle Layer Toggle Switcher
   const toggleLayer = (layerKey) => {
     const nextState = !activeLayers[layerKey];
     setActiveLayers((prev) => ({ ...prev, [layerKey]: nextState }));
@@ -253,7 +259,6 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
     }
   };
 
-  // Center on a specific resource
   const focusOnItem = (item) => {
     if (mapInstanceRef.current && item?.lat && item?.lon) {
       mapInstanceRef.current.flyTo([item.lat, item.lon], 15, { duration: 1 });
@@ -262,15 +267,20 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
     }
   };
 
+  const hospitalsCount = emergencyResources.filter((r) => r.type === 'hospital').length;
+  const sheltersCount = emergencyResources.filter((r) => r.type === 'shelter').length;
+  const waterCount = emergencyResources.filter((r) => r.type === 'water').length;
+
   return (
     <div className="gis-wrapper card" id="gis-interactive-map">
       <div className="gis-top-bar">
         <div className="gis-header-titles">
           <h3 className="section-title">
-            🗺️ GIS Heat Vulnerability &amp; Emergency Infrastructure Map
+            <MapIcon size={20} color="#1e40af" />
+            <span>GIS Heat Vulnerability &amp; Emergency Infrastructure Map</span>
           </h3>
           <p className="section-desc">
-            Showing hyper-local microclimates, thermal stress zones, hospitals, and emergency cooling shelters for {location?.name}.
+            Displaying microclimates, hospitals, cooling centers, and drinking water stations for {location?.name}.
           </p>
         </div>
 
@@ -281,7 +291,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
             onClick={() => toggleLayer('heatZones')}
             title="Toggle Thermal Stress Zones"
           >
-            <span>🔥</span>
+            <FlameIcon size={14} />
             <span>Heat Zones</span>
           </button>
           <button
@@ -289,24 +299,24 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
             onClick={() => toggleLayer('hospitals')}
             title="Toggle Emergency Hospitals"
           >
-            <span>🏥</span>
-            <span>Hospitals ({emergencyResources.filter((r) => r.type === 'hospital').length})</span>
+            <HospitalIcon size={14} />
+            <span>Hospitals ({hospitalsCount})</span>
           </button>
           <button
             className={`layer-toggle-btn ${activeLayers.shelters ? 'active shelter' : ''}`}
             onClick={() => toggleLayer('shelters')}
             title="Toggle Cooling Shelters"
           >
-            <span>🏠</span>
-            <span>Cool Shelters ({emergencyResources.filter((r) => r.type === 'shelter').length})</span>
+            <ShelterIcon size={14} />
+            <span>Shelters ({sheltersCount})</span>
           </button>
           <button
             className={`layer-toggle-btn ${activeLayers.water ? 'active water' : ''}`}
             onClick={() => toggleLayer('water')}
             title="Toggle Water Stations"
           >
-            <span>💧</span>
-            <span>Water Booths ({emergencyResources.filter((r) => r.type === 'water').length})</span>
+            <WaterIcon size={14} />
+            <span>Water ({waterCount})</span>
           </button>
         </div>
       </div>
@@ -316,7 +326,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
         <div className="map-view-box">
           {mapError ? (
             <div className="map-fallback-view">
-              <span>🗺️</span>
+              <MapIcon size={36} color="#94a3b8" />
               <p>Map view is loading or unavailable. Showing tabular facility listings below.</p>
             </div>
           ) : (
@@ -327,15 +337,15 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
           <div className="gis-floating-legend">
             <span className="legend-head">Risk Scale (WBGT):</span>
             <div className="legend-items">
-              <span className="leg-dot" style={{ background: '#16a34a' }}>&lt;26° Safe</span>
-              <span className="leg-dot" style={{ background: '#ca8a04' }}>26-28° Caution</span>
-              <span className="leg-dot" style={{ background: '#ea580c' }}>28-32° Alert</span>
-              <span className="leg-dot" style={{ background: '#dc2626' }}>&gt;32° Danger</span>
+              <span className="leg-dot" style={{ background: '#16a34a' }}>&lt;26&deg; Safe</span>
+              <span className="leg-dot" style={{ background: '#ca8a04' }}>26-28&deg; Caution</span>
+              <span className="leg-dot" style={{ background: '#ea580c' }}>28-32&deg; Alert</span>
+              <span className="leg-dot" style={{ background: '#dc2626' }}>&gt;32&deg; Danger</span>
             </div>
           </div>
         </div>
 
-        {/* Sidebar: Quick Navigation of Nearby Facilities & Wards */}
+        {/* Sidebar */}
         <div className="gis-sidebar">
           <div className="sidebar-header">
             <h4>Facilities &amp; Heat Zones</h4>
@@ -343,7 +353,6 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
           </div>
 
           <div className="sidebar-items-list scroll-area">
-            {/* Wards */}
             <div className="sidebar-group-label">Microclimate Wards</div>
             {wards.map((ward) => {
               const color = getRiskColor(ward.mortalityRisk);
@@ -356,7 +365,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
                   <div className="item-color-bar" style={{ background: color }} />
                   <div className="item-details">
                     <span className="item-name">{ward.name}</span>
-                    <span className="item-meta">WBGT: {ward.wbgt}°C · Temp: {ward.temperature}°C</span>
+                    <span className="item-meta">WBGT: {ward.wbgt}&deg;C &middot; Temp: {ward.temperature}&deg;C</span>
                   </div>
                   <span className="item-badge" style={{ background: `${color}18`, color }}>
                     {ward.mortalityRisk}% Risk
@@ -365,7 +374,6 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
               );
             })}
 
-            {/* Emergency Facilities */}
             <div className="sidebar-group-label" style={{ marginTop: '12px' }}>Emergency Points</div>
             {emergencyResources.map((res) => (
               <button
@@ -373,12 +381,16 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
                 className={`sidebar-item res-type ${selectedResource?.id === res.id ? 'selected' : ''}`}
                 onClick={() => focusOnItem(res)}
               >
-                <span className="item-icon">{res.icon}</span>
+                <span className="item-icon-svg">
+                  {res.type === 'hospital' && <HospitalIcon size={16} color="#dc2626" />}
+                  {res.type === 'shelter' && <ShelterIcon size={16} color="#2563eb" />}
+                  {res.type === 'water' && <WaterIcon size={16} color="#0891b2" />}
+                </span>
                 <div className="item-details">
                   <span className="item-name">{res.name}</span>
-                  <span className="item-meta">{res.categoryLabel} · {res.distanceKm} km</span>
+                  <span className="item-meta">{res.categoryLabel} &middot; {res.distanceKm} km</span>
                 </div>
-                <span className="item-action-icon">🎯</span>
+                <CrosshairIcon size={14} color="#94a3b8" />
               </button>
             ))}
           </div>
@@ -396,12 +408,14 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
               <h4>{selectedWard.name}</h4>
               <span className="detail-pop">Pop: {selectedWard.population}</span>
             </div>
-            <button className="detail-close-btn" onClick={() => setSelectedWard(null)}>✕</button>
+            <button className="detail-close-btn" onClick={() => setSelectedWard(null)} aria-label="Close">
+              <XIcon size={16} />
+            </button>
           </div>
           <div className="detail-grid-metrics">
-            <div className="detail-stat"><span>Wet-Bulb Globe (WBGT)</span><strong>{selectedWard.wbgt}°C</strong></div>
-            <div className="detail-stat"><span>Dry Air Temp</span><strong>{selectedWard.temperature}°C</strong></div>
-            <div className="detail-stat"><span>Heat Index</span><strong>{selectedWard.heatIndex}°C</strong></div>
+            <div className="detail-stat"><span>Wet-Bulb Globe (WBGT)</span><strong>{selectedWard.wbgt}&deg;C</strong></div>
+            <div className="detail-stat"><span>Dry Air Temp</span><strong>{selectedWard.temperature}&deg;C</strong></div>
+            <div className="detail-stat"><span>Heat Index</span><strong>{selectedWard.heatIndex}&deg;C</strong></div>
             <div className="detail-stat"><span>Relative Humidity</span><strong>{selectedWard.humidity}%</strong></div>
             <div className="detail-stat"><span>Mortality Vulnerability</span><strong style={{ color: getRiskColor(selectedWard.mortalityRisk) }}>{selectedWard.mortalityRisk}%</strong></div>
             <div className="detail-stat"><span>Cooling Centers</span><strong>{selectedWard.coolingCenters} Active</strong></div>
@@ -413,26 +427,34 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
         <div className="gis-detail-banner resource animate-fade-in">
           <div className="detail-banner-header">
             <div className="detail-title-group">
-              <span className="res-icon-lg">{selectedResource.icon}</span>
+              <span className="res-icon-lg-svg">
+                {selectedResource.type === 'hospital' && <HospitalIcon size={20} color="#dc2626" />}
+                {selectedResource.type === 'shelter' && <ShelterIcon size={20} color="#2563eb" />}
+                {selectedResource.type === 'water' && <WaterIcon size={20} color="#0891b2" />}
+              </span>
               <div>
                 <span className="res-type-pill">{selectedResource.categoryLabel}</span>
                 <h4>{selectedResource.name}</h4>
               </div>
             </div>
-            <button className="detail-close-btn" onClick={() => setSelectedResource(null)}>✕</button>
+            <button className="detail-close-btn" onClick={() => setSelectedResource(null)} aria-label="Close">
+              <XIcon size={16} />
+            </button>
           </div>
           <div className="res-detail-body">
-            <div className="res-info-line">📍 <strong>Address:</strong> {selectedResource.address} ({selectedResource.distanceKm} km from center)</div>
-            <div className="res-info-line">❄️ <strong>Cooling Amenities:</strong> {selectedResource.coolingAmenity}</div>
-            <div className="res-info-line">👥 <strong>Capacity:</strong> {selectedResource.capacity}</div>
+            <div className="res-info-line"><strong>Address:</strong> {selectedResource.address} ({selectedResource.distanceKm} km away)</div>
+            <div className="res-info-line"><strong>Cooling Amenities:</strong> {selectedResource.coolingAmenity}</div>
+            <div className="res-info-line"><strong>Capacity:</strong> {selectedResource.capacity}</div>
             <div className="res-actions-row">
               {selectedResource.phone && selectedResource.phone !== 'N/A' && (
                 <a href={`tel:${selectedResource.phone.split('/')[0].trim()}`} className="btn btn-secondary btn-sm">
-                  📞 Call Facility ({selectedResource.phone})
+                  <PhoneIcon size={13} />
+                  <span>Call ({selectedResource.phone})</span>
                 </a>
               )}
               <a href={selectedResource.mapsUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm">
-                🗺️ Open GPS Navigation
+                <NavigationIcon size={13} />
+                <span>Get Directions</span>
               </a>
             </div>
           </div>
