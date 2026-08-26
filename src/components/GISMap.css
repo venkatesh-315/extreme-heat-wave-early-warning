@@ -1,0 +1,338 @@
+.gis-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.gis-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.gis-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.legend-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Map content layout */
+.gis-content {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+  height: 500px;
+}
+
+.map-container {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.map-el {
+  width: 100%;
+  height: 100%;
+}
+
+.map-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.map-error span { font-size: 2rem; }
+
+/* Ward sidebar */
+.ward-sidebar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.sidebar-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.ward-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 420px;
+}
+
+.ward-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: left;
+  width: 100%;
+}
+
+.ward-item:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--ward-color, rgba(255,107,0,0.3));
+}
+
+.ward-item.selected {
+  background: rgba(255,107,0,0.08);
+  border-color: var(--ward-color, var(--accent-orange));
+}
+
+.ward-color-bar {
+  width: 3px;
+  height: 36px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+.ward-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ward-name {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ward-stats {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.ward-risk {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.ward-risk-pct {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.ward-risk-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Ward detail panel */
+.ward-detail-panel {
+  padding: 20px;
+}
+
+.ward-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ward-detail-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ward-detail-close {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.ward-detail-close:hover {
+  background: rgba(255,255,255,0.12);
+  color: var(--text-primary);
+}
+
+.ward-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.ward-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+}
+
+.wd-icon { font-size: 1rem; }
+.wd-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.wd-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* Leaflet custom markers */
+.city-center-marker {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.city-marker-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(255,215,0,0.6);
+  border-radius: 50%;
+  animation: pulse-ring 2s ease infinite;
+}
+
+.city-marker-dot {
+  font-size: 1.4rem;
+  z-index: 1;
+  filter: drop-shadow(0 0 6px rgba(255,215,0,0.8));
+}
+
+.ward-marker {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ward-marker-inner {
+  width: 34px;
+  height: 34px;
+  background: rgba(0,0,0,0.7);
+  border: 2px solid var(--risk-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.ward-risk-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 800;
+}
+
+.ward-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: pulse-ring 2.5s ease infinite;
+}
+
+/* Map popup styles */
+.map-popup { min-width: 160px; }
+.popup-ward-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: white;
+  margin-bottom: 8px;
+}
+.popup-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: #9494b8;
+  padding: 2px 0;
+}
+.popup-row strong { font-weight: 700; }
+
+@media (max-width: 1024px) {
+  .gis-content { grid-template-columns: 1fr; height: auto; }
+  .map-container { height: 400px; }
+  .ward-sidebar { max-height: 300px; }
+  .ward-detail-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .gis-content { grid-template-columns: 1fr; }
+  .ward-detail-grid { grid-template-columns: repeat(2, 1fr); }
+}

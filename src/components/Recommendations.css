@@ -1,0 +1,346 @@
+.recommendations-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Summary banner */
+.reco-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.reco-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.reco-summary-stats {
+  display: flex;
+  gap: 24px;
+}
+
+.reco-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.reco-stat-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.reco-stat-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* Reco list */
+.reco-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reco-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition);
+}
+
+.reco-item:hover {
+  transform: translateX(4px);
+}
+
+.reco-icon-wrap {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.reco-emoji { font-size: 1.4rem; }
+
+.reco-body {
+  flex: 1;
+}
+
+.reco-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.reco-category {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.reco-priority-badge {
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reco-action {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Alert panel */
+.alert-panel {
+  padding: 24px;
+}
+
+.alert-panel-header {
+  margin-bottom: 20px;
+}
+
+.alert-panel-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.alert-panel-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.sms-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.sms-tab {
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.sms-tab:hover {
+  background: rgba(255,107,0,0.08);
+  border-color: rgba(255,107,0,0.3);
+  color: #ff8533;
+}
+
+.sms-tab.active {
+  background: rgba(255,107,0,0.12);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+}
+
+.sms-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Phone mock */
+.sms-phone-mock {
+  background: #1a1a2e;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+.phone-status-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  padding: 4px 4px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 12px;
+}
+
+.phone-message-wrap {
+  padding: 4px;
+}
+
+.phone-bubble {
+  background: rgba(255,107,0,0.1);
+  border: 1px solid rgba(255,107,0,0.2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.phone-meta {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  text-align: right;
+}
+
+/* SMS actions */
+.sms-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.target-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.target-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+}
+
+.target-icon { font-size: 1.2rem; }
+
+.target-label {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.target-value {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dispatch-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* HAP checklist */
+.hap-card {
+  padding: 24px;
+}
+
+.hap-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.hap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.hap-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  transition: all var(--transition);
+}
+
+.hap-item:hover {
+  background: rgba(255,107,0,0.06);
+  border-color: rgba(255,107,0,0.2);
+}
+
+.hap-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+.hap-info { flex: 1; }
+
+.hap-item-title {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.hap-item-desc {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.hap-status {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ff6b00;
+  background: rgba(255,107,0,0.1);
+  border: 1px solid rgba(255,107,0,0.25);
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .sms-preview { grid-template-columns: 1fr; }
+  .hap-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .reco-summary-stats { gap: 16px; }
+  .reco-summary { flex-direction: column; align-items: flex-start; }
+  .hap-grid { grid-template-columns: 1fr; }
+  .sms-tabs { gap: 6px; }
+  .sms-tab { font-size: 0.72rem; padding: 6px 10px; }
+  .dispatch-btns .btn { font-size: 0.8rem; padding: 8px 14px; justify-content: center; }
+}
