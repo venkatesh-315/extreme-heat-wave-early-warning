@@ -1,211 +1,217 @@
 import React, { useState } from 'react';
+import { MULTILINGUAL_SMS_TEMPLATES } from '../data/mockData';
 import './Recommendations.css';
 
 const PRIORITY_CONFIG = {
-  CRITICAL: { color: '#ff2d2d', bg: 'rgba(255,45,45,0.1)', border: 'rgba(255,45,45,0.3)', icon: '🔴' },
-  HIGH: { color: '#f97316', bg: 'rgba(249,115,22,0.1)', border: 'rgba(249,115,22,0.3)', icon: '🟠' },
-  MODERATE: { color: '#eab308', bg: 'rgba(234,179,8,0.1)', border: 'rgba(234,179,8,0.3)', icon: '🟡' },
-  LOW: { color: '#22c55e', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.3)', icon: '🟢' },
+  CRITICAL: { color: '#dc2626', bg: '#fef2f2', border: '#fecaca', label: 'CRITICAL ACTION' },
+  HIGH: { color: '#ea580c', bg: '#fff7ed', border: '#fed7aa', label: 'HIGH PRIORITY' },
+  MODERATE: { color: '#ca8a04', bg: '#fefce8', border: '#fef08a', label: 'MODERATE' },
+  LOW: { color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0', label: 'STANDARD' },
 };
 
-const SMS_TEMPLATES = [
-  {
-    id: 'sms-general',
-    label: 'General Public Advisory',
-    content: '🌡️ HEAT ALERT: Extreme heatwave conditions in your area. Stay indoors 11AM-4PM. Drink water every 30 mins. Call 104 for heat emergencies. Stay safe! — District Administration',
-  },
-  {
-    id: 'sms-workers',
-    label: 'Outdoor Workers Alert',
-    content: '⚠️ WORKER HEAT SAFETY: All outdoor work suspended 11AM-4PM due to extreme heat. Mandatory shade breaks. Drink 1L water/hour. Seek shade immediately if dizzy. — Labour Dept',
-  },
-  {
-    id: 'sms-health',
-    label: 'Healthcare System Alert',
-    content: '🏥 HEALTH SYSTEM ALERT: Activate Heat Action Plan. Pre-position IV fluids & ORS. All PHCs to extend hours till 8PM. WBGT > 32°C recorded. — CMO Office',
-  },
-  {
-    id: 'sms-cooling',
-    label: 'Cooling Centre Notification',
-    content: '❄️ FREE COOLING CENTRES NOW OPEN: Government schools & community halls open 24/7 with AC, water & food. Bring elderly & children. Free of cost. — Municipal Corporation',
-  },
-];
-
-function Recommendations({ recommendations, city, thermalMetrics }) {
+function Recommendations({ recommendations = [], location, thermalMetrics }) {
+  const [activeSmsIndex, setActiveSmsIndex] = useState(0);
   const [copiedId, setCopiedId] = useState(null);
-  const [activeSmsTab, setActiveSmsTab] = useState(0);
-  const [alertSent, setAlertSent] = useState(false);
+  const [dispatchStatus, setDispatchStatus] = useState(null);
 
-  const handleCopy = (id, content) => {
-    navigator.clipboard.writeText(content).then(() => {
+  const selectedTemplate = MULTILINGUAL_SMS_TEMPLATES[activeSmsIndex] || MULTILINGUAL_SMS_TEMPLATES[0];
+
+  const handleCopy = (id, text) => {
+    navigator.clipboard.writeText(text).then(() => {
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
     });
   };
 
-  const handleSendAlert = () => {
-    setAlertSent(true);
-    setTimeout(() => setAlertSent(false), 3000);
+  const handleSimulateDispatch = (channel) => {
+    setDispatchStatus(`Queued broadcast via ${channel} to district telemetry gateways.`);
+    setTimeout(() => setDispatchStatus(null), 3500);
   };
 
-  const criticalCount = recommendations.filter(r => r.priority === 'CRITICAL').length;
+  const criticalCount = recommendations.filter((r) => r.priority === 'CRITICAL').length;
 
   return (
     <div className="recommendations-section" id="recommendations-section">
-      {/* Summary banner */}
-      <div className="reco-summary card">
-        <div className="reco-summary-left">
-          <h3 className="section-title">🚨 Action Recommendations — {city?.name}</h3>
-          <p className="reco-subtitle">
-            {criticalCount} critical · {recommendations.length - criticalCount} high-priority actions required
+      {/* Executive Heat Action Plan Header */}
+      <div className="hap-executive-card card">
+        <div className="hap-left">
+          <div className="hap-badge">
+            <span>📋</span>
+            <span>NDMA Heat Action Plan (HAP) Protocols</span>
+          </div>
+          <h3 className="section-title">
+            Inter-Agency Directive &amp; Public Advisories — {location?.name}
+          </h3>
+          <p className="section-desc">
+            Mandatory standard operating procedures triggered for Current WBGT {thermalMetrics?.wbgt}°C &amp; {thermalMetrics?.mortalityRisk}% Excess Mortality Risk.
           </p>
         </div>
-        <div className="reco-summary-stats">
-          <div className="reco-stat">
-            <span className="reco-stat-val" style={{ color: '#ff2d2d' }}>{criticalCount}</span>
-            <span className="reco-stat-label">Critical Actions</span>
+
+        <div className="hap-stats-row">
+          <div className="hap-stat-pill critical">
+            <span className="hsp-val">{criticalCount}</span>
+            <span className="hsp-lbl">Critical Directives</span>
           </div>
-          <div className="reco-stat">
-            <span className="reco-stat-val" style={{ color: '#f97316' }}>{thermalMetrics?.wbgt?.toFixed(1)}°C</span>
-            <span className="reco-stat-label">Current WBGT</span>
+          <div className="hap-stat-pill">
+            <span className="hsp-val">{thermalMetrics?.wbgt}°C</span>
+            <span className="hsp-lbl">Current WBGT</span>
           </div>
-          <div className="reco-stat">
-            <span className="reco-stat-val" style={{ color: '#ef4444' }}>{thermalMetrics?.mortalityRisk}%</span>
-            <span className="reco-stat-label">Mortality Risk</span>
+          <div className="hap-stat-pill">
+            <span className="hsp-val">{thermalMetrics?.mortalityRisk}%</span>
+            <span className="hsp-lbl">Mortality Risk</span>
           </div>
         </div>
       </div>
 
-      {/* Recommendations list */}
-      <div className="reco-list">
-        {recommendations.map((rec, i) => {
-          const config = PRIORITY_CONFIG[rec.priority] || PRIORITY_CONFIG['LOW'];
+      {/* Action Recommendations List */}
+      <div className="action-items-list">
+        {recommendations.map((item, idx) => {
+          const conf = PRIORITY_CONFIG[item.priority] || PRIORITY_CONFIG.LOW;
           return (
             <div
-              key={i}
-              id={`recommendation-${i}`}
-              className="reco-item"
-              style={{ background: config.bg, border: `1px solid ${config.border}` }}
+              key={idx}
+              className="action-card card"
+              style={{ borderLeft: `4px solid ${conf.color}` }}
             >
-              <div className="reco-icon-wrap">
-                <span className="reco-emoji">{rec.icon}</span>
+              <div className="action-icon-col">
+                <span className="action-emoji">{item.icon}</span>
               </div>
-              <div className="reco-body">
-                <div className="reco-header-row">
-                  <span className="reco-category">{rec.category}</span>
+
+              <div className="action-body">
+                <div className="action-top-row">
+                  <span className="action-category">{item.category}</span>
                   <span
-                    className="reco-priority-badge"
-                    style={{ background: config.bg, border: `1px solid ${config.border}`, color: config.color }}
+                    className="action-priority-badge"
+                    style={{ background: conf.bg, color: conf.color, border: `1px solid ${conf.border}` }}
                   >
-                    {config.icon} {rec.priority}
+                    ● {conf.label}
                   </span>
                 </div>
-                <p className="reco-action">{rec.action}</p>
+
+                <h4 className="action-title-text">{item.title || item.category}</h4>
+                <p className="action-desc-text">{item.action}</p>
+
+                {item.authority && (
+                  <div className="action-authority">
+                    <span>Enforcing Authority:</span> <strong>{item.authority}</strong>
+                  </div>
+                )}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* SMS/WhatsApp Alert Panel */}
-      <div className="alert-panel card" id="alert-dispatch-panel">
-        <div className="alert-panel-header">
-          <h4 className="alert-panel-title">📱 Automated Alert Dispatch System</h4>
-          <p className="alert-panel-desc">Pre-built regional alert templates — SMS · WhatsApp · IVR</p>
+      {/* Multi-Lingual SMS & WhatsApp Broadcast Generator */}
+      <div className="sms-broadcast-card card" id="sms-dispatcher">
+        <div className="sms-card-header">
+          <div>
+            <h4 className="section-title">📱 Multi-Lingual Emergency Alert Broadcast Engine</h4>
+            <p className="section-desc">
+              Pre-approved bi-lingual advisory templates for SMS, WhatsApp, Wireless Emergency Alerts (WEA), and Radio.
+            </p>
+          </div>
         </div>
 
-        <div className="sms-tabs">
-          {SMS_TEMPLATES.map((tmpl, i) => (
+        <div className="sms-language-tabs">
+          {MULTILINGUAL_SMS_TEMPLATES.map((tmpl, idx) => (
             <button
-              key={i}
-              id={`sms-tab-${i}`}
-              className={`sms-tab ${activeSmsTab === i ? 'active' : ''}`}
-              onClick={() => setActiveSmsTab(i)}
+              key={tmpl.id}
+              className={`sms-lang-tab ${activeSmsIndex === idx ? 'active' : ''}`}
+              onClick={() => setActiveSmsIndex(idx)}
             >
-              {tmpl.label}
+              <span>{tmpl.lang === 'Hindi' ? '🇮🇳 हिन्दी' : '🌐 English'}</span>
+              <span className="sms-tab-name">{tmpl.label}</span>
             </button>
           ))}
         </div>
 
-        <div className="sms-preview">
-          <div className="sms-phone-mock">
-            <div className="phone-status-bar">
-              <span>SMS · 12:34</span>
-              <span>📶 ✉️</span>
+        <div className="sms-preview-layout">
+          {/* Phone Simulation */}
+          <div className="phone-screen-mock">
+            <div className="phone-top-bar">
+              <span>National Disaster Alert · 1077</span>
+              <span>📶 5G 100%</span>
             </div>
-            <div className="phone-message-wrap">
-              <div className="phone-bubble">{SMS_TEMPLATES[activeSmsTab].content}</div>
-              <div className="phone-meta">District Administration · {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</div>
+            <div className="phone-bubble-box">
+              <div className="sms-bubble">{selectedTemplate.content}</div>
+              <div className="sms-timestamp">District Disaster Management Authority · Just Now</div>
             </div>
           </div>
 
-          <div className="sms-actions">
-            <div className="target-stats">
-              <div className="target-item">
-                <span className="target-icon">👥</span>
-                <div>
-                  <span className="target-label">Target Recipients</span>
-                  <span className="target-value">2.4M residents</span>
-                </div>
+          {/* Dispatch Controls & Audience Stats */}
+          <div className="sms-controls-side">
+            <div className="target-audience-box">
+              <div className="aud-row">
+                <span className="aud-lbl">Target Audience:</span>
+                <strong>{selectedTemplate.recipient}</strong>
               </div>
-              <div className="target-item">
-                <span className="target-icon">⏱️</span>
-                <div>
-                  <span className="target-label">Est. Delivery</span>
-                  <span className="target-value">3–5 minutes</span>
-                </div>
+              <div className="aud-row">
+                <span className="aud-lbl">Estimated District Reach:</span>
+                <strong>~1.85 Million Mobile Subscribers</strong>
               </div>
-              <div className="target-item">
-                <span className="target-icon">💸</span>
-                <div>
-                  <span className="target-label">Cost Estimate</span>
-                  <span className="target-value">₹12,000</span>
-                </div>
+              <div className="aud-row">
+                <span className="aud-lbl">Delivery SLA:</span>
+                <span className="aud-green">● Under 120 Seconds</span>
               </div>
             </div>
 
-            <div className="dispatch-btns">
+            <div className="dispatch-buttons-group">
               <button
-                id="copy-sms-btn"
-                className="btn btn-secondary"
-                onClick={() => handleCopy(SMS_TEMPLATES[activeSmsTab].id, SMS_TEMPLATES[activeSmsTab].content)}
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => handleCopy(selectedTemplate.id, selectedTemplate.content)}
               >
-                {copiedId === SMS_TEMPLATES[activeSmsTab].id ? '✅ Copied!' : '📋 Copy Template'}
+                {copiedId === selectedTemplate.id ? '✅ Copied to Clipboard!' : '📋 Copy Alert Text'}
               </button>
+
               <button
-                id="send-sms-btn"
-                className="btn btn-primary"
-                onClick={handleSendAlert}
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => handleSimulateDispatch('SMS Gateway')}
               >
-                {alertSent ? '✅ Alert Queued!' : '🚀 Send SMS Alert'}
+                🚀 Dispatch SMS Broadcast
               </button>
-              <button id="send-whatsapp-btn" className="btn" style={{ background: 'rgba(37,211,102,0.2)', color: '#25d366', border: '1px solid rgba(37,211,102,0.3)' }}>
-                💬 WhatsApp Blast
+
+              <button
+                type="button"
+                className="btn btn-sm whatsapp-btn"
+                onClick={() => handleSimulateDispatch('WhatsApp Business API')}
+              >
+                💬 WhatsApp Channel Blast
               </button>
             </div>
+
+            {dispatchStatus && (
+              <div className="dispatch-alert-success animate-fade-in">
+                ✅ {dispatchStatus}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Heat Action Plan checklist */}
-      <div className="hap-card card" id="heat-action-plan">
-        <h4 className="hap-title">📋 Heat Action Plan (HAP) Checklist</h4>
-        <div className="hap-grid">
+      {/* Sector-Wise Operational Checklist */}
+      <div className="sector-checklist-card card">
+        <h4 className="section-title">🏛️ Municipal Sector-Wise Readiness Checklist</h4>
+        <div className="sector-grid">
           {[
-            { icon: '❄️', title: 'Cooling Centers', desc: 'Open govt buildings with AC, fans, water, food', status: 'ACTIVATE' },
-            { icon: '💧', title: 'Water Tankers', desc: 'Double frequency to slums & heat islands', status: 'DISPATCH' },
-            { icon: '⚡', title: 'Power Grid', desc: 'No load-shedding in hospitals & ICUs', status: 'ALERT DISCOM' },
-            { icon: '🏥', title: 'Healthcare', desc: 'Pre-position IV fluids, ORS, ice packs', status: 'PREPARE' },
-            { icon: '📢', title: 'Media Advisory', desc: 'Issue press release & social media alerts', status: 'ISSUE' },
-            { icon: '👮', title: 'Field Teams', desc: 'Deploy heat patrol teams in vulnerable zones', status: 'DEPLOY' },
+            { icon: '❄️', title: 'Cooling Centers', status: 'ACTIVE', desc: 'Air-cooled community halls & night shelters open 24/7' },
+            { icon: '💧', title: 'Water Tankers', status: 'DEPLOYED', desc: 'High-frequency refill trips to slums and transit bus stands' },
+            { icon: '⚡', title: 'Power DISCOMs', status: 'ALERTED', desc: 'No load-shedding directives active for hospitals & ICU units' },
+            { icon: '🏥', title: 'Health ICUs', status: 'EQUIPPED', desc: 'Ice baths, cold IV saline, and ORS packets pre-stocked' },
+            { icon: '👷', title: 'Labour Regulators', status: 'ENFORCED', desc: 'Mandatory halt on outdoor construction 11:00 AM - 4:30 PM' },
+            { icon: '🚌', title: 'Public Transport', status: 'CHECKED', desc: 'Cool drinking water & ORS booths at major metro & bus hubs' },
           ].map((item, i) => (
-            <div key={i} className="hap-item" id={`hap-item-${i}`}>
-              <span className="hap-icon">{item.icon}</span>
-              <div className="hap-info">
-                <span className="hap-item-title">{item.title}</span>
-                <span className="hap-item-desc">{item.desc}</span>
+            <div key={i} className="sector-item">
+              <span className="sector-icon">{item.icon}</span>
+              <div className="sector-texts">
+                <div className="sector-top">
+                  <span className="sector-name">{item.title}</span>
+                  <span className="sector-status-pill">{item.status}</span>
+                </div>
+                <p className="sector-desc">{item.desc}</p>
               </div>
-              <span className="hap-status">{item.status}</span>
             </div>
           ))}
         </div>

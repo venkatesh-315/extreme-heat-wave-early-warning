@@ -1,108 +1,120 @@
 import React from 'react';
 import './WeatherMetrics.css';
 
-const MetricCard = ({ id, icon, label, value, unit, subValue, color, trend }) => (
-  <div className="metric-card card" id={id}>
+const MetricCard = ({ id, icon, label, value, unit, subValue, color, alertLevel }) => (
+  <div className={`metric-card card ${alertLevel || ''}`} id={id}>
     <div className="metric-header">
       <span className="metric-icon">{icon}</span>
       <span className="metric-label">{label}</span>
-      {trend && <span className={`metric-trend ${trend > 0 ? 'up' : 'down'}`}>
-        {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}
-      </span>}
     </div>
     <div className="metric-body">
-      <span className="metric-value" style={{ color }}>
-        {value}<span className="metric-unit">{unit}</span>
+      <span className="metric-value" style={{ color: color || 'var(--text-primary)' }}>
+        {value}
+        {unit && <span className="metric-unit">{unit}</span>}
       </span>
     </div>
     {subValue && <div className="metric-sub">{subValue}</div>}
   </div>
 );
 
-function WeatherMetrics({ weather, city, thermalMetrics }) {
-  if (!weather || !city) return null;
-  const now = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+function WeatherMetrics({ weather, location, thermalMetrics, sourceInfo }) {
+  if (!weather || !location) return null;
+
+  const imdAlert = thermalMetrics?.imdAlert || {
+    title: 'ORANGE ALERT',
+    description: 'Heatwave conditions active',
+    color: '#ea580c',
+    bgColor: '#fff7ed',
+    borderColor: '#fed7aa',
+  };
 
   return (
     <div className="weather-metrics-section">
-      {/* City header */}
-      <div className="city-header card">
-        <div className="city-info">
-          <div className="city-flag">🇮🇳</div>
-          <div>
-            <h2 className="city-name">{city.name}</h2>
-            <p className="city-meta">{city.state} · {city.lat.toFixed(4)}°N, {city.lon.toFixed(4)}°E</p>
+      {/* Executive Location & Alert Strip */}
+      <div className="location-summary-card card">
+        <div className="loc-main-info">
+          <div className="loc-icon-flag">🇮🇳</div>
+          <div className="loc-text-block">
+            <div className="loc-name-row">
+              <h2 className="loc-heading">{location.name}</h2>
+              <span className="loc-state-tag">{location.state || 'India'}</span>
+              <span className="loc-source-badge">📡 {sourceInfo || 'Live IMD Meteorological Feed'}</span>
+            </div>
+            <p className="loc-coords-text">
+              Coordinates: {location.lat?.toFixed(4)}°N, {location.lon?.toFixed(4)}°E · Pop: {(location.population ? (location.population / 1e6).toFixed(2) + 'M' : 'Metropolitan Zone')}
+            </p>
           </div>
         </div>
-        <div className="city-right">
-          <div className="city-condition">
-            <span className="weather-icon-big">☀️</span>
-            <div>
-              <span className="condition-text">{weather.weatherCondition}</span>
-              <span className="update-time">Updated: {now}</span>
-            </div>
+
+        <div className="loc-alert-box" style={{ background: imdAlert.bgColor, borderColor: imdAlert.borderColor }}>
+          <div className="alert-box-top">
+            <span className="alert-dot-pulse" style={{ background: imdAlert.color }} />
+            <span className="alert-box-title" style={{ color: imdAlert.color }}>{imdAlert.title}</span>
           </div>
-          <div className="feels-like">
-            Feels like <strong>{weather.feelsLike}°C</strong>
-          </div>
+          <p className="alert-box-desc">{imdAlert.description}</p>
         </div>
       </div>
 
-      {/* Primary metrics grid */}
+      {/* Primary Metrics Grid */}
       <div className="metrics-grid">
         <MetricCard
-          id="metric-temperature"
+          id="metric-temp"
           icon="🌡️"
-          label="Dry Bulb Temp"
+          label="Dry Bulb Air Temperature"
           value={weather.temperature}
           unit="°C"
-          color={weather.temperature > 42 ? '#ff2d2d' : weather.temperature > 38 ? '#ff6b00' : '#ffd700'}
-          subValue={`Dew Point: ${weather.dewPoint}°C`}
+          color={weather.temperature >= 44 ? '#dc2626' : weather.temperature >= 40 ? '#ea580c' : '#ca8a04'}
+          subValue={`Feels Like: ${weather.feelsLike}°C (Dew Point ${weather.dewPoint}°C)`}
         />
+
+        <MetricCard
+          id="metric-wbgt"
+          icon="🔥"
+          label="Outdoor WBGT Index"
+          value={thermalMetrics?.wbgt}
+          unit="°C"
+          color={thermalMetrics?.wbgt >= 32 ? '#dc2626' : thermalMetrics?.wbgt >= 28 ? '#ea580c' : '#ca8a04'}
+          subValue="ISO 7933 Occupational Heat Limit"
+        />
+
         <MetricCard
           id="metric-humidity"
           icon="💧"
           label="Relative Humidity"
           value={weather.humidity}
           unit="%"
-          color={weather.humidity > 70 ? '#3b82f6' : weather.humidity > 50 ? '#60a5fa' : '#93c5fd'}
-          subValue="Critical for heat stress"
+          color={weather.humidity >= 70 ? '#0284c7' : '#0369a1'}
+          subValue={weather.humidity >= 65 ? 'High Sweatbox Compound Stress' : 'Dry Desert Loo Conditions'}
         />
-        <MetricCard
-          id="metric-wind"
-          icon="💨"
-          label="Wind Speed"
-          value={weather.windSpeed}
-          unit=" km/h"
-          color="#a855f7"
-          subValue="Affects WBGT cooling"
-        />
+
         <MetricCard
           id="metric-solar"
           icon="☀️"
-          label="Solar Radiation"
+          label="Direct Solar Irradiance"
           value={weather.solarRadiation}
           unit=" W/m²"
-          color="#ffd700"
-          subValue={`UV Index: ${weather.uvIndex}`}
+          color="#d97706"
+          subValue={`UV Index: ${weather.uvIndex} (Very High)`}
         />
+
+        <MetricCard
+          id="metric-wind"
+          icon="💨"
+          label="Wind Speed (10m)"
+          value={weather.windSpeed}
+          unit=" km/h"
+          color="#7c3aed"
+          subValue={`Direction: ${weather.windDirection || 270}° (Western Loo)`}
+        />
+
         <MetricCard
           id="metric-pressure"
           icon="🌐"
-          label="Atm. Pressure"
+          label="Atmospheric Pressure"
           value={weather.pressure}
           unit=" hPa"
-          color="#22c55e"
-          subValue={`Visibility: ${weather.visibility} km`}
-        />
-        <MetricCard
-          id="metric-cloud"
-          icon="☁️"
-          label="Cloud Cover"
-          value={weather.cloudCover}
-          unit="%"
-          color="#9ca3af"
-          subValue="Affects radiation"
+          color="#059669"
+          subValue={`Cloud Cover: ${weather.cloudCover}% · Visibility ${weather.visibility || 7.5} km`}
         />
       </div>
     </div>

@@ -1,83 +1,85 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer, LineChart, Line, ReferenceLine } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { HISTORICAL_MORTALITY } from '../data/mockData';
 import './MortalityTrend.css';
 
-function MortalityTrend({ mortalityRisk }) {
-  const projectedDeaths = Math.round(350 + mortalityRisk * 8);
-  const projectedData = [
+function MortalityTrend({ mortalityRisk = 45 }) {
+  const projectedDeaths2026 = Math.round(2800 + (mortalityRisk - 40) * 18);
+  const data = [
     ...HISTORICAL_MORTALITY,
-    { year: 2026, deaths: projectedDeaths, projected: true },
+    { year: 2026, deaths: projectedDeaths2026, avgMaxTemp: 46.5, projected: true },
   ];
 
   return (
     <div className="mortality-trend-card card" id="mortality-trend-chart">
-      <div className="chart-header">
+      <div className="trend-header">
         <div>
-          <h3 className="chart-title">📈 Historical Heat Mortality Trend & 2026 Forecast</h3>
-          <p className="chart-subtitle">India — Heat-induced excess deaths per year</p>
+          <div className="trend-badge">
+            <span>📈</span>
+            <span>Climatological Vulnerability Analytics</span>
+          </div>
+          <h3 className="section-title">
+            Historical Heat Mortality &amp; Summer 2026 Projections (India)
+          </h3>
+          <p className="section-desc">
+            National annual excess heat-induced fatalities and severe heatwave spells (2019–2026)
+          </p>
         </div>
-        <div className="projection-badge">
+        <div className="proj-pill">
           <span className="proj-dot" />
-          2026 Projected: <strong>{projectedDeaths.toLocaleString()}</strong> deaths
+          <span>Summer 2026 Projected: <strong>{projectedDeaths2026.toLocaleString()}</strong> casualties</span>
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={projectedData} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-          <XAxis dataKey="year" tick={{ fill: '#5a5a7a', fontSize: 11 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: '#5a5a7a', fontSize: 11 }} axisLine={false} tickLine={false} />
-          <Tooltip
-            contentStyle={{ background: '#1a1a35', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10 }}
-            labelStyle={{ color: 'white', fontWeight: 700 }}
-            itemStyle={{ color: '#ff8533' }}
-            formatter={(v, n) => [`${v} deaths`, 'Heat mortality']}
-          />
-          <ReferenceLine y={500} stroke="rgba(255,100,0,0.3)" strokeDasharray="4 3" label={{ value: 'Alert threshold', fill: '#ff6b00', fontSize: 10 }} />
-          <Bar dataKey="deaths" radius={[4, 4, 0, 0]} maxBarSize={50}>
-            {projectedData.map((entry, i) => (
-              <Cell
-                key={i}
-                fill={entry.projected
-                  ? 'url(#projectedGrad)'
-                  : entry.deaths > 500
-                  ? '#ef4444'
-                  : '#ff6b00'
-                }
-                opacity={entry.projected ? 0.8 : 1}
-              />
-            ))}
-          </Bar>
-          <defs>
-            <linearGradient id="projectedGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ff2d2d" stopOpacity={0.9} />
-              <stop offset="100%" stopColor="#ff6b00" stopOpacity={0.5} />
-            </linearGradient>
-          </defs>
-        </BarChart>
-      </ResponsiveContainer>
+      <div className="chart-canvas-wrap">
+        <ResponsiveContainer width="100%" height={230}>
+          <BarChart data={data} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+            <XAxis dataKey="year" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={{ stroke: '#cbd5e1' }} tickLine={false} />
+            <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
+            <Tooltip
+              contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+              labelStyle={{ color: '#0f172a', fontWeight: 700 }}
+              formatter={(v, name, props) => [`${v.toLocaleString()} deaths`, props.payload.projected ? '2026 Projection' : 'Recorded Excess Deaths']}
+            />
+            <ReferenceLine y={2000} stroke="#dc2626" strokeDasharray="4 3" label={{ value: 'National Severe Threshold (2,000)', fill: '#dc2626', fontSize: 10, position: 'top' }} />
+            <Bar dataKey="deaths" radius={[4, 4, 0, 0]} maxBarSize={48}>
+              {data.map((entry, index) => (
+                <Cell
+                  key={index}
+                  fill={entry.projected ? '#dc2626' : entry.deaths >= 2000 ? '#ea580c' : '#f97316'}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
 
-      <div className="mortality-insight">
-        <div className="insight-item">
-          <span className="insight-icon">📊</span>
-          <div>
-            <span className="insight-label">YoY Growth</span>
-            <span className="insight-value" style={{ color: '#ef4444' }}>+18.4%</span>
+      <div className="mortality-insights-grid">
+        <div className="insight-card">
+          <span className="ins-icon">🌡️</span>
+          <div className="ins-texts">
+            <span className="ins-lbl">Severe Spells Trend</span>
+            <strong className="ins-val" style={{ color: '#dc2626' }}>21+ Spells in 2026</strong>
+            <span className="ins-sub">Up from 8 spells in 2019</span>
           </div>
         </div>
-        <div className="insight-item">
-          <span className="insight-icon">🎯</span>
-          <div>
-            <span className="insight-label">High Risk Population</span>
-            <span className="insight-value" style={{ color: '#f97316' }}>Elderly &amp; Outdoor Workers</span>
+
+        <div className="insight-card">
+          <span className="ins-icon">👥</span>
+          <div className="ins-texts">
+            <span className="ins-lbl">Highest Risk Demographic</span>
+            <strong className="ins-val" style={{ color: '#ea580c' }}>Informal Workers &amp; Elderly</strong>
+            <span className="ins-sub">Construction, agriculture, delivery riders</span>
           </div>
         </div>
-        <div className="insight-item">
-          <span className="insight-icon">⏰</span>
-          <div>
-            <span className="insight-label">Peak Mortality Window</span>
-            <span className="insight-value" style={{ color: '#ffd700' }}>May–June, 2–6 PM</span>
+
+        <div className="insight-card">
+          <span className="ins-icon">🛡️</span>
+          <div className="ins-texts">
+            <span className="ins-lbl">Heat Action Plan Efficacy</span>
+            <strong className="ins-val" style={{ color: '#16a34a' }}>-35% Mortality Reduction</strong>
+            <span className="ins-sub">When cooling shelters &amp; advisories are active</span>
           </div>
         </div>
       </div>

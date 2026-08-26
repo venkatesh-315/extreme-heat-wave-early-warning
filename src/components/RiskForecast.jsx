@@ -2,112 +2,189 @@ import React, { useState } from 'react';
 import './RiskForecast.css';
 
 const STRESS_COLORS = {
-  Low: '#22c55e',
-  Moderate: '#eab308',
+  Low: '#16a34a',
+  Moderate: '#ca8a04',
   High: '#f97316',
-  'Very High': '#ef4444',
+  'Very High': '#ea580c',
   Extreme: '#dc2626',
-  Catastrophic: '#7f1d1d',
+  Catastrophic: '#991b1b',
 };
 
-const WBGT_RANGES = [
-  { label: 'No Risk', range: '< 26°C', color: '#22c55e', bg: 'rgba(34,197,94,0.1)' },
-  { label: 'Moderate', range: '26–28°C', color: '#eab308', bg: 'rgba(234,179,8,0.1)' },
-  { label: 'High', range: '28–30°C', color: '#f97316', bg: 'rgba(249,115,22,0.1)' },
-  { label: 'Very High', range: '30–32°C', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-  { label: 'Extreme', range: '32–35°C', color: '#dc2626', bg: 'rgba(220,38,38,0.12)' },
-  { label: 'Catastrophic', range: '> 35°C', color: '#7f1d1d', bg: 'rgba(127,29,29,0.15)' },
-];
+function RiskForecast({ forecast = [], location }) {
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const selected = forecast[selectedDayIndex] || forecast[0];
 
-function RiskForecast({ forecast, city }) {
-  const [selectedDay, setSelectedDay] = useState(0);
-  const selected = forecast[selectedDay];
-
-  if (!forecast?.length || !selected) return null;
+  if (!forecast || forecast.length === 0 || !selected) return null;
 
   return (
-    <div className="forecast-section" id="risk-forecast">
-      <div className="forecast-header-row">
-        <h3 className="section-title">📅 5-Day Risk Forecast — {city?.name}</h3>
-        <p className="forecast-desc">WBGT-based heat stress & mortality risk prediction</p>
+    <div className="forecast-section card" id="risk-forecast">
+      <div className="forecast-header">
+        <div>
+          <div className="forecast-badge">
+            <span>📅</span>
+            <span>7-Day IMD Synoptic Outlook</span>
+          </div>
+          <h3 className="section-title">
+            Summer 2026 Thermal Risk Forecast — {location?.name}
+          </h3>
+          <p className="section-desc">
+            Day-by-day maximum temperature, humidity, WBGT, and mortality risk projections.
+          </p>
+        </div>
       </div>
 
-      {/* Day cards strip */}
-      <div className="forecast-strip">
+      {/* 7-Day Horizontal Strip */}
+      <div className="forecast-cards-strip">
         {forecast.map((day, i) => {
-          const color = STRESS_COLORS[day.stressCategory.label] || '#ff6b00';
+          const color = STRESS_COLORS[day.stressCategory?.label] || '#ea580c';
+          const isSelected = selectedDayIndex === i;
+
           return (
             <button
               key={i}
-              id={`forecast-day-${i}`}
-              className={`forecast-day-card ${selectedDay === i ? 'selected' : ''}`}
-              onClick={() => setSelectedDay(i)}
-              style={{ '--day-color': color }}
+              id={`forecast-day-btn-${i}`}
+              className={`forecast-card ${isSelected ? 'selected' : ''}`}
+              onClick={() => setSelectedDayIndex(i)}
             >
-              <span className="day-label">{day.day}</span>
-              <span className="day-date">{day.date}</span>
-              <span className="day-temp">{day.temperature}°C</span>
-              <div className="day-risk-bar">
-                <div className="day-risk-fill" style={{ width: `${day.mortalityRisk}%`, background: color }} />
+              <div className="fc-top">
+                <span className="fc-day-name">{day.day}</span>
+                <span className="fc-date-sub">{day.date}</span>
               </div>
-              <span className="day-risk-pct" style={{ color }}>{day.mortalityRisk}%</span>
-              <span className="day-stress" style={{ color, background: `${color}18`, border: `1px solid ${color}33` }}>
-                {day.stressCategory.label}
-              </span>
+
+              <div className="fc-temp-block">
+                <span className="fc-temp-val">{day.temperature}°</span>
+                <span className="fc-temp-unit">C Max</span>
+              </div>
+
+              <div className="fc-risk-bar-wrap">
+                <div
+                  className="fc-risk-bar-fill"
+                  style={{ width: `${Math.min(100, day.mortalityRisk)}%`, background: color }}
+                />
+              </div>
+
+              <div className="fc-bottom">
+                <span className="fc-risk-pct" style={{ color }}>{day.mortalityRisk}% Risk</span>
+                <span
+                  className="fc-tag"
+                  style={{ background: `${color}14`, color, border: `1px solid ${color}33` }}
+                >
+                  {day.stressCategory?.label || 'Normal'}
+                </span>
+              </div>
             </button>
           );
         })}
       </div>
 
-      {/* Detailed view for selected day */}
-      <div className="forecast-detail card">
-        <div className="detail-header">
-          <h4 className="detail-day">{selected.day} — {selected.date}</h4>
-          <span className="detail-stress-badge"
+      {/* Selected Day In-Depth Breakdown */}
+      <div className="selected-day-detail card">
+        <div className="day-detail-header">
+          <div className="day-detail-titles">
+            <span className="day-detail-date">Detailed Advisory for {selected.day} ({selected.date})</span>
+            <h4>{selected.temperature}°C Max Air Temperature · {selected.wbgt}°C WBGT</h4>
+          </div>
+          <span
+            className="detail-alert-badge"
             style={{
-              background: `${STRESS_COLORS[selected.stressCategory.label]}18`,
-              border: `1px solid ${STRESS_COLORS[selected.stressCategory.label]}44`,
-              color: STRESS_COLORS[selected.stressCategory.label]
-            }}>
-            {selected.stressCategory.label} Thermal Stress
+              background: `${STRESS_COLORS[selected.stressCategory?.label]}15`,
+              color: STRESS_COLORS[selected.stressCategory?.label],
+              border: `1px solid ${STRESS_COLORS[selected.stressCategory?.label]}44`,
+            }}
+          >
+            ● {selected.stressCategory?.label} Thermal Burden ({selected.stressCategory?.text || 'Alert'})
           </span>
         </div>
 
-        <div className="detail-metrics">
-          {[
-            { label: 'Temperature', value: `${selected.temperature}°C`, icon: '🌡️', color: '#ff6b00' },
-            { label: 'Humidity', value: `${selected.humidity}%`, icon: '💧', color: '#3b82f6' },
-            { label: 'Wind Speed', value: `${selected.windSpeed} km/h`, icon: '💨', color: '#a855f7' },
-            { label: 'Solar Radiation', value: `${selected.solarRadiation} W/m²`, icon: '☀️', color: '#ffd700' },
-            { label: 'WBGT', value: `${selected.wbgt}°C`, icon: '🔥', color: '#ff6b00' },
-            { label: 'UTCI', value: `${selected.utci}°C`, icon: '🌐', color: '#a855f7' },
-            { label: 'Heat Index', value: `${selected.heatIndex}°C`, icon: '🌡️', color: '#ef4444' },
-            { label: 'Mortality Risk', value: `${selected.mortalityRisk}%`, icon: '⚠️', color: STRESS_COLORS[selected.stressCategory.label] },
-          ].map((m, i) => (
-            <div className="detail-metric" key={i}>
-              <span className="detail-metric-icon">{m.icon}</span>
-              <div>
-                <span className="detail-metric-label">{m.label}</span>
-                <span className="detail-metric-value" style={{ color: m.color }}>{m.value}</span>
-              </div>
+        <div className="day-detail-grid">
+          <div className="dd-item">
+            <span className="dd-icon">🌡️</span>
+            <div className="dd-texts">
+              <span className="dd-label">Max Temperature</span>
+              <strong className="dd-value" style={{ color: '#ea580c' }}>{selected.temperature}°C</strong>
             </div>
-          ))}
+          </div>
+
+          <div className="dd-item">
+            <span className="dd-icon">🔥</span>
+            <div className="dd-texts">
+              <span className="dd-label">Wet-Bulb Globe (WBGT)</span>
+              <strong className="dd-value" style={{ color: '#dc2626' }}>{selected.wbgt}°C</strong>
+            </div>
+          </div>
+
+          <div className="dd-item">
+            <span className="dd-icon">♨️</span>
+            <div className="dd-texts">
+              <span className="dd-label">Heat Index</span>
+              <strong className="dd-value" style={{ color: '#b91c1c' }}>{selected.heatIndex}°C</strong>
+            </div>
+          </div>
+
+          <div className="dd-item">
+            <span className="dd-icon">🌐</span>
+            <div className="dd-texts">
+              <span className="dd-label">UTCI Perceived</span>
+              <strong className="dd-value" style={{ color: '#7c3aed' }}>{selected.utci}°C</strong>
+            </div>
+          </div>
+
+          <div className="dd-item">
+            <span className="dd-icon">💧</span>
+            <div className="dd-texts">
+              <span className="dd-label">Relative Humidity</span>
+              <strong className="dd-value" style={{ color: '#0284c7' }}>{selected.humidity}%</strong>
+            </div>
+          </div>
+
+          <div className="dd-item">
+            <span className="dd-icon">☀️</span>
+            <div className="dd-texts">
+              <span className="dd-label">Solar Irradiance</span>
+              <strong className="dd-value" style={{ color: '#d97706' }}>{selected.solarRadiation} W/m²</strong>
+            </div>
+          </div>
+
+          <div className="dd-item">
+            <span className="dd-icon">💨</span>
+            <div className="dd-texts">
+              <span className="dd-label">Wind Speed</span>
+              <strong className="dd-value" style={{ color: '#64748b' }}>{selected.windSpeed} km/h</strong>
+            </div>
+          </div>
+
+          <div className="dd-item">
+            <span className="dd-icon">⚠️</span>
+            <div className="dd-texts">
+              <span className="dd-label">Excess Mortality Risk</span>
+              <strong className="dd-value" style={{ color: STRESS_COLORS[selected.stressCategory?.label] }}>
+                {selected.mortalityRisk}%
+              </strong>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* WBGT Reference Table */}
-      <div className="wbgt-reference card">
-        <h4 className="ref-title">📋 WBGT Risk Reference Scale (ISO 7933)</h4>
-        <div className="ref-scale">
-          {WBGT_RANGES.map((r, i) => (
-            <div key={i} className="ref-item" style={{ background: r.bg, borderColor: `${r.color}33` }}>
-              <div className="ref-dot" style={{ background: r.color }} />
-              <div>
-                <span className="ref-label" style={{ color: r.color }}>{r.label}</span>
-                <span className="ref-range">{r.range} WBGT</span>
-              </div>
-            </div>
-          ))}
+      {/* ISO & IMD Warning Matrix Reference */}
+      <div className="forecast-matrix-ref">
+        <h4 className="matrix-title">📋 NDMA / IMD Heat Action Matrix Guidance (Summer 2026)</h4>
+        <div className="matrix-chips">
+          <div className="matrix-chip green">
+            <span className="chip-badge">GREEN</span>
+            <span className="chip-desc">&lt;40°C: Normal. No special advisory.</span>
+          </div>
+          <div className="matrix-chip yellow">
+            <span className="chip-badge">YELLOW</span>
+            <span className="chip-desc">40-42°C: Be Updated. Outdoor workers stay hydrated.</span>
+          </div>
+          <div className="matrix-chip orange">
+            <span className="chip-badge">ORANGE</span>
+            <span className="chip-desc">42-44°C: Be Prepared. Halt work 12-3 PM. Open cooling shelters.</span>
+          </div>
+          <div className="matrix-chip red">
+            <span className="chip-badge">RED</span>
+            <span className="chip-desc">&gt;44°C or WBGT &gt;32°: Take Action. Emergency protocols active.</span>
+          </div>
         </div>
       </div>
     </div>
