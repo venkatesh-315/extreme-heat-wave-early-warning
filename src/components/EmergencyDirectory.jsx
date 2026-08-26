@@ -118,7 +118,12 @@ function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap })
           </div>
         ) : (
           filteredResources.map((item) => (
-            <div key={item.id} className={`resource-card ${item.type}`}>
+            <div
+              key={item.id}
+              className={`resource-card ${item.type}`}
+              style={{ cursor: onFocusOnMap ? 'pointer' : 'default' }}
+              onClick={() => onFocusOnMap && onFocusOnMap(item)}
+            >
               <div className="res-header">
                 <div className="res-icon-wrap">
                   {item.type === 'hospital' && <HospitalIcon size={20} color="#dc2626" />}

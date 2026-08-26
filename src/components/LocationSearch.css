@@ -4,6 +4,7 @@
   position: relative;
   width: 100%;
   margin: 0 auto;
+  z-index: 200;
 }
 
 .search-main-row {
@@ -118,7 +119,7 @@
   display: inline-block;
 }
 
-/* Suggestions Dropdown */
+/* Suggestions Dropdown with Smooth Scrolling */
 .suggestions-dropdown {
   position: absolute;
   top: 100%;
@@ -128,10 +129,33 @@
   border: 1.5px solid #cbd5e1;
   border-top: none;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.12);
-  z-index: 1000;
-  max-height: 340px;
-  overflow-y: auto;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14), 0 6px 10px rgba(0, 0, 0, 0.08);
+  z-index: 9999;
+  max-height: 280px;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+.suggestions-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 3px;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 .dropdown-meta-header {

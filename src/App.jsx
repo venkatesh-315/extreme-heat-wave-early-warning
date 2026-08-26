@@ -13,6 +13,7 @@ import MortalityTrend from './components/MortalityTrend';
 import ImdApiModal from './components/ImdApiModal';
 import Footer from './components/Footer';
 import SplitText from './components/SplitText';
+import Loader from './components/Loader';
 
 import {
   UserLocationPin,
@@ -47,13 +48,15 @@ function App() {
   const [sourceInfo, setSourceInfo] = useState('');
   const [isCalculating, setIsCalculating] = useState(false);
   const [hasData, setHasData] = useState(false);
-  const [activeSection, setActiveSection] = useState('map'); // Defaults to map or switches on select
+  const [activeSection, setActiveSection] = useState('map'); // Defaults to map view
+  const [focusedResource, setFocusedResource] = useState(null);
   const [isImdModalOpen, setIsImdModalOpen] = useState(false);
 
   // Load weather and emergency data for a given location
   const handleLocationSelect = useCallback(async (location, shouldAutoSwitchToMap = true) => {
     setIsCalculating(true);
     setHasData(false);
+    setFocusedResource(null);
 
     // Automatically display the map of user's location
     if (shouldAutoSwitchToMap) {
@@ -115,6 +118,11 @@ function App() {
       isMounted = false;
     };
   }, [handleLocationSelect]);
+
+  const handleFocusResourceOnMap = (resource) => {
+    setFocusedResource(resource);
+    setActiveSection('map');
+  };
 
   return (
     <div className="app-root">
@@ -232,14 +240,15 @@ function App() {
           </>
         )}
 
-        {/* LOADING STATE */}
+        {/* LOADING STATE WITH CUSTOM BLACK LINES ANIMATION */}
         {isCalculating && (
           <div className="loading-overlay animate-fade-in">
             <div className="loading-card card">
-              <div className="loading-spinner animate-spin" />
-              <h3 className="loading-title">Computing Meteorological Heat Indices</h3>
-              <p className="loading-sub">Solving WBGT, UTCI, Solar Irradiance &amp; Locating Facilities for {selectedLocation?.name || 'Selected Location'}...</p>
-              <div className="loading-steps">
+              <Loader
+                label="Computing Meteorological Heat Indices"
+                sublabel={`Solving WBGT, UTCI, Solar Irradiance & Locating Facilities for ${selectedLocation?.name || 'Selected Location'}...`}
+              />
+              <div className="loading-steps" style={{ marginTop: '16px' }}>
                 {[
                   'Connecting to IMD / Open-Meteo High-Res India feed...',
                   'Calculating Stull Wet-Bulb & Globe Temperature (ISO 7933)...',
@@ -296,6 +305,7 @@ function App() {
                     location={selectedLocation}
                     wards={wardData}
                     emergencyResources={emergencyResources}
+                    focusedResource={focusedResource}
                   />
                 </div>
               )}
@@ -322,9 +332,7 @@ function App() {
                   <EmergencyDirectory
                     resources={emergencyResources}
                     locationName={selectedLocation?.name}
-                    onFocusOnMap={() => {
-                      setActiveSection('map');
-                    }}
+                    onFocusOnMap={handleFocusResourceOnMap}
                   />
                 </div>
               )}

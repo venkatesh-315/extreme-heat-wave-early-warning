@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   MapIcon,
   FlameIcon,
@@ -30,9 +30,10 @@ const getRiskLabel = (risk) => {
   return 'LOW';
 };
 
-function GISMap({ location, wards = [], emergencyResources = [] }) {
+function GISMap({ location, wards = [], emergencyResources = [], focusedResource = null }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const markersMapRef = useRef({});
   const layerGroupsRef = useRef({
     heatZones: null,
     hospitals: null,
@@ -50,11 +51,87 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
   });
   const [mapError, setMapError] = useState(false);
 
+  // Toggle specific layer
+  const toggleLayer = useCallback((layerKey) => {
+    setActiveLayers((prev) => {
+      const nextState = !prev[layerKey];
+      const group = layerGroupsRef.current[layerKey];
+      const map = mapInstanceRef.current;
+
+      if (group && map) {
+        if (nextState) {
+          group.addTo(map);
+        } else {
+          map.removeLayer(group);
+        }
+      }
+      return { ...prev, [layerKey]: nextState };
+    });
+  }, []);
+
+  // Ensure a layer is visible
+  const ensureLayerVisible = useCallback((layerKey) => {
+    setActiveLayers((prev) => {
+      if (!prev[layerKey]) {
+        const group = layerGroupsRef.current[layerKey];
+        const map = mapInstanceRef.current;
+        if (group && map) {
+          group.addTo(map);
+        }
+        return { ...prev, [layerKey]: true };
+      }
+      return prev;
+    });
+  }, []);
+
+  // Focus on any Ward or Emergency Point and open its popup on the map
+  const focusOnItem = useCallback((item) => {
+    if (!item || !mapInstanceRef.current) return;
+
+    if (item.type) {
+      const layerKey = item.type === 'hospital' ? 'hospitals' : item.type === 'shelter' ? 'shelters' : 'water';
+      ensureLayerVisible(layerKey);
+
+      setSelectedResource(item);
+      setSelectedWard(null);
+    } else {
+      ensureLayerVisible('heatZones');
+      setSelectedWard(item);
+      setSelectedResource(null);
+    }
+
+    if (item.lat && item.lon) {
+      mapInstanceRef.current.flyTo([item.lat, item.lon], 16, {
+        animate: true,
+        duration: 0.8,
+      });
+
+      // Open marker popup after brief pan animation
+      setTimeout(() => {
+        const marker = markersMapRef.current[item.id];
+        if (marker) {
+          marker.openPopup();
+        }
+      }, 350);
+    }
+  }, [ensureLayerVisible]);
+
+  // Handle external focusedResource prop (e.g. from Emergency Directory tab)
+  useEffect(() => {
+    if (focusedResource) {
+      const timer = setTimeout(() => {
+        focusOnItem(focusedResource);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [focusedResource, focusOnItem]);
+
   // Initialize Map
   useEffect(() => {
     if (!location?.lat || !location?.lon) return;
 
     let isMounted = true;
+    markersMapRef.current = {};
 
     const initMap = async () => {
       try {
@@ -71,7 +148,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
         // Initialize new map with Light Positron/Voyager Tiles
         const map = L.map(mapRef.current, {
           center: [location.lat, location.lon],
-          zoom: 12,
+          zoom: 13,
           zoomControl: true,
           attributionControl: true,
         });
@@ -135,7 +212,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
             iconAnchor: [20, 20],
           });
 
-          L.marker([ward.lat, ward.lon], { icon: wardIcon })
+          const wardMarker = L.marker([ward.lat, ward.lon], { icon: wardIcon })
             .addTo(heatGroup)
             .on('click', () => {
               setSelectedWard(ward);
@@ -159,9 +236,11 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
                 </div>
               </div>
             `);
+
+          markersMapRef.current[ward.id] = wardMarker;
         });
 
-        // 2. Plot Emergency Resources with Clean SVG Markers
+        // 2. Plot Emergency Resources with Clean SVG Markers & Rich Popups
         emergencyResources.forEach((res) => {
           let svgInner = '';
           let targetGroup = hospitalGroup;
@@ -188,7 +267,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
             iconAnchor: [16, 16],
           });
 
-          L.marker([res.lat, res.lon], { icon: markerIcon })
+          const resMarker = L.marker([res.lat, res.lon], { icon: markerIcon })
             .addTo(targetGroup)
             .on('click', () => {
               setSelectedResource(res);
@@ -198,7 +277,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
               <div class="map-light-popup res-popup">
                 <div class="popup-badge-row">
                   <span class="popup-res-tag ${res.type}">${res.categoryLabel}</span>
-                  <span class="popup-dist">${res.distanceKm} km</span>
+                  <span class="popup-dist">${res.distanceKm} km away</span>
                 </div>
                 <div class="popup-title">${res.name}</div>
                 <div class="popup-address">${res.address}</div>
@@ -207,11 +286,13 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
                 ${res.phone ? `<div class="popup-phone">Tel: <strong>${res.phone}</strong></div>` : ''}
                 <div class="popup-actions">
                   <a href="${res.mapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn">
-                    Get Directions
+                    Get GPS Directions
                   </a>
                 </div>
               </div>
             `);
+
+          markersMapRef.current[res.id] = resMarker;
         });
 
         heatGroup.addTo(map);
@@ -243,30 +324,6 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
     };
   }, [location, wards, emergencyResources]);
 
-  const toggleLayer = (layerKey) => {
-    const nextState = !activeLayers[layerKey];
-    setActiveLayers((prev) => ({ ...prev, [layerKey]: nextState }));
-
-    const group = layerGroupsRef.current[layerKey];
-    const map = mapInstanceRef.current;
-
-    if (group && map) {
-      if (nextState) {
-        group.addTo(map);
-      } else {
-        map.removeLayer(group);
-      }
-    }
-  };
-
-  const focusOnItem = (item) => {
-    if (mapInstanceRef.current && item?.lat && item?.lon) {
-      mapInstanceRef.current.flyTo([item.lat, item.lon], 15, { duration: 1 });
-      if (item.type) setSelectedResource(item);
-      else setSelectedWard(item);
-    }
-  };
-
   const hospitalsCount = emergencyResources.filter((r) => r.type === 'hospital').length;
   const sheltersCount = emergencyResources.filter((r) => r.type === 'shelter').length;
   const waterCount = emergencyResources.filter((r) => r.type === 'water').length;
@@ -280,7 +337,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
             <span>GIS Heat Vulnerability &amp; Emergency Infrastructure Map</span>
           </h3>
           <p className="section-desc">
-            Displaying microclimates, hospitals, cooling centers, and drinking water stations for {location?.name}.
+            Displaying microclimates, hospitals, cooling centers, and drinking water stations for {location?.name}. Click any facility or heat zone to view on map.
           </p>
         </div>
 
@@ -345,7 +402,7 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
           </div>
         </div>
 
-        {/* Sidebar */}
+        {/* Interactive Facilities & Emergency Points Sidebar */}
         <div className="gis-sidebar">
           <div className="sidebar-header">
             <h4>Facilities &amp; Heat Zones</h4>
@@ -374,7 +431,9 @@ function GISMap({ location, wards = [], emergencyResources = [] }) {
               );
             })}
 
-            <div className="sidebar-group-label" style={{ marginTop: '12px' }}>Emergency Points</div>
+            <div className="sidebar-group-label" style={{ marginTop: '12px' }}>
+              Emergency Points ({emergencyResources.length})
+            </div>
             {emergencyResources.map((res) => (
               <button
                 key={res.id}

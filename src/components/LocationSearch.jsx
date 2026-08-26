@@ -190,7 +190,10 @@ function LocationSearch({ onSelect, isCalculating, selectedLocation }) {
 
         {/* Auto-suggestions Dropdown */}
         {isOpen && suggestions.length > 0 && (
-          <div className="suggestions-dropdown card">
+          <div
+            className="suggestions-dropdown card scroll-area"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
             <div className="dropdown-meta-header">
               <span>Matching Locations in India</span>
               <span>{suggestions.length} results</span>
