@@ -6,7 +6,10 @@ import {
   RefreshCwIcon,
   SearchIcon,
   CrosshairIcon,
-  XIcon
+  XIcon,
+  LogOutIcon,
+  Building2Icon,
+  UsersIcon
 } from './icons';
 import { searchLocations, reverseGeocode, CURATED_INDIAN_LOCATIONS } from '../services/geocodingService';
 import './TopHeader.css';
@@ -17,7 +20,9 @@ function TopHeader({
   onToggleSidebar,
   onOpenAlerts,
   isLive = true,
-  autoRefreshInterval = '1m'
+  autoRefreshInterval = '1m',
+  currentUser,
+  onLogout
 }) {
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   // Keep the previous location name in the input field
@@ -330,6 +335,33 @@ function TopHeader({
                 Open Full Alerts Center &rarr;
               </button>
             </div>
+          )}
+        </div>
+
+        {/* User Profile Pill directly beside left of Time */}
+        <div className="header-user-profile-pill">
+          <div className="header-user-avatar">
+            <span>{currentUser?.avatar || (currentUser?.role === 'citizen' ? 'PU' : 'OF')}</span>
+            <span className="user-online-dot" />
+          </div>
+          <div className="header-user-details">
+            <span className="header-user-fullname">
+              {currentUser?.name || (currentUser?.role === 'citizen' ? 'Public User #8204' : 'Officer #4102')}
+            </span>
+            <span className="header-user-sub">
+              {currentUser?.department || (currentUser?.role === 'citizen' ? 'Civic Safety Network' : 'Disaster Control Desk')}
+            </span>
+          </div>
+          {onLogout && (
+            <button
+              type="button"
+              className="header-logout-quick-btn"
+              onClick={onLogout}
+              title="Switch Account / Sign Out"
+              aria-label="Switch Account / Sign Out"
+            >
+              <LogOutIcon size={13} color="#64748b" />
+            </button>
           )}
         </div>
 

@@ -48,7 +48,7 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
         <div className="hap-left">
           <div className="hap-badge">
             <ShieldAlertIcon size={13} color="#dc2626" />
-            <span>NDMA Heat Action Plan (HAP) Protocols</span>
+            <span>Heat Action Protocols</span>
           </div>
           <h3 className="section-title">
             Inter-Agency Directives &amp; Public Advisories &mdash; {location?.name}

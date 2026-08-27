@@ -19,6 +19,7 @@ import HourlyChart from './components/HourlyChart';
 import Recommendations from './components/Recommendations';
 import AlertBanner from './components/AlertBanner';
 import Loader from './components/Loader';
+import LoginPage from './components/LoginPage';
 
 import { CURATED_INDIAN_LOCATIONS } from './services/geocodingService';
 import {
@@ -27,6 +28,7 @@ import {
   saveUserSettings
 } from './services/weatherService';
 import { fetchEmergencyResources } from './services/emergencyService';
+import { getCurrentUser, logoutUser } from './services/authService';
 import { generateWardData, generateRecommendations } from './data/mockData';
 import {
   SettingsIcon,
@@ -39,6 +41,7 @@ import {
 import './App.css';
 
 function App() {
+  const [currentUser, setCurrentUser] = useState(null);
   const [userSettings, setUserSettings] = useState(() => getUserSettings());
   const [selectedLocation, setSelectedLocation] = useState(CURATED_INDIAN_LOCATIONS[0]);
   const [weatherData, setWeatherData] = useState(null);
@@ -159,7 +162,17 @@ function App() {
     setTimeout(() => setSettingsSaveAlert(false), 3000);
   };
 
+  const handleLogout = () => {
+    logoutUser();
+    setCurrentUser(null);
+  };
+
   const tempUnit = userSettings.tempUnit || 'C';
+
+  // If user is not authenticated, display full-screen Login Page
+  if (!currentUser) {
+    return <LoginPage onLoginSuccess={(user) => setCurrentUser(user)} />;
+  }
 
   return (
     <div className="thermoguard-app">
@@ -172,6 +185,8 @@ function App() {
         onSelectTab={handleTabSelect}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       {/* Main Content Area */}
@@ -183,6 +198,8 @@ function App() {
           onOpenAlerts={() => handleTabSelect('alerts')}
           isLive={true}
           autoRefreshInterval={userSettings.autoRefreshInterval}
+          currentUser={currentUser}
+          onLogout={handleLogout}
         />
 
         <main className="dashboard-scroll-body">
@@ -418,7 +435,7 @@ function App() {
                       <strong style={{ fontSize: '0.85rem', color: '#0f172a' }}>Biometeorology &amp; Climate Model Engine</strong>
                     </div>
                     <p style={{ fontSize: '0.78rem', color: '#475569', margin: 0, lineHeight: 1.5 }}>
-                      Live telemetry streams high-resolution 0.1&deg; Indian meteorological grid data, automatically calculating ISO 7933 Outdoor WBGT, UTCI human thermoregulation, and NDMA Heat Action Plan alert levels without requiring manual credentials.
+                      Live telemetry streams high-resolution 0.1&deg; Indian meteorological grid data, automatically calculating ISO 7933 Outdoor WBGT, UTCI human thermoregulation, and standardized heat action alert levels without requiring manual credentials.
                     </p>
                   </div>
 

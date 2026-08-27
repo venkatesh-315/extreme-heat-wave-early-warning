@@ -9,7 +9,10 @@ import {
   ActionCenterIcon,
   ReportsIcon,
   SettingsIcon,
-  XIcon
+  XIcon,
+  LogOutIcon,
+  Building2Icon,
+  UsersIcon
 } from './icons';
 import './Sidebar.css';
 
@@ -24,7 +27,9 @@ const NAV_ITEMS = [
   { id: 'settings', label: 'Settings', icon: SettingsIcon },
 ];
 
-function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose }) {
+function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose, currentUser, onLogout }) {
+  const isAuthority = currentUser?.role === 'authority';
+
   return (
     <>
       {/* Backdrop for Mobile Drawer */}
@@ -76,8 +81,20 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
           })}
         </nav>
 
-        {/* Bottom Sidebar Status */}
+        {/* Bottom Sidebar Footer */}
         <div className="sidebar-footer">
+          {/* Switch Role / Sign Out Button */}
+          {onLogout && (
+            <button
+              className="sidebar-logout-btn"
+              onClick={onLogout}
+              title="Sign Out / Switch Role Portal"
+            >
+              <LogOutIcon size={16} />
+              <span>Switch / Sign Out</span>
+            </button>
+          )}
+
           {/* System Status Card */}
           <div className="system-status-card">
             <div className="status-dot-pulse" />

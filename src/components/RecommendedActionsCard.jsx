@@ -50,7 +50,7 @@ function RecommendedActionsCard({ onViewActionCenter }) {
       <div className="rec-actions-top">
         <h3 className="card-heading">
           Recommended Actions
-          <span className="info-tooltip-wrap" title="National Disaster Management Authority (NDMA) Heat Action Plan Directives">
+          <span className="info-tooltip-wrap" title="Heat Action Plan Directives">
             <InfoIcon size={14} />
           </span>
         </h3>

@@ -1,0 +1,803 @@
+/* ================================================================
+   ThermoGuard Fullscreen Split Login Page Styles
+   100vw x 100vh Edge-to-Edge Layout · Role Animations · Mobile Responsive
+   ================================================================ */
+
+.thermoguard-login-screen {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: #f8fafc;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #0f172a;
+}
+
+/* ================================================================
+   LEFT HERO SIDE (Branding, Cityline Atmosphere & Capabilities)
+   ================================================================ */
+.login-hero-side {
+  position: relative;
+  height: 100%;
+  background: linear-gradient(160deg, #090e17 0%, #0d1522 35%, #181926 70%, #201524 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 44px 52px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Atmospheric Heat Glow & Background Elements */
+.hero-skyline-bg {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(ellipse 70% 50% at 75% 25%, rgba(234, 88, 12, 0.28) 0%, rgba(220, 38, 38, 0.08) 50%, transparent 80%),
+    linear-gradient(to top, rgba(9, 14, 23, 0.95) 0%, rgba(9, 14, 23, 0.3) 60%, transparent 100%);
+  background-size: cover;
+  background-position: center bottom;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-atmosphere-glow {
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.22) 0%, rgba(234, 88, 12, 0.08) 50%, transparent 75%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Futuristic Radiating Radar Rings */
+.hero-radar-rings {
+  position: absolute;
+  top: 15%;
+  right: 18%;
+  width: 280px;
+  height: 280px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.radar-sun-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 24px 6px rgba(251, 191, 36, 0.8), 0 0 48px 12px rgba(234, 88, 12, 0.5);
+}
+
+.radar-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px dashed rgba(251, 191, 36, 0.25);
+  animation: radarPulse 6s linear infinite;
+}
+
+.radar-ring.ring-1 {
+  width: 90px;
+  height: 90px;
+  animation-delay: 0s;
+}
+
+.radar-ring.ring-2 {
+  width: 170px;
+  height: 170px;
+  animation-delay: 2s;
+  border-color: rgba(249, 115, 22, 0.2);
+}
+
+.radar-ring.ring-3 {
+  width: 250px;
+  height: 250px;
+  animation-delay: 4s;
+  border-color: rgba(220, 38, 38, 0.15);
+}
+
+@keyframes radarPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0.2;
+  }
+}
+
+/* Heat Wave Atmosphere at Base */
+.hero-wave-lines {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  background: radial-gradient(ellipse 100% 60% at 50% 120%, rgba(37, 99, 235, 0.18) 0%, rgba(124, 58, 237, 0.08) 50%, transparent 90%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Hero Content Stack */
+.hero-content-wrapper {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 620px;
+}
+
+/* Brand Header */
+.hero-brand-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hero-logo-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 4px 12px rgba(244, 63, 94, 0.4));
+}
+
+.hero-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-brand-text .brand-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.hero-brand-text .brand-tagline {
+  font-size: 0.76rem;
+  color: #94a3b8;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-top: 2px;
+}
+
+/* Headline Block */
+.hero-headline-block {
+  margin: 28px 0 20px;
+}
+
+.hero-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.85rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0 0 14px;
+}
+
+.text-heat-gradient {
+  background: linear-gradient(135deg, #fb923c 0%, #ea580c 45%, #dc2626 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.hero-subtitle {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  max-width: 520px;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Features List */
+.hero-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.hero-feature-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 12px 18px;
+  border-radius: 14px;
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.hero-feature-card:hover {
+  transform: translateX(4px);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.75);
+}
+
+.feature-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-icon-box.orange {
+  background: rgba(234, 88, 12, 0.16);
+  border: 1px solid rgba(234, 88, 12, 0.3);
+}
+
+.feature-icon-box.amber {
+  background: rgba(217, 119, 6, 0.16);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+
+.feature-icon-box.emerald {
+  background: rgba(22, 163, 74, 0.16);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+
+.feature-icon-box.purple {
+  background: rgba(124, 58, 237, 0.16);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+.feature-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-text strong {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 2px;
+}
+
+.feature-text span {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+/* Bottom Pledge Pill */
+.hero-bottom-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 18px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  color: #e2e8f0;
+  width: fit-content;
+  backdrop-filter: blur(12px);
+}
+
+.pill-shield-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ================================================================
+   RIGHT AUTH SIDE (Welcome Card, Role Switcher, Sign In)
+   ================================================================ */
+.login-auth-side {
+  position: relative;
+  height: 100%;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 56px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Top Floating Theme Pill */
+.theme-toggle-bar {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.theme-pill-toggle {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Auth Card */
+.auth-form-card {
+  width: 100%;
+  max-width: 440px;
+  margin: auto auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-card-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-welcome-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.auth-welcome-desc {
+  font-size: 0.92rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Role Navigation Tabs with Animated Indicator */
+.role-nav-tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 5px;
+  margin-bottom: 24px;
+}
+
+.role-tab-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.32s ease, background 0.3s ease;
+  z-index: 2;
+}
+
+.role-tab-indicator.authority {
+  background: linear-gradient(90deg, #ea580c, #dc2626);
+}
+
+.role-tab-indicator.citizen {
+  background: linear-gradient(90deg, #0284c7, #2563eb);
+}
+
+.role-tab-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+  z-index: 1;
+}
+
+.role-tab-btn:hover {
+  color: #0f172a;
+}
+
+.role-tab-btn:active {
+  transform: scale(0.98);
+}
+
+.role-tab-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.role-tab-btn.active.authority svg {
+  color: #dc2626;
+  transform: scale(1.08);
+  transition: transform 0.2s ease;
+}
+
+.role-tab-btn.active.citizen svg {
+  color: #0284c7;
+  transform: scale(1.08);
+  transition: transform 0.2s ease;
+}
+
+/* Role Info Context Panel with Animated Switch */
+.role-context-panel {
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  min-height: 104px;
+  margin-bottom: 26px;
+}
+
+.role-context-panel.transitioning {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.role-context-panel.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.animate-role-card {
+  animation: roleCardEnter 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes roleCardEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.role-info-card {
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.role-info-card.authority {
+  border-left: 4px solid #dc2626;
+  background: linear-gradient(180deg, #fff1f2 0%, #ffffff 100%);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.05);
+}
+
+.role-info-card.citizen {
+  border-left: 4px solid #0284c7;
+  background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.05);
+}
+
+.role-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.role-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+.role-badge.authority {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.role-badge.citizen {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.role-security-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.role-info-summary {
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: #475569;
+  margin: 0;
+}
+
+/* Primary Submit Action Button */
+.auth-primary-submit-btn {
+  width: 100%;
+  padding: 15px 22px;
+  border-radius: 12px;
+  border: none;
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-primary-submit-btn.authority-accent {
+  background: linear-gradient(90deg, #ea580c 0%, #dc2626 100%);
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
+}
+
+.auth-primary-submit-btn.authority-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.45);
+}
+
+.auth-primary-submit-btn.citizen-accent {
+  background: linear-gradient(90deg, #0284c7 0%, #2563eb 100%);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+}
+
+.auth-primary-submit-btn.citizen-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+}
+
+.auth-primary-submit-btn:active {
+  transform: translateY(0);
+}
+
+.btn-label-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-label-state svg {
+  transition: transform 0.2s ease;
+}
+
+.auth-primary-submit-btn:hover .btn-label-state svg {
+  transform: translateX(5px);
+}
+
+.btn-loading-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Sign Up Footer */
+.auth-signup-footer {
+  text-align: center;
+  font-size: 0.86rem;
+  color: #64748b;
+  margin-top: 24px;
+}
+
+.signup-link-btn {
+  background: none;
+  border: none;
+  color: #ea580c;
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  transition: color 0.15s ease;
+}
+
+.signup-link-btn:hover {
+  color: #dc2626;
+  text-decoration: underline;
+}
+
+/* ================================================================
+   DARK THEME OVERRIDES
+   ================================================================ */
+.thermoguard-login-screen.theme-dark .login-auth-side {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.thermoguard-login-screen.theme-dark .theme-pill-toggle {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.thermoguard-login-screen.theme-dark .theme-btn.active {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.thermoguard-login-screen.theme-dark .auth-welcome-title {
+  color: #f8fafc;
+}
+
+.thermoguard-login-screen.theme-dark .auth-welcome-desc {
+  color: #94a3b8;
+}
+
+.thermoguard-login-screen.theme-dark .role-nav-tabs {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.thermoguard-login-screen.theme-dark .role-tab-btn {
+  color: #94a3b8;
+}
+
+.thermoguard-login-screen.theme-dark .role-tab-btn.active {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.thermoguard-login-screen.theme-dark .role-info-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.thermoguard-login-screen.theme-dark .role-info-card.authority {
+  background: linear-gradient(180deg, rgba(220, 38, 38, 0.12) 0%, #1e293b 100%);
+}
+
+.thermoguard-login-screen.theme-dark .role-info-card.citizen {
+  background: linear-gradient(180deg, rgba(2, 132, 199, 0.12) 0%, #1e293b 100%);
+}
+
+.thermoguard-login-screen.theme-dark .role-security-badge,
+.thermoguard-login-screen.theme-dark .role-info-summary {
+  color: #cbd5e1;
+}
+
+/* ================================================================
+   RESPONSIVE DESIGN (Tablets & Mobile Phones)
+   ================================================================ */
+@media (max-width: 1080px) {
+  .login-hero-side {
+    padding: 32px 36px;
+  }
+  .login-auth-side {
+    padding: 28px 36px;
+  }
+  .hero-title {
+    font-size: 2.35rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .thermoguard-login-screen {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+    position: relative;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .login-hero-side {
+    height: auto;
+    padding: 32px 24px 28px;
+  }
+
+  .hero-radar-rings {
+    display: none;
+  }
+
+  .hero-headline-block {
+    margin: 20px 0 16px;
+  }
+
+  .hero-title {
+    font-size: 2.1rem;
+  }
+
+  .hero-features-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .login-auth-side {
+    height: auto;
+    padding: 28px 24px 36px;
+    overflow-y: visible;
+  }
+
+  .auth-form-card {
+    max-width: 100%;
+    margin: 0 0 20px;
+  }
+}
+
+@media (max-width: 580px) {
+  .hero-features-list {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-title {
+    font-size: 1.85rem;
+  }
+
+  .auth-welcome-title {
+    font-size: 1.65rem;
+  }
+
+  .login-hero-side {
+    padding: 24px 18px 20px;
+  }
+
+  .login-auth-side {
+    padding: 20px 18px 28px;
+  }
+}

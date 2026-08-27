@@ -192,9 +192,9 @@ function RiskForecast({ forecast = [], location }) {
         </div>
       </div>
 
-      {/* ISO & IMD Warning Matrix Reference */}
+      {/* ISO & Warning Matrix Reference */}
       <div className="forecast-matrix-ref">
-        <h4 className="matrix-title">NDMA / IMD Heat Action Matrix Guidance (Summer 2026)</h4>
+        <h4 className="matrix-title">Heat Action Matrix Guidance (Summer 2026)</h4>
         <div className="matrix-chips">
           <div className="matrix-chip green">
             <span className="chip-badge">GREEN</span>
