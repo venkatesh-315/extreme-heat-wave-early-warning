@@ -30,14 +30,6 @@ export const ThermoGuardLogo = ({ size = 28, className = '' }) => (
   </svg>
 );
 
-// MoES / Government of India Ashoka Lion Emblem Icon
-export const GovtEmblemIcon = ({ size = 26, className = '' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M12 2v20M6 8l6-6 6 6M6 16l6 6 6-6M4 12h16" />
-    <circle cx="12" cy="12" r="3" fill="#e2e8f0" stroke="#475569" />
-  </svg>
-);
-
 // Navigation Sidebar Icons
 export const DashboardIcon = ({ size = 18, color = 'currentColor', className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>

@@ -97,7 +97,7 @@ export function generateLocalizedEmergencyResources(lat, lon, locationName) {
     {
       name: `District Civil Hospital & Heat-Stroke Centre, ${cleanName}`,
       type: 'hospital',
-      categoryLabel: 'Govt District Hospital (Dedicated Heat ICU)',
+      categoryLabel: 'District Civil Hospital (Dedicated Heat ICU)',
       offsetLat: 0.012,
       offsetLon: -0.008,
       phone: '108 / 011-23348121',
@@ -145,19 +145,19 @@ export function generateLocalizedEmergencyResources(lat, lon, locationName) {
 
     // Emergency Cooling Shelters & Night Shelters
     {
-      name: `Municipal Corporation 24/7 Air-Cooled Shelter (Rain Basera)`,
+      name: `Municipal 24/7 Air-Cooled Shelter (Rain Basera)`,
       type: 'shelter',
-      categoryLabel: 'Disaster Management Cooling Shelter',
+      categoryLabel: 'Cooling Shelter & Relief Centre',
       offsetLat: 0.006,
       offsetLon: 0.009,
-      phone: '1077 (NDMA Helpline)',
+      phone: '1077 (Emergency Helpline)',
       address: `Near Railway Station Bus Terminal, ${cleanName}`,
       icuReady: false,
       coolingAmenity: 'High-Capacity Air Coolers, RO Water, Free Mattresses',
       capacity: '200 Persons (Free Entry)',
     },
     {
-      name: `Government Girls Senior Secondary School (Heat Wave Relief Hub)`,
+      name: `Community Senior Secondary School (Heat Wave Relief Hub)`,
       type: 'shelter',
       categoryLabel: 'Public Community Cooling Center',
       offsetLat: -0.011,

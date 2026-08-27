@@ -9,7 +9,6 @@ import {
   ActionCenterIcon,
   ReportsIcon,
   SettingsIcon,
-  GovtEmblemIcon,
   XIcon
 } from './icons';
 import './Sidebar.css';
@@ -77,7 +76,7 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
           })}
         </nav>
 
-        {/* Bottom Sidebar Status & Government Badge */}
+        {/* Bottom Sidebar Status */}
         <div className="sidebar-footer">
           {/* System Status Card */}
           <div className="system-status-card">
@@ -85,18 +84,6 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
             <div className="status-info">
               <div className="status-title">System Status</div>
               <div className="status-desc">All Systems Operational</div>
-            </div>
-          </div>
-
-          {/* MoES / NCMRWF Emblem Card */}
-          <div className="moes-crest-card">
-            <div className="moes-crest-icon">
-              <GovtEmblemIcon size={24} />
-            </div>
-            <div className="moes-crest-info">
-              <div className="moes-heading">MoES | NCMRWF</div>
-              <div className="moes-subtext">Ministry of Earth Sciences</div>
-              <div className="moes-subtext">Government of India</div>
             </div>
           </div>
         </div>

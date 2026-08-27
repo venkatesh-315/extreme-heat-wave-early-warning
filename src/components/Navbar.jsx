@@ -14,24 +14,24 @@ function Navbar({ isLive = true }) {
 
   return (
     <header className="navbar-root">
-      {/* Top National Strip */}
+      {/* Top Alert Strip */}
       <div className="gov-top-bar">
         <div className="gov-top-inner">
           <div className="gov-brand-unit">
             <span className="gov-badge-icon">
               <ShieldAlertIcon size={14} color="#1e40af" />
             </span>
-            <span className="gov-emblem">Government of India &middot; Ministry of Earth Sciences (MoES)</span>
-            <span className="gov-portal-tag">National Early Warning Network</span>
+            <span className="gov-emblem">ThermoGuard Early Warning Network</span>
+            <span className="gov-portal-tag">Real-Time Heatwave Biometeorology</span>
           </div>
 
           <div className="gov-helplines">
             <span className="helpline-label">24x7 Helplines:</span>
-            <a href="tel:108" className="helpline-pill" title="National Ambulance Service">
+            <a href="tel:108" className="helpline-pill" title="Ambulance Service">
               <AmbulanceIcon size={13} color="#dc2626" />
               <span>Ambulance: <strong>108</strong></span>
             </a>
-            <a href="tel:1077" className="helpline-pill" title="Disaster Control Room">
+            <a href="tel:1077" className="helpline-pill" title="Disaster Helpline">
               <ShieldAlertIcon size={13} color="#ea580c" />
               <span>Disaster: <strong>1077</strong></span>
             </a>
@@ -63,7 +63,7 @@ function Navbar({ isLive = true }) {
             <div className="live-status-chip">
               <span className={`live-pulse-dot ${isLive ? 'online' : ''}`} />
               <ActivityIcon size={14} color="#16a34a" />
-              <span>{isLive ? 'IMD Live Feed Active' : 'Climatological Model'}</span>
+              <span>{isLive ? 'Live Weather Feed Active' : 'Climatological Model'}</span>
             </div>
 
             <button

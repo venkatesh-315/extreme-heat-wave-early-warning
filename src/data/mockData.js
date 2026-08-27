@@ -19,7 +19,7 @@ export const INDIAN_CITIES = CURATED_INDIAN_LOCATIONS;
  * Summer 2026 Baseline Reference Climatology
  */
 export const SUMMER_2026_METEOROLOGY = {
-  seasonTitle: 'Summer 2026 Seasonal Outlook (IMD / MoES)',
+  seasonTitle: 'Summer 2026 Seasonal Heatwave Outlook',
   duration: 'April – June 2026',
   anomalyProjection: '+1.5°C to +3.5°C Above Long-Period Average (LPA)',
   activeHeatwaveSubdivisions: [
@@ -144,22 +144,22 @@ export function generateRecommendations(wbgt, mortalityRisk, population = 150000
       priority: 'HIGH',
       category: 'Public Health',
       title: 'Open Free Municipal Cooling Shelters',
-      action: 'Open air-conditioned/cooled government halls, libraries, and night shelters (Rain Basera) for public respite from 10 AM to 6 PM.',
-      authority: 'Disaster Management Authority',
+      action: 'Open air-conditioned/cooled public halls, community libraries, and night shelters (Rain Basera) for public respite from 10 AM to 6 PM.',
+      authority: 'Municipal Emergency Response',
     });
     recs.push({
       priority: 'HIGH',
       category: 'Workers Advisory',
       title: 'Mandate Work-Rest Cycles (45 min work / 15 min rest)',
       action: 'Employers must provide 1 liter cool drinking water per worker per hour and shaded rest zones.',
-      authority: 'Factory Inspectorate',
+      authority: 'Occupational Health Board',
     });
     recs.push({
       priority: 'HIGH',
       category: 'Power Grid',
       title: 'Zero Load-Shedding Directive for Health Facilities',
-      action: 'Alert State DISCOMs to prevent rolling blackouts in residential zones and critical public infrastructure.',
-      authority: 'State Electricity Regulatory Commission',
+      action: 'State Electricity Board priority hotline active. Backup diesel generators on standby for all district hospitals and cooling centres.',
+      authority: 'Disaster Coordination Cell',
     });
   }
 
@@ -209,22 +209,21 @@ export const MULTILINGUAL_SMS_TEMPLATES = [
     id: 'sms-workers-en',
     lang: 'English',
     label: 'Outdoor Worker Safety Directive',
-    recipient: 'Contractors, Factory Owners, Farm Workers',
-    content: 'LABOUR DEPT DIRECTIVE: All strenuous outdoor and rooftop construction work suspended 11 AM - 4 PM. Mandatory cool water and shade breaks every 30 mins. Report violations to 1800-11-2526.',
+    content: 'HEAT SAFETY DIRECTIVE: All strenuous outdoor and rooftop construction work paused 11 AM - 4 PM. Mandatory cool water and shade breaks every 30 mins. For helpline call 104.',
   },
   {
     id: 'sms-workers-hi',
     lang: 'Hindi',
     label: 'श्रमिक सुरक्षा निर्देश (Hindi)',
     recipient: 'ठेकेदार, निर्माण श्रमिक, फैक्ट्री',
-    content: 'श्रम विभाग निर्देश: भीषण गर्मी के कारण सुबह 11 से शाम 4 बजे तक खुले में भारी निर्माण कार्य प्रतिबंधित है। श्रमिकों हेतु छांव व ठंडे पेयजल का अनिवार्य प्रबंध करें। — श्रम मंत्रालय',
+    content: 'कार्यस्थल निर्देश: भीषण गर्मी के कारण सुबह 11 से शाम 4 बजे तक खुले में भारी निर्माण कार्य से बचें। श्रमिकों हेतु छांव व ठंडे पेयजल का अनिवार्य प्रबंध करें। — हीटवेव सुरक्षा सेल',
   },
   {
     id: 'sms-hospital-en',
     lang: 'English',
-    label: 'Hospital & CMO Preparedness Notice',
-    recipient: 'All PHCs, CHCs, Private & Govt Hospitals',
-    content: 'CMO HEALTH ALERT: Activate Heat-Stroke protocol immediately. Reserve dedicated cooling beds, stock IV fluids, ORS, and ice packs. Report daily heat morbidity to IDSP portal by 6 PM.',
+    label: 'Hospital Preparedness Notice',
+    recipient: 'All PHCs, CHCs, Private & Public Hospitals',
+    content: 'HEALTH ALERT: Activate Heat-Stroke protocol immediately. Reserve dedicated cooling beds, stock IV fluids, ORS, and ice packs. Maintain heat monitoring logs.',
   },
 ];
 
