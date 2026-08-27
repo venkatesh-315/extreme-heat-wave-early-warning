@@ -1,0 +1,481 @@
+/* Ward Level Risk Map Card Styles */
+.ward-map-card {
+  padding: 20px 24px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Fullscreen Mode with Edge Borders */
+.map-fullscreen-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99990;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.ward-map-card.fullscreen {
+  position: fixed !important;
+  top: 16px !important;
+  bottom: 16px !important;
+  left: 16px !important;
+  right: 16px !important;
+  z-index: 99999 !important;
+  border-radius: 16px !important;
+  border: 2px solid #cbd5e1 !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35) !important;
+  padding: 20px !important;
+  background: #ffffff !important;
+  height: calc(100vh - 32px) !important;
+  width: calc(100vw - 32px) !important;
+  max-width: none !important;
+  animation: modalScale 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ward-map-card.fullscreen .ward-map-canvas-wrapper {
+  height: calc(100vh - 100px) !important;
+  max-height: none !important;
+  border-radius: 12px;
+}
+
+.ward-map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ward-title-group {
+  display: flex;
+  align-items: center;
+}
+
+.explainer-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  margin-left: 4px;
+}
+
+.ward-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.risk-filter-dropdown-wrap {
+  position: relative;
+}
+
+.risk-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.risk-filter-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.exit-fullscreen-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.risk-filter-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 6px;
+  z-index: 600;
+  width: 180px;
+}
+
+.risk-filter-opt {
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.risk-filter-opt:hover {
+  background: #f8fafc;
+}
+
+.risk-filter-opt.active {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+/* Canvas Area */
+.ward-map-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #f1f5f9;
+  background: #f8fafc;
+  flex: 1;
+}
+
+.ward-leaflet-map {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+/* Zoom & Fullscreen Controls */
+.map-custom-controls {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.map-ctrl-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.map-ctrl-btn:last-child {
+  border-bottom: none;
+}
+
+.map-ctrl-btn:hover {
+  background: #f8fafc;
+}
+
+/* Custom Marker Spot: Pin Circle + Location Name Directly Below */
+.ward-spot-marker-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.ward-pin-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2.5px solid #ea580c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+}
+
+.ward-spot-marker-container:hover .ward-pin-circle {
+  transform: scale(1.1);
+}
+
+.ward-pin-temp {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.ward-pin-unit {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.52rem;
+  font-weight: 700;
+  color: #64748b;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+/* Location Name Displayed Directly Below the Spot */
+.ward-spot-name-below {
+  margin-top: 4px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}
+
+/* Exact Uploaded Popup Styling */
+.uploaded-map-popup-wrapper .leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15) !important;
+  padding: 0 !important;
+}
+
+.uploaded-map-popup-wrapper .leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: 1.35 !important;
+}
+
+.uploaded-style-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.popup-top-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.popup-cat-badge {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.popup-pop-info {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.popup-spot-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 2px;
+}
+
+.popup-spot-microclimate {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.74rem;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.popup-metrics-grid-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 4px;
+}
+
+.pm-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pm-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.pm-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.pm-value.text-dark {
+  color: #0f172a;
+}
+
+/* Reduced Size Mini Risk Scale Legend on Bottom Left */
+.ward-floating-mini-legend {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 500;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(4px);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 4px 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.mini-legend-title {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 2px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 1px;
+}
+
+.mini-legend-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mini-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mini-color-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mini-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 500;
+  color: #475569;
+  line-height: 1;
+}
+
+/* Category Guide Modal */
+.category-guide-modal {
+  max-width: 580px;
+  width: 90%;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: modalScale 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.guide-content-body {
+  max-height: 380px;
+  overflow-y: auto;
+  margin-top: 10px;
+  padding-right: 4px;
+}
+
+.category-explanation-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cat-explain-card {
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left-width: 4px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cat-header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cat-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 9999px;
+}
+
+.cat-title-text {
+  font-size: 0.78rem;
+  color: #0f172a;
+}
+
+.cat-desc-line,
+.cat-action-line {
+  font-size: 0.72rem;
+  color: #475569;
+  line-height: 1.3;
+}
+
+@media (max-width: 768px) {
+  .ward-map-card.fullscreen {
+    top: 8px !important;
+    bottom: 8px !important;
+    left: 8px !important;
+    right: 8px !important;
+    height: calc(100vh - 16px) !important;
+    width: calc(100vw - 16px) !important;
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+}

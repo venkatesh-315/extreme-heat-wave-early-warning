@@ -1,0 +1,127 @@
+/* Health Impact Forecast Card Styles */
+.health-forecast-card {
+  padding: 20px 24px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.forecast-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.forecast-chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.legend-entry {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.legend-line {
+  width: 10px;
+  height: 2px;
+  border-radius: 2px;
+}
+
+.legend-line.red {
+  background: #ef4444;
+}
+
+.legend-line.purple {
+  background: #8b5cf6;
+}
+
+.forecast-chart-wrap {
+  width: 100%;
+  margin: 4px 0 12px;
+}
+
+.forecast-chart-tooltip {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+}
+
+.tooltip-day-label {
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.tooltip-stat-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Bottom Highlight Cards */
+.forecast-stat-boxes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.highlight-stat-box {
+  padding: 10px 14px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.highlight-stat-box.red {
+  background: #fef2f2;
+}
+
+.highlight-stat-box.purple {
+  background: #faf5ff;
+}
+
+.stat-box-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.highlight-stat-box.red .stat-box-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #dc2626;
+  line-height: 1.2;
+}
+
+.highlight-stat-box.purple .stat-box-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #7c3aed;
+  line-height: 1.2;
+}
+
+.stat-box-date {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  color: #94a3b8;
+}

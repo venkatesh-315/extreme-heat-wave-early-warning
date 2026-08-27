@@ -1,0 +1,198 @@
+/* Human Thermal Stress Card CSS */
+.human-stress-card {
+  padding: 20px 24px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-top-title {
+  margin-bottom: 14px;
+}
+
+.card-heading {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-tooltip-wrap {
+  display: inline-flex;
+  cursor: help;
+}
+
+.stress-card-body {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 1;
+}
+
+/* Circular Ring */
+.stress-gauge-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.circular-gauge-container {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-svg-element {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.gauge-bg-ring {
+  fill: none;
+  stroke: #f1f5f9;
+  stroke-width: 8;
+}
+
+.gauge-progress-ring {
+  fill: none;
+  stroke: #ef4444;
+  stroke-width: 8.5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.gauge-center-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.gauge-val-big {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.95rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.gauge-unit-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* Right Details */
+.stress-details-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.severity-headline-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.severity-title-red {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #dc2626;
+  letter-spacing: 0.02em;
+}
+
+.severity-level-pill {
+  background: #f3e8ff;
+  color: #7c3aed;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.stress-description {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Sub-metrics row */
+.submetrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding-top: 6px;
+  border-top: 1px solid #f8fafc;
+}
+
+.submetric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.submetric-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.submetric-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.submetric-val.text-extreme {
+  color: #dc2626;
+}
+
+.stress-updated-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+@media (max-width: 640px) {
+  .stress-card-body {
+    flex-direction: column;
+    text-align: center;
+  }
+  .severity-headline-row {
+    justify-content: center;
+  }
+  .submetrics-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .stress-updated-row {
+    justify-content: center;
+  }
+}

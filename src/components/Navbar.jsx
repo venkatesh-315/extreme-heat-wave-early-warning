@@ -4,13 +4,12 @@ import {
   PhoneIcon,
   AmbulanceIcon,
   ShieldAlertIcon,
-  SatelliteIcon,
   ActivityIcon,
   XIcon
 } from './icons';
 import './Navbar.css';
 
-function Navbar({ onOpenImdModal, isLive = true }) {
+function Navbar({ isLive = true }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -68,16 +67,6 @@ function Navbar({ onOpenImdModal, isLive = true }) {
             </div>
 
             <button
-              id="imd-api-config-btn"
-              className="btn btn-secondary btn-sm api-config-btn"
-              onClick={onOpenImdModal}
-              title="Configure IMD API Key and Data Sources"
-            >
-              <SatelliteIcon size={15} color="#1e40af" />
-              <span>IMD API Settings</span>
-            </button>
-
-            <button
               className="hamburger-btn"
               onClick={() => setMenuOpen((o) => !o)}
               aria-label="Toggle navigation menu"
@@ -116,16 +105,6 @@ function Navbar({ onOpenImdModal, isLive = true }) {
                 </a>
               </div>
             </div>
-            <button
-              className="btn btn-primary btn-sm mobile-api-btn"
-              onClick={() => {
-                setMenuOpen(false);
-                if (onOpenImdModal) onOpenImdModal();
-              }}
-            >
-              <SatelliteIcon size={15} color="#ffffff" />
-              <span>Configure IMD Weather API Key</span>
-            </button>
           </div>
         )}
       </nav>

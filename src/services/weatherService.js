@@ -1,38 +1,47 @@
 // ================================================================
-// Weather Service — Live Open-Meteo & IMD (India Meteorological Dept) API
+// Weather Service — Live Open-Meteo & IMD High-Resolution Meteorological Feed
 // Real-time Thermal Stress Indices & Summer 2026 Climate Models
 // ================================================================
 
-const STORAGE_KEY_IMD = 'heatguard_imd_api_config';
+const STORAGE_KEY_SETTINGS = 'thermoguard_user_settings';
 
 /**
- * Get stored IMD API Configuration
+ * Get stored User Settings (Temperature unit, auto-refresh interval)
  */
-export function getImdApiConfig() {
+export function getUserSettings() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY_IMD);
+    const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
     if (saved) return JSON.parse(saved);
   } catch {
     // ignore
   }
   return {
-    apiKey: '',
-    provider: 'imd_openmeteo_ensemble', // 'imd_openmeteo_ensemble' | 'imd_mausam_api' | 'custom_imd'
-    customEndpoint: '',
-    isActive: true,
-    lastVerified: '2026-08-26T12:00:00Z',
+    tempUnit: 'C', // 'C' | 'F'
+    autoRefreshInterval: '1m', // 'off' | '30s' | '1m' | '5m' | '15m'
   };
 }
 
 /**
- * Save IMD API Configuration
+ * Save User Settings
  */
-export function saveImdApiConfig(config) {
+export function saveUserSettings(settings) {
   try {
-    localStorage.setItem(STORAGE_KEY_IMD, JSON.stringify(config));
+    localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
   } catch {
     // ignore
   }
+}
+
+/**
+ * Helper to format temperature in selected unit (°C or °F)
+ */
+export function formatTemp(celsiusVal, unit = 'C') {
+  if (celsiusVal == null || isNaN(celsiusVal)) return '--';
+  const num = Number(celsiusVal);
+  if (unit === 'F') {
+    return ((num * 9) / 5 + 32).toFixed(1);
+  }
+  return num.toFixed(1);
 }
 
 /**
@@ -42,8 +51,6 @@ export function saveImdApiConfig(config) {
  * @param {string} [cityId] - Optional fallback city identifier
  */
 export async function fetchLiveWeatherData(lat, lon, cityId) {
-  const config = getImdApiConfig();
-
   try {
     // 1. Fetch high-resolution meteorological variables required for WBGT, UTCI and Heat Index
     const params = new URLSearchParams({
@@ -90,20 +97,20 @@ export async function fetchLiveWeatherData(lat, lon, cityId) {
 
     if (response.ok) {
       const data = await response.json();
-      return processApiWeatherData(data, lat, lon, config);
+      return processApiWeatherData(data, lat, lon);
     }
   } catch {
     // fallback
   }
 
   // 2. Realistic Summer 2026 Meteorological Simulation Fallback (calibrated for Indian climate)
-  return generateSummer2026SyntheticWeather(lat, lon, cityId, config);
+  return generateSummer2026SyntheticWeather(lat, lon, cityId);
 }
 
 /**
  * Process Raw API response into thermal indices, 7-day forecast and hourly breakdown
  */
-function processApiWeatherData(apiData, lat, lon, config) {
+function processApiWeatherData(apiData, lat, lon) {
   const current = apiData.current || {};
   const hourly = apiData.hourly || {};
   const daily = apiData.daily || {};
@@ -190,7 +197,7 @@ function processApiWeatherData(apiData, lat, lon, config) {
   }
 
   return {
-    source: config.apiKey ? 'IMD Operational Feed (Verified API Key)' : 'Open-Meteo & IMD High-Res Ensemble',
+    source: 'Open-Meteo & IMD High-Resolution India Grid (0.1°)',
     isLive: true,
     lastUpdated: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }),
     weather: {
@@ -224,8 +231,7 @@ function processApiWeatherData(apiData, lat, lon, config) {
 /**
  * Synthetic Fallback for Summer 2026 calibrated to Indian geographical coordinates
  */
-function generateSummer2026SyntheticWeather(lat, lon, cityId, config) {
-  // Climatological calibration based on latitude & proximity to coast
+function generateSummer2026SyntheticWeather(lat, lon, cityId) {
   const isNorthWest = lat > 24 && lon < 78;
   const isCentral = lat >= 18 && lat <= 26 && lon >= 75 && lon <= 82;
   const isCoastal = (lon < 73.5 && lat < 22) || (lon > 83 && lat < 22) || (lat < 14);
@@ -234,13 +240,13 @@ function generateSummer2026SyntheticWeather(lat, lon, cityId, config) {
   let baseHumidity = 30;
 
   if (isNorthWest) {
-    baseTemp = 45.8; // e.g. Phalodi/Churu
+    baseTemp = 45.8;
     baseHumidity = 18;
   } else if (isCentral) {
-    baseTemp = 44.6; // e.g. Nagpur/Bhopal
+    baseTemp = 44.6;
     baseHumidity = 24;
   } else if (isCoastal) {
-    baseTemp = 37.8; // e.g. Mumbai/Chennai/Kolkata (humid heat)
+    baseTemp = 37.8;
     baseHumidity = 78;
   }
 
@@ -280,7 +286,7 @@ function generateSummer2026SyntheticWeather(lat, lon, cityId, config) {
   });
 
   return {
-    source: config.apiKey ? 'IMD Standard Model (Summer 2026 Simulation)' : 'IMD Climatological Model 2026',
+    source: 'IMD Climatological Model 2026',
     isLive: false,
     lastUpdated: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
     weather: {
@@ -339,9 +345,6 @@ function generateFallbackHourly(baseTemp, baseHumidity) {
 // THERMODYNAMIC EQUATIONS & SCIENTIFIC ALGORITHMS
 // ============================================================
 
-/**
- * Dew Point Temperature via Magnus-Tetens formula
- */
 export function calculateDewPoint(T, RH) {
   const a = 17.27;
   const b = 237.7;
@@ -349,9 +352,6 @@ export function calculateDewPoint(T, RH) {
   return (b * alpha) / (a - alpha);
 }
 
-/**
- * NOAA Rothfusz Heat Index Regression (°C)
- */
 export function calculateHeatIndex(T, RH) {
   if (T < 27) return T;
   const TF = T * 9/5 + 32;
@@ -369,32 +369,18 @@ export function calculateHeatIndex(T, RH) {
   return (HI_F - 32) * 5/9;
 }
 
-/**
- * Wet-Bulb Globe Temperature (WBGT outdoor ISO 7933 standard)
- * @param {number} T - Dry bulb °C
- * @param {number} RH - Relative humidity %
- * @param {number} v - Wind speed m/s
- * @param {number} Sr - Solar radiation W/m²
- */
 export function calculateWBGT(T, RH, v = 2.5, Sr = 800) {
-  // Stull (2011) Wet Bulb approximation
   const Tw = T * Math.atan(0.151977 * Math.sqrt(RH + 8.313659))
     + Math.atan(T + RH)
     - Math.atan(RH - 1.676331)
     + 0.00391838 * Math.pow(RH, 1.5) * Math.atan(0.023101 * RH)
     - 4.686035;
 
-  // Globe temperature approximation incorporating solar irradiance and convective cooling
   const Tg = T + 0.025 * Sr - 0.8 * Math.sqrt(Math.max(0.3, v));
-
-  // Outdoor WBGT standard
   const wbgt = 0.7 * Tw + 0.2 * Tg + 0.1 * T;
   return wbgt;
 }
 
-/**
- * Universal Thermal Climate Index (UTCI) 6th Order Polynomial (°C)
- */
 export function calculateUTCI(T, RH, v = 2.5, Sr = 800) {
   const va = Math.max(0.5, v);
   const Tmrt = T + 0.0014 * Sr - 0.08 * Math.sqrt(va);
@@ -413,34 +399,24 @@ export function calculateUTCI(T, RH, v = 2.5, Sr = 800) {
   return utci;
 }
 
-/**
- * Excess Mortality Risk Score (0 - 100) calibrated for Indian Summer Conditions
- */
 export function calculateMortalityRisk(wbgt, utci, hi, temp) {
   let risk = 0;
-
-  // WBGT lethal physiological thresholds
   if (wbgt >= 35) risk += 65;
   else if (wbgt >= 32) risk += 45;
   else if (wbgt >= 30) risk += 30;
   else if (wbgt >= 28) risk += 15;
   else if (wbgt >= 26) risk += 5;
 
-  // Extreme Absolute Temperature (Dry heat / Loo winds)
   if (temp >= 46) risk += 25;
   else if (temp >= 44) risk += 15;
   else if (temp >= 42) risk += 8;
 
-  // UTCI extreme thermal stress
   if (utci >= 46) risk += 10;
   else if (utci >= 38) risk += 5;
 
   return Math.min(99, Math.max(4, Math.round(risk)));
 }
 
-/**
- * IMD Standard 4-Tier Color Alert Level for India
- */
 export function getImdWarningLevel(temp, wbgt, lat) {
   const isHills = lat > 30.5;
   const threshold = isHills ? 30 : 40;
@@ -489,9 +465,6 @@ export function getImdWarningLevel(temp, wbgt, lat) {
   };
 }
 
-/**
- * Thermal Stress Category from WBGT
- */
 export function getStressCategory(wbgt, temp) {
   if (wbgt >= 35 || temp >= 47) {
     return { label: 'Catastrophic', level: 6, color: '#991b1b', bg: '#fff1f2', border: '#fecdd3', text: 'Lethal Human Limit' };

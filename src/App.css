@@ -1,626 +1,163 @@
 /* ================================================================
-   App.css — Civic Layout, Structured Tabs, Executive Dashboard & Light Theme
-================================================================ */
+   ThermoGuard Heatwave Early Warning System — Main App Styles
+   Clean, modern, high-precision light theme dashboard
+   ================================================================ */
 
-.app-root {
+.thermoguard-app {
+  display: flex;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--bg-body);
-}
-
-/* Subtle Government Top Strip */
-.gov-top-bar {
-  background: #ffffff;
-  border-bottom: 1px solid var(--border-subtle);
-  padding: 6px 20px;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.gov-top-inner {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.gov-brand-unit {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.gov-badge-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gov-emblem {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.gov-portal-tag {
-  background: #eff6ff;
-  color: #1e40af;
-  border: 1px solid #bfdbfe;
-  padding: 1px 6px;
-  border-radius: var(--radius-xs);
-  font-size: 0.675rem;
-  font-weight: 600;
-}
-
-.gov-helplines {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.helpline-label {
-  font-weight: 700;
-  color: var(--text-muted);
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.helpline-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--text-secondary);
-  font-weight: 600;
-  text-decoration: none;
-  background: #f8fafc;
-  padding: 3px 8px;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--border-subtle);
-  transition: var(--transition);
-  font-size: 0.725rem;
-}
-
-.helpline-pill:hover {
-  background: #eff6ff;
-  border-color: #93c5fd;
-  color: var(--primary-blue);
-}
-
-.helpline-pill strong {
-  color: var(--imd-red);
-}
-
-/* Main Container */
-.app-main {
-  flex: 1;
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 20px 20px 60px;
-}
-
-/* Hero / Header Search Section */
-.hero-section {
-  background: #ffffff;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  padding: 32px 32px 28px;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow-sm);
-  position: relative;
-  overflow: visible;
-  z-index: 100;
-  transition: var(--transition);
-}
-
-.hero-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.hero-titles {
-  max-width: 820px;
-}
-
-.hero-badge-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.season-badge {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.portal-code-badge {
-  background: #f8fafc;
+  min-height: 100dvh;
+  background-color: #f8fafc;
   color: #334155;
-  border: 1px solid #cbd5e1;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  align-items: flex-start;
+  position: relative;
 }
 
-.hero-title-container {
-  margin-bottom: 8px;
-}
-
-.hero-main-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
-  font-weight: 800;
-  color: var(--text-primary);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  display: block;
-}
-
-.split-parent {
-  display: inline-block;
-  white-space: normal;
-  word-wrap: break-word;
-}
-
-.split-char {
-  display: inline-block;
-  will-change: transform, opacity;
-}
-
-.split-word {
-  display: inline-block;
-  white-space: nowrap;
-}
-
-.hero-subtitle {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.55;
-  max-width: 740px;
-}
-
-.hero-actions-right {
+.app-main-layout {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
 }
 
-.api-status-btn {
-  background: #f8fafc;
-  border: 1px solid var(--border-strong);
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: var(--transition);
-  white-space: nowrap;
-}
-
-.api-status-btn:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
-}
-
-/* Quick Summary Bar for Selected Location */
-.active-location-banner {
-  background: #f8fafc;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-}
-
-.active-loc-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.loc-pin-icon-wrap {
-  width: 44px;
-  height: 44px;
-  background: #ffffff;
-  border: 1.5px solid #cbd5e1;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.loc-title-h2 {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  line-height: 1.2;
-}
-
-.loc-meta-text {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 2px;
-  flex-wrap: wrap;
-}
-
-.active-loc-metrics {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.loc-metric-pill {
-  background: #ffffff;
-  border: 1px solid var(--border-subtle);
-  padding: 6px 12px;
-  border-radius: var(--radius-md);
+.dashboard-scroll-body {
+  padding: 24px 28px 40px;
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  max-width: 1540px;
+  width: 100%;
+  margin: 0 auto;
+  flex: 1;
 }
 
-.loc-metric-label {
-  font-size: 0.675rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-}
-
-.loc-metric-val {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-/* Dashboard Nav Tabs */
-.dashboard-nav {
-  display: flex;
-  gap: 6px;
-  border-bottom: 1px solid var(--border-strong);
-  margin-bottom: 24px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 2px;
-}
-
-.dashboard-nav::-webkit-scrollbar {
-  display: none;
-}
-
-.nav-tab {
-  padding: 10px 16px;
-  background: none;
-  border: none;
-  border-bottom: 3px solid transparent;
-  color: var(--text-muted);
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  margin-bottom: -1px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  flex-shrink: 0;
-}
-
-.nav-tab:hover {
-  color: var(--text-primary);
-  background: #f1f5f9;
-}
-
-.nav-tab.active {
-  color: var(--primary-blue);
-  border-bottom-color: var(--primary-blue);
-  background: #ffffff;
-  font-weight: 700;
-}
-
-.tab-badge {
-  background: #f1f5f9;
-  color: var(--text-secondary);
-  font-size: 0.675rem;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 99px;
-  border: 1px solid var(--border-subtle);
-}
-
-.nav-tab.active .tab-badge {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: var(--primary-blue);
-}
-
-/* Section layouts */
-.section-fade {
+/* Dashboard Grid Container */
+.dashboard-grid-container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Loading State */
-.loading-overlay {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 380px;
-  padding: 20px;
-}
-
-.loading-card {
-  padding: 36px 32px;
-  text-align: center;
-  max-width: 480px;
+  gap: 20px;
   width: 100%;
 }
 
-.loading-spinner {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 16px;
-  border: 4px solid #f1f5f9;
-  border-top-color: var(--primary-blue);
-  border-right-color: var(--imd-orange);
-  border-radius: 50%;
+.dashboard-row {
+  display: grid;
+  gap: 20px;
+  align-items: stretch;
 }
 
-.loading-title {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 4px;
+/* ROW 1: Human Thermal Stress (wide), Key Weather Params, Active Alert */
+.row-1 {
+  grid-template-columns: 1.4fr 1fr 1fr;
 }
 
-.loading-sub {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-bottom: 20px;
+/* ROW 2: Ward Level Risk Map, 5-Day Health Impact Forecast, Recommended Actions */
+.row-2 {
+  grid-template-columns: 1.1fr 1.35fr 1fr;
 }
 
-.loading-steps {
+/* ROW 3: At-Risk Population Overview (spans wide), Model Confidence */
+.row-3 {
+  grid-template-columns: 2.35fr 1fr;
+}
+
+.grid-col {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  text-align: left;
+  min-width: 0;
 }
 
-.loading-step {
+.grid-col > * {
+  height: 100%;
+}
+
+/* Bottom Footer Note */
+.dashboard-bottom-footer {
+  text-align: center;
+  padding: 16px 0 10px;
+}
+
+.dashboard-bottom-footer p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Tab Views Container */
+.tab-view-container {
+  width: 100%;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.825rem;
-  color: var(--text-secondary);
-  padding: 6px 10px;
-  background: #f8fafc;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-subtle);
+  flex-direction: column;
+  gap: 20px;
 }
 
-.step-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--primary-blue);
-  border-radius: 50%;
-  animation: pulseDot 1.2s infinite;
-}
+/* ================================================================
+   RESPONSIVE MEDIA QUERIES & MOBILE OPTIMIZATIONS
+   ================================================================ */
 
-/* Stats Overview */
-.stats-overview {
-  margin-top: 16px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.overview-stat-card {
-  padding: 18px;
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.overview-icon-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid var(--border-subtle);
-}
-
-.overview-val {
-  font-family: var(--font-display);
-  font-size: 1.55rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  line-height: 1.1;
-  margin-bottom: 2px;
-}
-
-.overview-lbl {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.overview-sub {
-  font-size: 0.725rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-/* Summer 2026 Advisory Banner */
-.summer-2026-advisory-card {
-  border-left: 4px solid var(--imd-orange);
-  padding: 24px;
-}
-
-.advisory-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.advisory-title-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.advisory-title {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.advisory-text {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 16px;
-}
-
-.hotspot-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.hotspot-tag {
-  background: #fff7ed;
-  color: #c2410c;
-  border: 1px solid #fed7aa;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-/* Mobile & Tablet Responsiveness */
-@media (max-width: 1024px) {
-  .hero-header-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
+@media (max-width: 1360px) {
+  .row-1 {
+    grid-template-columns: 1.2fr 1fr 1fr;
   }
-  .hero-actions-right {
-    align-items: flex-start;
-  }
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .row-2 {
+    grid-template-columns: 1fr 1.2fr 1fr;
   }
 }
 
-@media (max-width: 640px) {
-  .app-main {
-    padding: 12px 12px 40px;
+@media (max-width: 1180px) {
+  .row-1 {
+    grid-template-columns: 1fr 1fr;
   }
-  .gov-top-bar {
-    padding: 6px 12px;
+  .row-1 .col-stress {
+    grid-column: span 2;
   }
-  .gov-helplines {
-    display: none;
+
+  .row-2 {
+    grid-template-columns: 1fr 1fr;
   }
-  .hero-section {
-    padding: 18px 14px;
-    border-radius: var(--radius-lg);
+  .row-2 .col-map {
+    grid-column: span 2;
   }
-  .hero-main-title {
-    font-size: 1.45rem;
+
+  .row-3 {
+    grid-template-columns: 1fr;
   }
-  .hero-subtitle {
-    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .dashboard-scroll-body {
+    padding: 14px 14px 84px; /* Extra bottom padding for MobileNav bar */
+    gap: 14px;
   }
-  .active-location-banner {
-    padding: 14px 12px;
-    flex-direction: column;
-    align-items: stretch;
+
+  .dashboard-row {
+    grid-template-columns: 1fr !important;
+    gap: 14px;
+  }
+
+  .row-1 .col-stress,
+  .row-2 .col-map {
+    grid-column: span 1 !important;
+  }
+
+  .dashboard-bottom-footer {
+    padding: 8px 0 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-scroll-body {
+    padding: 10px 10px 84px;
     gap: 12px;
   }
-  .active-loc-metrics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .loc-metric-pill {
-    padding: 8px 10px;
-  }
-  .dashboard-nav {
-    gap: 4px;
-    margin-bottom: 16px;
-  }
-  .nav-tab {
-    padding: 8px 12px;
-    font-size: 0.8rem;
-  }
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .summer-2026-advisory-card {
-    padding: 16px;
+  .dashboard-row {
+    gap: 12px;
   }
 }
