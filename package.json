@@ -1,0 +1,17 @@
+{
+  "name": "extreme-heat-wave-early-warning",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173 --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.7"
+  },
+  "devDependencies": {
+    "vite": "^6.0.7"
+  }
+}

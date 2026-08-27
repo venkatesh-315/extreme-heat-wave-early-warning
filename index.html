@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThermoGuard - Heatwave Early Warning System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <div class="logo-shield-wrapper">
+            <svg class="logo-icon" viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L4 8V20C4 29 10.8 37.4 20 40C29.2 37.4 36 29 36 20V8L20 2Z" stroke="#EA580C" stroke-width="2.2" stroke-linejoin="round" fill="#FFF7ED"/>
+              <circle cx="20" cy="20" r="6" fill="#EF4444"/>
+              <path d="M20 8.5V11.5M20 28.5V31.5M8.5 20H11.5M28.5 20H31.5M11.9 11.9L14 14M26 26L28.1 28.1M11.9 28.1L14 26M26 14L28.1 11.9" stroke="#EA580C" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1 class="brand-name">THERMOGUARD</h1>
+            <p class="brand-sub">Heatwave Early Warning System</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item active" id="nav-dashboard">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#heatmap" class="nav-item" id="nav-heatmap">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+          </span>
+          <span class="nav-label">Heat Map</span>
+        </a>
+        <a href="#forecast" class="nav-item" id="nav-forecast">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+          </span>
+          <span class="nav-label">Forecast</span>
+        </a>
+        <a href="#health-impact" class="nav-item" id="nav-health">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path><path d="M7.5 12h2.5l1.5-2.5 2 5 1.5-2.5h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-label">Health Impact</span>
+        </a>
+        <a href="#alerts" class="nav-item" id="nav-alerts">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          </span>
+          <span class="nav-label">Alerts</span>
+        </a>
+        <a href="#action-center" class="nav-item" id="nav-action">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v5l3 3"></path><circle cx="12" cy="12" r="2"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2"></path></svg>
+          </span>
+          <span class="nav-label">Action Center</span>
+        </a>
+        <a href="#reports" class="nav-item" id="nav-reports">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </span>
+          <span class="nav-label">Reports</span>
+        </a>
+        <a href="#settings" class="nav-item" id="nav-settings">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          </span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-card">
+          <div class="status-indicator">
+            <span class="dot-pulse green-dot"></span>
+            <span class="status-title">System Status</span>
+          </div>
+          <p class="status-desc">All Systems Operational</p>
+        </div>
+
+        <div class="govt-card">
+          <div class="govt-emblem">
+            <!-- Detailed Indian Emblem (Ashoka Lion Capital) -->
+            <svg viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg" class="emblem-svg">
+              <path d="M18 3C15.2 3 13 5.2 13 8C13 9.4 13.8 10.6 15 11.2C12.5 11.8 10 13.8 10 17C10 20.2 12.2 21.8 14.2 22.4C13.2 23.5 12 25.2 12 27.5C12 30.5 14.5 32.5 17 33H19C21.5 32.5 24 30.5 24 27.5C24 25.2 22.8 23.5 21.8 22.4C23.8 21.8 26 20.2 26 17C26 13.8 23.5 11.8 21 11.2C22.2 10.6 23 9.4 23 8C23 5.2 20.8 3 18 3Z" fill="#334155"/>
+              <!-- Abacus & Dharma Chakra -->
+              <rect x="9" y="34.5" width="18" height="4" rx="1" fill="#475569"/>
+              <circle cx="18" cy="36.5" r="1.6" fill="#F8FAFC"/>
+              <circle cx="18" cy="36.5" r="0.6" fill="#334155"/>
+              <rect x="7" y="39.5" width="22" height="2.5" rx="0.8" fill="#1E293B"/>
+            </svg>
+          </div>
+          <div class="govt-info">
+            <div class="govt-heading">MoES | NCMRWF</div>
+            <div class="govt-sub">Ministry of Earth Sciences</div>
+            <div class="govt-country">Government of India</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Navigation Bar -->
+      <header class="top-bar">
+        <div class="top-left">
+          <div class="location-pill" id="location-select">
+            <svg class="loc-pin" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span class="location-name">Hyderabad, Telangana</span>
+            <svg class="chevron-down" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div class="refresh-indicator">
+            <span class="refresh-text">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Auto Refresh
+            </span>
+            <span class="live-pill">
+              <span class="live-dot"></span>
+              Live
+            </span>
+          </div>
+        </div>
+
+        <div class="top-right">
+          <div class="notification-btn" id="notif-btn">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="notif-badge">3</span>
+          </div>
+          <div class="datetime-display">
+            <div class="time-text" id="live-time">10:24 AM</div>
+            <div class="date-text" id="live-date">26 Aug 2025</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- ROW 1 -->
+        <!-- Card 1: Human Thermal Stress Index -->
+        <section class="card thermal-stress-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Human Thermal Stress Index</h2>
+              <button class="info-btn" aria-label="Info" title="Wet Bulb Globe Temperature and Universal Thermal Climate Index">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="stress-content">
+            <div class="gauge-container">
+              <div class="circular-gauge">
+                <svg viewBox="0 0 120 120" class="gauge-svg">
+                  <!-- Background Track -->
+                  <circle cx="60" cy="60" r="48" class="gauge-bg" />
+                  <!-- Filled Value Track (~76%) -->
+                  <circle cx="60" cy="60" r="48" class="gauge-val" />
+                </svg>
+                <div class="gauge-inner-text">
+                  <span class="gauge-number">38.7</span>
+                  <span class="gauge-unit">°C (WBGT)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="stress-details">
+              <div class="stress-status-row">
+                <span class="stress-level-tag">CRITICAL</span>
+                <span class="level-badge">Level 5</span>
+              </div>
+              <p class="stress-subhead">Extreme heat stress conditions.</p>
+              <p class="stress-warning">High risk of heat illness and mortality.</p>
+
+              <div class="stress-metrics-row">
+                <div class="stress-col">
+                  <span class="metric-label">WBGT</span>
+                  <span class="metric-val">34.8 °C</span>
+                </div>
+                <div class="stress-col">
+                  <span class="metric-label">UTCI</span>
+                  <span class="metric-val">41.2 °C</span>
+                </div>
+                <div class="stress-col">
+                  <span class="metric-label">Heat Index</span>
+                  <span class="metric-val">53.1 °C</span>
+                </div>
+                <div class="stress-col">
+                  <span class="metric-label">Discomfort</span>
+                  <span class="metric-val font-bold">Extreme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer-note">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>Updated: 10:20 AM</span>
+          </div>
+        </section>
+
+        <!-- Card 2: Key Weather Parameters -->
+        <section class="card weather-params-card">
+          <div class="card-header">
+            <h2 class="card-title">Key Weather Parameters</h2>
+          </div>
+
+          <div class="weather-list">
+            <div class="weather-row">
+              <div class="weather-label-group">
+                <span class="weather-icon-box temp-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg>
+                </span>
+                <span class="param-name">Temperature</span>
+              </div>
+              <span class="param-value text-red">42.1 °C</span>
+            </div>
+
+            <div class="weather-row">
+              <div class="weather-label-group">
+                <span class="weather-icon-box humidity-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                </span>
+                <span class="param-name">Humidity</span>
+              </div>
+              <span class="param-value">68 %</span>
+            </div>
+
+            <div class="weather-row">
+              <div class="weather-label-group">
+                <span class="weather-icon-box wind-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
+                </span>
+                <span class="param-name">Wind Speed</span>
+              </div>
+              <span class="param-value">12.6 km/h</span>
+            </div>
+
+            <div class="weather-row">
+              <div class="weather-label-group">
+                <span class="weather-icon-box solar-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </span>
+                <span class="param-name">Solar Radiation</span>
+              </div>
+              <span class="param-value">620 W/m²</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 3: Active Alert -->
+        <section class="card active-alert-card">
+          <div class="card-header">
+            <div class="alert-title-header">
+              <svg class="alert-badge-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <h2 class="card-title">Active Alert</h2>
+            </div>
+          </div>
+
+          <div class="alert-body">
+            <div class="alert-headline-row">
+              <h3 class="alert-headline">EXTREME HEAT ALERT</h3>
+              <span class="red-alert-badge">
+                <span class="red-alert-dot"></span>
+                Red Alert
+              </span>
+            </div>
+            <p class="alert-description">Severe heatwave conditions likely to persist for next 3 days.</p>
+
+            <div class="affected-section">
+              <span class="affected-label">Affected Population</span>
+              <span class="affected-sub">Ward 14A-19B</span>
+            </div>
+
+            <div class="alert-timestamp">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span>29 Aug 2025, 10:00 AM</span>
+            </div>
+
+            <button class="btn-all-alerts" id="btn-all-alerts">
+              <span>View All Alerts</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- ROW 2 -->
+        <!-- Card 4: Ward Level Risk Map -->
+        <section class="card ward-map-card">
+          <div class="card-header space-between">
+            <div class="card-title-group">
+              <h2 class="card-title">Ward Level Risk Map</h2>
+              <button class="info-btn" aria-label="Info" title="Choropleth heat risk by municipal ward">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              </button>
+            </div>
+            <div class="dropdown-pill-sm">
+              <span>Risk Index</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </div>
+
+          <div class="map-wrapper" id="map-container">
+            <!-- Map Controls -->
+            <div class="map-controls">
+              <button class="map-btn" id="map-zoom-in" title="Zoom in">+</button>
+              <button class="map-btn" id="map-zoom-out" title="Zoom out">–</button>
+              <button class="map-btn" id="map-fullscreen" title="Reset view">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              </button>
+            </div>
+
+            <!-- SVG Map of Hyderabad Wards (High fidelity organic ward polygons) -->
+            <div class="svg-map-container" id="svg-map-wrapper">
+              <svg viewBox="0 0 520 440" class="ward-svg" id="ward-svg-element">
+                <!-- Background subtle road network lines -->
+                <g class="map-roads" opacity="0.12">
+                  <path d="M 60 160 Q 260 210 460 170" stroke="#64748B" stroke-width="1.5" fill="none"/>
+                  <path d="M 130 50 Q 250 230 390 390" stroke="#64748B" stroke-width="1.5" fill="none"/>
+                  <path d="M 410 70 Q 260 210 90 370" stroke="#64748B" stroke-width="1.5" fill="none"/>
+                  <path d="M 230 30 Q 270 220 250 410" stroke="#64748B" stroke-width="2" fill="none"/>
+                  <path d="M 30 230 Q 260 220 490 240" stroke="#64748B" stroke-width="2" fill="none"/>
+                </g>
+
+                <!-- OUTER GREEN WARDS (Low Risk 0-20) -->
+                <g class="ward-group" fill="#86EFAC" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round">
+                  <path id="ward-1" class="ward-poly" data-name="Ward 1 - Patancheru" data-risk="14" data-temp="36.2" data-status="Low (0-20)" d="M 140 165 L 175 178 L 165 218 L 125 225 L 115 185 Z"/>
+                  <path id="ward-2" class="ward-poly" data-name="Ward 2 - Serilingampally" data-risk="18" data-temp="37.0" data-status="Low (0-20)" d="M 125 225 L 165 218 L 170 260 L 132 282 L 108 250 Z"/>
+                  <path id="ward-3" class="ward-poly" data-name="Ward 3 - Rajendranagar" data-risk="19" data-temp="37.1" data-status="Low (0-20)" d="M 132 282 L 170 260 L 185 305 L 162 335 L 128 320 Z"/>
+                  <path id="ward-4" class="ward-poly" data-name="Ward 4 - Shamshabad" data-risk="15" data-temp="36.5" data-status="Low (0-20)" d="M 162 335 L 185 305 L 212 332 L 202 375 L 158 362 Z"/>
+                  <path id="ward-5" class="ward-poly" data-name="Ward 5 - LB Nagar South" data-risk="17" data-temp="36.9" data-status="Low (0-20)" d="M 330 295 L 368 280 L 392 315 L 360 355 L 318 328 Z"/>
+                  <path id="ward-6" class="ward-poly" data-name="Ward 6 - Hayathnagar" data-risk="16" data-temp="36.8" data-status="Low (0-20)" d="M 368 280 L 405 252 L 435 290 L 392 315 Z"/>
+                  <path id="ward-7" class="ward-poly" data-name="Ward 7 - Uppal East" data-risk="19" data-temp="37.2" data-status="Low (0-20)" d="M 380 190 L 428 180 L 442 228 L 405 252 L 372 232 Z"/>
+                  <path id="ward-8" class="ward-poly" data-name="Ward 8 - Medchal North" data-risk="12" data-temp="35.8" data-status="Low (0-20)" d="M 168 128 L 205 108 L 216 150 L 180 165 L 142 150 Z"/>
+                  <path id="ward-9" class="ward-poly" data-name="Ward 9 - Quthbullapur North" data-risk="15" data-temp="36.4" data-status="Low (0-20)" d="M 205 108 L 255 98 L 260 140 L 216 150 Z"/>
+                  <path id="ward-10" class="ward-poly" data-name="Ward 10 - Alwal North" data-risk="18" data-temp="37.0" data-status="Low (0-20)" d="M 255 98 L 298 112 L 292 150 L 260 140 Z"/>
+                  <path id="ward-10b" class="ward-poly" data-name="Ward 10B - Keesara" data-risk="14" data-temp="36.3" data-status="Low (0-20)" d="M 298 112 L 345 130 L 338 168 L 292 150 Z"/>
+                  <path id="ward-10c" class="ward-poly" data-name="Ward 10C - Ghatkesar" data-risk="16" data-temp="36.7" data-status="Low (0-20)" d="M 345 130 L 388 152 L 380 190 L 338 168 Z"/>
+                </g>
+
+                <!-- MODERATE YELLOW WARDS (20-40) -->
+                <g class="ward-group" fill="#FDE047" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round">
+                  <path id="ward-11" class="ward-poly" data-name="Ward 11 - Kukatpally West" data-risk="32" data-temp="38.5" data-status="Moderate (20-40)" d="M 180 165 L 216 150 L 222 188 L 175 178 Z"/>
+                  <path id="ward-12" class="ward-poly" data-name="Ward 12 - Jubilee Hills Outer" data-risk="28" data-temp="38.0" data-status="Moderate (20-40)" d="M 175 178 L 222 188 L 218 222 L 165 218 Z"/>
+                  <path id="ward-13" class="ward-poly" data-name="Ward 13 - Banjara Hills West" data-risk="36" data-temp="39.1" data-status="Moderate (20-40)" d="M 165 218 L 218 222 L 212 258 L 170 260 Z"/>
+                  <path id="ward-14" class="ward-poly" data-name="Ward 14 - Attapur" data-risk="34" data-temp="38.8" data-status="Moderate (20-40)" d="M 170 260 L 212 258 L 222 298 L 185 305 Z"/>
+                  <path id="ward-15" class="ward-poly" data-name="Ward 15 - Falaknuma South" data-risk="38" data-temp="39.4" data-status="Moderate (20-40)" d="M 185 305 L 222 298 L 244 335 L 212 332 Z"/>
+                  <path id="ward-16" class="ward-poly" data-name="Ward 16 - Chandrayangutta" data-risk="35" data-temp="39.0" data-status="Moderate (20-40)" d="M 222 298 L 265 292 L 275 340 L 244 335 Z"/>
+                  <path id="ward-17" class="ward-poly" data-name="Ward 17 - Saroornagar" data-risk="30" data-temp="38.2" data-status="Moderate (20-40)" d="M 265 292 L 305 282 L 318 328 L 275 340 Z"/>
+                  <path id="ward-18" class="ward-poly" data-name="Ward 18 - Ramanthapur" data-risk="37" data-temp="39.2" data-status="Moderate (20-40)" d="M 305 282 L 330 295 L 368 280 L 352 242 L 315 252 Z"/>
+                  <path id="ward-19" class="ward-poly" data-name="Ward 19 - Malkajgiri Outer" data-risk="31" data-temp="38.4" data-status="Moderate (20-40)" d="M 292 150 L 338 168 L 326 205 L 288 185 Z"/>
+                  <path id="ward-20" class="ward-poly" data-name="Ward 20 - Kapra" data-risk="27" data-temp="37.8" data-status="Moderate (20-40)" d="M 338 168 L 380 190 L 358 222 L 326 205 Z"/>
+                  <path id="ward-21" class="ward-poly" data-name="Ward 21 - Nacharam" data-risk="35" data-temp="38.9" data-status="Moderate (20-40)" d="M 358 222 L 380 190 L 372 232 L 342 225 Z"/>
+                </g>
+
+                <!-- HIGH ORANGE WARDS (40-60) -->
+                <g class="ward-group" fill="#FB923C" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round">
+                  <path id="ward-22" class="ward-poly" data-name="Ward 22 - Sanathnagar" data-risk="48" data-temp="40.2" data-status="High (40-60)" d="M 216 150 L 258 140 L 252 178 L 222 188 Z"/>
+                  <path id="ward-23" class="ward-poly" data-name="Ward 23 - Secunderabad Cantonment" data-risk="52" data-temp="40.6" data-status="High (40-60)" d="M 258 140 L 292 150 L 298 182 L 252 178 Z"/>
+                  <path id="ward-24" class="ward-poly" data-name="Ward 24 - Begumpet" data-risk="58" data-temp="41.1" data-status="High (40-60)" d="M 222 188 L 252 178 L 246 210 L 218 205 Z"/>
+                  <path id="ward-25" class="ward-poly" data-name="Ward 25 - Punjagutta" data-risk="55" data-temp="40.8" data-status="High (40-60)" d="M 218 205 L 246 210 L 242 235 L 212 230 Z"/>
+                  <path id="ward-26" class="ward-poly" data-name="Ward 26 - Mehdipatnam" data-risk="57" data-temp="41.0" data-status="High (40-60)" d="M 212 230 L 242 235 L 236 265 L 212 258 Z"/>
+                  <path id="ward-27" class="ward-poly" data-name="Ward 27 - Bahadurpura" data-risk="59" data-temp="41.2" data-status="High (40-60)" d="M 212 258 L 236 265 L 232 295 L 222 298 Z"/>
+                  <path id="ward-28" class="ward-poly" data-name="Ward 28 - Santoshnagar" data-risk="54" data-temp="40.7" data-status="High (40-60)" d="M 265 258 L 295 248 L 305 282 L 265 292 Z"/>
+                  <path id="ward-29" class="ward-poly" data-name="Ward 29 - Amberpet" data-risk="56" data-temp="40.9" data-status="High (40-60)" d="M 292 212 L 328 202 L 338 238 L 298 242 Z"/>
+                  <path id="ward-30" class="ward-poly" data-name="Ward 30 - Tarnaka" data-risk="46" data-temp="39.9" data-status="High (40-60)" d="M 288 185 L 326 205 L 328 202 L 298 182 Z"/>
+                  <path id="ward-31" class="ward-poly" data-name="Ward 31 - Dilsukhnagar" data-risk="53" data-temp="40.5" data-status="High (40-60)" d="M 298 242 L 338 238 L 352 272 L 310 278 Z"/>
+                </g>
+
+                <!-- VERY HIGH CORAL WARDS (60-80) -->
+                <g class="ward-group" fill="#F87171" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round">
+                  <path id="ward-32" class="ward-poly" data-name="Ward 32 - Somajiguda" data-risk="72" data-temp="41.8" data-status="Very High (60-80)" d="M 252 178 L 284 178 L 278 204 L 246 210 Z"/>
+                  <path id="ward-33" class="ward-poly" data-name="Ward 33 - Musheerabad" data-risk="76" data-temp="42.0" data-status="Very High (60-80)" d="M 284 178 L 298 182 L 292 212 L 278 208 Z"/>
+                  <path id="ward-34" class="ward-poly" data-name="Ward 34 - Khairatabad" data-risk="74" data-temp="41.9" data-status="Very High (60-80)" d="M 246 210 L 278 204 L 272 230 L 242 235 Z"/>
+                  <path id="ward-35" class="ward-poly" data-name="Ward 35 - Himayatnagar" data-risk="78" data-temp="42.2" data-status="Very High (60-80)" d="M 278 204 L 292 212 L 288 238 L 272 230 Z"/>
+                  <path id="ward-36" class="ward-poly" data-name="Ward 36 - Nampally North" data-risk="77" data-temp="42.1" data-status="Very High (60-80)" d="M 242 235 L 272 230 L 268 255 L 236 255 Z"/>
+                  <path id="ward-37" class="ward-poly" data-name="Ward 37 - Malakpet" data-risk="71" data-temp="41.7" data-status="Very High (60-80)" d="M 272 238 L 298 242 L 292 268 L 268 262 Z"/>
+                  <path id="ward-38" class="ward-poly" data-name="Ward 38 - Yakutpura Outer" data-risk="75" data-temp="42.0" data-status="Very High (60-80)" d="M 236 265 L 268 262 L 262 288 L 232 295 Z"/>
+                </g>
+
+                <!-- EXTREME CRIMSON WARDS (80-100) -->
+                <g class="ward-group" fill="#B91C1C" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round">
+                  <path id="ward-39" class="ward-poly" data-name="Ward 39 - Charminar Central" data-risk="94" data-temp="43.6" data-status="Extreme (80-100)" d="M 246 244 L 264 240 L 262 262 L 244 262 Z"/>
+                  <path id="ward-40" class="ward-poly" data-name="Ward 40 - Abids Old City" data-risk="96" data-temp="43.8" data-status="Extreme (80-100)" d="M 248 226 L 266 224 L 264 240 L 246 244 Z"/>
+                  <path id="ward-41" class="ward-poly" data-name="Ward 41 - Sultan Bazar" data-risk="91" data-temp="43.2" data-status="Extreme (80-100)" d="M 266 224 L 282 228 L 278 248 L 264 240 Z"/>
+                  <path id="ward-42" class="ward-poly" data-name="Ward 42 - Moghalpura" data-risk="89" data-temp="43.0" data-status="Extreme (80-100)" d="M 262 262 L 276 258 L 272 278 L 256 280 Z"/>
+                  <path id="ward-43" class="ward-poly" data-name="Ward 43 - Shah Ali Banda" data-risk="92" data-temp="43.4" data-status="Extreme (80-100)" d="M 242 262 L 262 262 L 256 280 L 238 278 Z"/>
+                </g>
+              </svg>
+
+              <!-- Map Interactive Tooltip -->
+              <div class="map-tooltip" id="map-tooltip">
+                <div class="tooltip-title" id="tt-title">Charminar Central</div>
+                <div class="tooltip-row"><span>Risk Index:</span> <strong id="tt-risk">94 (Extreme)</strong></div>
+                <div class="tooltip-row"><span>Temp:</span> <strong id="tt-temp">43.6 °C</strong></div>
+              </div>
+            </div>
+
+            <!-- Map Legend (Bottom Left) -->
+            <div class="map-legend">
+              <div class="legend-item"><span class="leg-dot c-green"></span><span>Low (0-20)</span></div>
+              <div class="legend-item"><span class="leg-dot c-yellow"></span><span>Moderate (20-40)</span></div>
+              <div class="legend-item"><span class="leg-dot c-orange"></span><span>High (40-60)</span></div>
+              <div class="legend-item"><span class="leg-dot c-coral"></span><span>Very High (60-80)</span></div>
+              <div class="legend-item"><span class="leg-dot c-crimson"></span><span>Extreme (80-100)</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 5: 5-Day Health Impact Forecast -->
+        <section class="card forecast-card">
+          <div class="card-header space-between">
+            <div class="card-title-group">
+              <h2 class="card-title">5-Day Health Impact Forecast</h2>
+              <button class="info-btn" aria-label="Info" title="Predicted heat-related health risks over 5 days">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              </button>
+            </div>
+            <div class="chart-legend-top">
+              <span class="cleg-item"><span class="cleg-line cleg-red"></span>Mortality Risk (%)</span>
+              <span class="cleg-item"><span class="cleg-line cleg-purple"></span>Hospitalization Risk (%)</span>
+            </div>
+          </div>
+
+          <div class="chart-wrapper">
+            <canvas id="forecastChart"></canvas>
+          </div>
+
+          <div class="forecast-highlights">
+            <div class="highlight-card hcard-mortality">
+              <div class="hcard-title text-red">Peak Mortality Risk</div>
+              <div class="hcard-val text-red">+12%</div>
+              <div class="hcard-date">On 29 Aug 2025</div>
+            </div>
+
+            <div class="highlight-card hcard-hosp">
+              <div class="hcard-title text-purple">Peak Hospitalization Risk</div>
+              <div class="hcard-val text-purple">+19%</div>
+              <div class="hcard-date">On 29 Aug 2025</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 6: Recommended Actions -->
+        <section class="card recommended-actions-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Recommended Actions</h2>
+              <button class="info-btn" aria-label="Info" title="Standard Operating Procedures and Disaster Mitigation">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="action-items-list">
+            <div class="action-item-card">
+              <div class="action-icon-box bg-blue-light text-blue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M9 8h1"></path><path d="M9 12h1"></path><path d="M9 16h1"></path><path d="M14 8h1"></path><path d="M14 12h1"></path><path d="M14 16h1"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path></svg>
+              </div>
+              <div class="action-details">
+                <h4 class="action-name">Open Cooling Centres</h4>
+                <p class="action-desc">High priority for vulnerable wards</p>
+              </div>
+            </div>
+
+            <div class="action-item-card">
+              <div class="action-icon-box bg-orange-light text-orange">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+              <div class="action-details">
+                <h4 class="action-name">Restrict Outdoor Work</h4>
+                <p class="action-desc font-medium">12:00 PM - 04:00 PM</p>
+              </div>
+            </div>
+
+            <div class="action-item-card">
+              <div class="action-icon-box bg-green-light text-green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+              </div>
+              <div class="action-details">
+                <h4 class="action-name">Hydration & Awareness</h4>
+                <p class="action-desc">Increase public announcements</p>
+              </div>
+            </div>
+
+            <div class="action-item-card">
+              <div class="action-icon-box bg-purple-light text-purple">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              </div>
+              <div class="action-details">
+                <h4 class="action-name">Power Grid Preparedness</h4>
+                <p class="action-desc">High load expected</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-action-center" id="btn-action-center">
+            <span>View Action Center</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </section>
+
+        <!-- ROW 3 -->
+        <!-- Card 7: At-Risk Population Overview (Spans 2 columns) -->
+        <section class="card population-overview-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">At-Risk Population Overview</h2>
+              <button class="info-btn" aria-label="Info" title="Census demographic breakdown of vulnerable categories">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="population-stats-grid">
+            <div class="pop-stat-card">
+              <div class="pop-icon-box bg-red-light text-red">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+              <div class="pop-stat-info">
+                <div class="pop-stat-val">2.41 Lakh</div>
+                <div class="pop-stat-label">Elderly (60+)</div>
+              </div>
+            </div>
+
+            <div class="pop-stat-card">
+              <div class="pop-icon-box bg-orange-light text-orange">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+              <div class="pop-stat-info">
+                <div class="pop-stat-val">1.87 Lakh</div>
+                <div class="pop-stat-label">Outdoor Workers</div>
+              </div>
+            </div>
+
+            <div class="pop-stat-card">
+              <div class="pop-icon-box bg-green-light text-green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"></circle><path d="M12 13v8"></path><path d="M9 18h6"></path></svg>
+              </div>
+              <div class="pop-stat-info">
+                <div class="pop-stat-val">1.32 Lakh</div>
+                <div class="pop-stat-label">Children (&lt;5 yrs)</div>
+              </div>
+            </div>
+
+            <div class="pop-stat-card">
+              <div class="pop-icon-box bg-purple-light text-purple">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              </div>
+              <div class="pop-stat-info">
+                <div class="pop-stat-val">4.65 Lakh</div>
+                <div class="pop-stat-label">Chronic Illness</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 8: Model Confidence -->
+        <section class="card model-confidence-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Model Confidence</h2>
+              <button class="info-btn" aria-label="Info" title="AI ensemble reliability and historical verification metric">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="confidence-content">
+            <div class="confidence-donut">
+              <svg viewBox="0 0 100 100" class="donut-svg">
+                <circle cx="50" cy="50" r="38" class="donut-bg" />
+                <circle cx="50" cy="50" r="38" class="donut-val" />
+              </svg>
+              <div class="donut-text">87%</div>
+            </div>
+
+            <div class="confidence-info">
+              <h4 class="conf-status">High Confidence</h4>
+              <p class="conf-desc">Model accuracy is high for this forecast.</p>
+            </div>
+          </div>
+
+          <div class="card-footer-note conf-footer">
+            <span>Last Updated: 10:15 AM</span>
+          </div>
+        </section>
+      </div>
+
+      <!-- Page Footer -->
+      <footer class="app-footer">
+        <p>ThermoGuard uses advanced AI models and real-time weather data to predict human thermal stress and health impacts.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
