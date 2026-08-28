@@ -21,16 +21,68 @@
 
 .mobile-menu-toggle {
   display: none;
-  background: none;
+  background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 6px;
-  color: #334155;
+  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: #1e293b;
   cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .mobile-menu-toggle:hover {
-  background: #f8fafc;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.mobile-menu-toggle:active {
+  transform: scale(0.92);
+}
+
+.mobile-menu-toggle.is-open {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #e11d48;
+}
+
+/* 3-line Animated Hamburger Icon */
+.hamburger-box {
+  width: 20px;
+  height: 14px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hamburger-line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.24s ease;
+  transform-origin: center;
+}
+
+.mobile-menu-toggle.is-open .hamburger-line.line-1 {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.mobile-menu-toggle.is-open .hamburger-line.line-2 {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.mobile-menu-toggle.is-open .hamburger-line.line-3 {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
 /* Location Selector Pill */
@@ -436,15 +488,90 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .top-header {
     padding: 10px 16px;
+    gap: 12px;
+  }
+  .header-user-details {
+    display: none;
+  }
+  .header-user-profile-pill {
+    padding: 3px;
+    gap: 4px;
+  }
+  .top-header-right {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .top-header {
+    padding: 8px 12px;
+    gap: 8px;
   }
   .datetime-display {
     display: none;
   }
   .header-status-strip {
     display: none;
+  }
+  .top-header-left {
+    gap: 8px;
+  }
+  .top-header-right {
+    gap: 8px;
+  }
+  .location-pill-btn {
+    padding: 6px 10px;
+    gap: 6px;
+    max-width: 170px;
+  }
+  .location-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-header {
+    padding: 8px 10px;
+  }
+  .location-pill-btn {
+    max-width: 135px;
+    padding: 5px 8px;
+    font-size: 0.78rem;
+  }
+  .mobile-menu-toggle {
+    width: 34px;
+    height: 34px;
+  }
+  .notif-bell-btn {
+    width: 34px;
+    height: 34px;
+  }
+  .header-user-avatar {
+    width: 26px;
+    height: 26px;
+    font-size: 0.68rem;
+  }
+  .notif-dropdown {
+    position: fixed !important;
+    top: 52px !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+  .location-dropdown-menu {
+    position: fixed !important;
+    top: 52px !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    max-width: none !important;
   }
 }
 
@@ -536,16 +663,6 @@
   background: #fee2e2;
   border-color: #fca5a5;
   color: #dc2626;
-}
-
-@media (max-width: 768px) {
-  .header-user-details {
-    display: none;
-  }
-  .header-user-profile-pill {
-    padding: 3px;
-    gap: 4px;
-  }
 }
 
 

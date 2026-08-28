@@ -41,7 +41,7 @@ import {
 import './App.css';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
   const [userSettings, setUserSettings] = useState(() => getUserSettings());
   const [selectedLocation, setSelectedLocation] = useState(CURATED_INDIAN_LOCATIONS[0]);
   const [weatherData, setWeatherData] = useState(null);
@@ -195,6 +195,7 @@ function App() {
           selectedLocation={selectedLocation}
           onSelectLocation={handleLocationSelect}
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+          isSidebarOpen={isSidebarOpen}
           onOpenAlerts={() => handleTabSelect('alerts')}
           isLive={true}
           autoRefreshInterval={userSettings.autoRefreshInterval}

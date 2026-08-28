@@ -110,7 +110,9 @@
 }
 
 .time-clock-icon {
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .view-alerts-btn {

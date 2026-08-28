@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   ThermoGuardLogo,
-  SunIcon,
-  MoonIcon,
   ShieldCheckIcon,
   TrendingUpIcon,
   MapPinIcon,
@@ -18,7 +16,6 @@ import './LoginPage.css';
 function LoginPage({ onLoginSuccess }) {
   const [role, setRole] = useState('authority'); // 'authority' | 'citizen'
   const [isLoading, setIsLoading] = useState(false);
-  const [themeMode, setThemeMode] = useState('light'); // 'light' | 'dark'
   const [roleTransitioning, setRoleTransitioning] = useState(false);
   const tabIndicatorRef = useRef(null);
   const authTabRef = useRef(null);
@@ -33,16 +30,6 @@ function LoginPage({ onLoginSuccess }) {
       tabIndicatorRef.current.style.width = `${offsetWidth}px`;
     }
   }, [role]);
-
-  // Toggle theme mode
-  const handleToggleTheme = (mode) => {
-    setThemeMode(mode);
-    if (mode === 'dark') {
-      document.documentElement.classList.add('dark-theme');
-    } else {
-      document.documentElement.classList.remove('dark-theme');
-    }
-  };
 
   // Role switch handler with animation trigger
   const handleSwitchRole = (newRole) => {
@@ -72,7 +59,7 @@ function LoginPage({ onLoginSuccess }) {
   };
 
   return (
-    <div className={`thermoguard-login-screen ${themeMode === 'dark' ? 'theme-dark' : 'theme-light'} role-${role}`}>
+    <div className={`thermoguard-login-screen role-${role}`}>
       {/* Split Left Hero Section */}
       <section className="login-hero-side">
         {/* Background Atmosphere Layers */}
@@ -166,30 +153,6 @@ function LoginPage({ onLoginSuccess }) {
 
       {/* Split Right Auth Section */}
       <section className="login-auth-side">
-        {/* Top Floating Theme Switcher */}
-        <div className="theme-toggle-bar">
-          <div className="theme-pill-toggle">
-            <button
-              type="button"
-              className={`theme-btn ${themeMode === 'light' ? 'active' : ''}`}
-              onClick={() => handleToggleTheme('light')}
-              aria-label="Light Theme"
-            >
-              <SunIcon size={15} color={themeMode === 'light' ? '#ea580c' : '#94a3b8'} />
-              <span>Light</span>
-            </button>
-            <button
-              type="button"
-              className={`theme-btn ${themeMode === 'dark' ? 'active' : ''}`}
-              onClick={() => handleToggleTheme('dark')}
-              aria-label="Dark Theme"
-            >
-              <MoonIcon size={15} color={themeMode === 'dark' ? '#38bdf8' : '#94a3b8'} />
-              <span>Dark</span>
-            </button>
-          </div>
-        </div>
-
         {/* Central Auth Container */}
         <div className="auth-form-card">
           {/* Card Header */}

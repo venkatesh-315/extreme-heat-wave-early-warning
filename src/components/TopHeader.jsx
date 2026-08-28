@@ -18,6 +18,7 @@ function TopHeader({
   selectedLocation,
   onSelectLocation,
   onToggleSidebar,
+  isSidebarOpen = false,
   onOpenAlerts,
   isLive = true,
   autoRefreshInterval = '1m',
@@ -152,17 +153,18 @@ function TopHeader({
   return (
     <header className="top-header">
       <div className="top-header-left">
-        {/* Mobile Hamburger Toggle */}
+        {/* Animated Mobile 3-Line Hamburger Toggle */}
         <button
-          className="mobile-menu-toggle"
+          className={`mobile-menu-toggle ${isSidebarOpen ? 'is-open' : ''}`}
           onClick={onToggleSidebar}
-          aria-label="Toggle Navigation Menu"
+          aria-label={isSidebarOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+          aria-expanded={isSidebarOpen}
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
+          <span className="hamburger-box">
+            <span className="hamburger-line line-1" />
+            <span className="hamburger-line line-2" />
+            <span className="hamburger-line line-3" />
+          </span>
         </button>
 
         {/* Location Dropdown Pill */}

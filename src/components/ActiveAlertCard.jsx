@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangleIcon, ArrowRightIcon } from './icons';
+import { AlertTriangleIcon, ArrowRightIcon, ClockIcon } from './icons';
 import './ActiveAlertCard.css';
 
 function ActiveAlertCard({ thermalMetrics, location, onViewAllAlerts }) {
@@ -42,7 +42,9 @@ function ActiveAlertCard({ thermalMetrics, location, onViewAllAlerts }) {
           </div>
 
           <div className="alert-time-line">
-            <span className="time-clock-icon">🕒</span>
+            <span className="time-clock-icon">
+              <ClockIcon size={13} color="#ea580c" />
+            </span>
             <span>29 Aug 2025, 10:00 AM</span>
           </div>
         </div>
