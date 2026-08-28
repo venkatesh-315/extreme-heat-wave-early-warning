@@ -697,3 +697,79 @@
   .sector-grid { grid-template-columns: 1fr; }
   .rlb-top-bar { flex-direction: column; align-items: flex-start; }
 }
+
+@media (max-width: 640px) {
+  .regional-lang-banner {
+    padding: 16px 14px;
+    border-radius: 12px;
+    gap: 12px;
+  }
+  .rlb-title {
+    font-size: 1.02rem;
+  }
+  .rlb-subtitle {
+    font-size: 0.76rem;
+  }
+  .rlb-lang-strip {
+    padding-top: 10px;
+    gap: 8px;
+  }
+  .rlb-lang-pill {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+  .hap-executive-card {
+    padding: 16px 14px;
+    gap: 14px;
+  }
+  .hap-stats-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .hap-stat-pill {
+    padding: 6px 8px;
+    text-align: center;
+  }
+  .hsp-val {
+    font-size: 1.05rem;
+  }
+  .hsp-lbl {
+    font-size: 0.6rem;
+  }
+  .action-card {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+  .action-icon-col {
+    width: 36px;
+    height: 36px;
+  }
+  .action-title-text {
+    font-size: 0.95rem;
+  }
+  .action-desc-text {
+    font-size: 0.8rem;
+  }
+  .sms-broadcast-card {
+    padding: 16px 14px;
+  }
+  .sms-category-tab {
+    min-width: 100%;
+  }
+  .phone-screen-mock {
+    border-radius: 12px;
+  }
+  .dispatch-buttons-group {
+    flex-direction: column;
+  }
+  .dispatch-buttons-group .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .sector-checklist-card {
+    padding: 16px 14px;
+  }
+}
+
