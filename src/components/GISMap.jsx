@@ -8,7 +8,10 @@ import {
   NavigationIcon,
   PhoneIcon,
   XIcon,
-  CrosshairIcon
+  CrosshairIcon,
+  MaximizeIcon,
+  PlusIcon,
+  MinusIcon
 } from './icons';
 import './GISMap.css';
 
@@ -49,7 +52,75 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
     shelters: true,
     water: true,
   });
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapError, setMapError] = useState(false);
+
+  // Invalidate Leaflet Map Size, center map view, and re-enable zoom whenever Fullscreen changes
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    const invalidateAndCenter = () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.scrollWheelZoom.enable();
+        mapInstanceRef.current.dragging.enable();
+        mapInstanceRef.current.doubleClickZoom.enable();
+        mapInstanceRef.current.invalidateSize({ pan: false });
+        if (location?.lat && location?.lon) {
+          mapInstanceRef.current.panTo([location.lat, location.lon], { animate: false });
+        }
+      }
+    };
+    invalidateAndCenter();
+    const t1 = setTimeout(invalidateAndCenter, 60);
+    const t2 = setTimeout(invalidateAndCenter, 200);
+    const t3 = setTimeout(invalidateAndCenter, 450);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [isFullscreen, location]);
+
+  // Disable page scrolling when full screen is active
+  useEffect(() => {
+    if (isFullscreen) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      const mainLayout = document.querySelector('.app-main-layout');
+      const originalMainOverflow = mainLayout ? mainLayout.style.overflow : '';
+      if (mainLayout) mainLayout.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        if (mainLayout) mainLayout.style.overflow = originalMainOverflow;
+      };
+    }
+  }, [isFullscreen]);
+
+  // Handle ESC key to exit fullscreen
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
+  const handleZoomIn = () => {
+    if (mapInstanceRef.current) mapInstanceRef.current.zoomIn();
+  };
+
+  const handleZoomOut = () => {
+    if (mapInstanceRef.current) mapInstanceRef.current.zoomOut();
+  };
+
+  const toggleFullscreen = () => {
+    setIsFullscreen((prev) => !prev);
+  };
 
   // Toggle specific layer
   const toggleLayer = useCallback((layerKey) => {
@@ -149,8 +220,12 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
         const map = L.map(mapRef.current, {
           center: [location.lat, location.lon],
           zoom: 13,
-          zoomControl: true,
+          zoomControl: false, // Custom controls placed below
           attributionControl: true,
+          scrollWheelZoom: true, // Smooth mouse wheel zoom enabled!
+          doubleClickZoom: true,
+          dragging: true,
+          touchZoom: true,
         });
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -159,26 +234,24 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
           maxZoom: 19,
         }).addTo(map);
 
-        // Center Location Marker: Exact Uploaded SVG Pin Asset
+        // Center Location Marker: Google Maps Style Glowing Blue Dot
         const centerIcon = L.divIcon({
-          html: `<div class="user-custom-pin-wrap">
-            <div class="user-pin-pulse"></div>
-            <svg width="36" height="36" viewBox="0 0 100 100" fill="none" class="user-pin-svg">
-              <path d="M50 10C31.22 10 16 25.22 16 44C16 66.5 45.8 88.5 47.1 89.4C48 90 49 90.3 50 90.3C51 90.3 52 90 52.9 89.4C54.2 88.5 84 66.5 84 44C84 25.22 68.78 10 50 10ZM50 81.3C40.6 73.1 23.6 56.6 23.6 44C23.6 29.44 35.44 17.6 50 17.6C64.56 17.6 76.4 29.44 76.4 44C76.4 56.6 59.4 73.1 50 81.3Z" fill="#0f172a"/>
-              <path d="M50 31C42.82 31 37 36.82 37 44C37 51.18 42.82 57 50 57C57.18 57 63 51.18 63 44C63 36.82 57.18 31 50 31ZM50 49.4C47.02 49.4 44.6 46.98 44.6 44C44.6 41.02 47.02 38.6 50 38.6C52.98 38.6 55.4 41.02 55.4 44C55.4 46.98 52.98 49.4 50 49.4Z" fill="#0f172a"/>
-            </svg>
+          html: `<div class="gmaps-user-location-wrap">
+            <div class="gmaps-user-location-halo"></div>
+            <div class="gmaps-user-location-dot"></div>
           </div>`,
           className: '',
-          iconSize: [36, 36],
-          iconAnchor: [18, 36],
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+          popupAnchor: [0, -14],
         });
 
-        L.marker([location.lat, location.lon], { icon: centerIcon })
+        L.marker([location.lat, location.lon], { icon: centerIcon, zIndexOffset: 1000 })
           .addTo(map)
           .bindPopup(`
             <div class="map-light-popup center-popup">
               <div class="popup-title">${location.name}</div>
-              <div class="popup-sub">${location.state || 'India'} &middot; ${location.lat.toFixed(4)}&deg;N, ${location.lon.toFixed(4)}&deg;E</div>
+              <div class="popup-sub">${location.state || 'India'} &middot; Your Selected Location</div>
             </div>
           `);
 
@@ -329,7 +402,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
   const waterCount = emergencyResources.filter((r) => r.type === 'water').length;
 
   return (
-    <div className="gis-wrapper card" id="gis-interactive-map">
+    <div className={`gis-wrapper card ${isFullscreen ? 'fullscreen-mode' : ''}`} id="gis-interactive-map">
       <div className="gis-top-bar">
         <div className="gis-header-titles">
           <h3 className="section-title">
@@ -344,6 +417,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
         {/* Dynamic Layer Switchers */}
         <div className="gis-layer-toggles">
           <button
+            type="button"
             className={`layer-toggle-btn ${activeLayers.heatZones ? 'active heat' : ''}`}
             onClick={() => toggleLayer('heatZones')}
             title="Toggle Thermal Stress Zones"
@@ -352,6 +426,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             <span>Heat Zones</span>
           </button>
           <button
+            type="button"
             className={`layer-toggle-btn ${activeLayers.hospitals ? 'active hospital' : ''}`}
             onClick={() => toggleLayer('hospitals')}
             title="Toggle Emergency Hospitals"
@@ -360,6 +435,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             <span>Hospitals ({hospitalsCount})</span>
           </button>
           <button
+            type="button"
             className={`layer-toggle-btn ${activeLayers.shelters ? 'active shelter' : ''}`}
             onClick={() => toggleLayer('shelters')}
             title="Toggle Cooling Shelters"
@@ -368,6 +444,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             <span>Shelters ({sheltersCount})</span>
           </button>
           <button
+            type="button"
             className={`layer-toggle-btn ${activeLayers.water ? 'active water' : ''}`}
             onClick={() => toggleLayer('water')}
             title="Toggle Water Stations"
@@ -375,6 +452,17 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             <WaterIcon size={14} />
             <span>Water ({waterCount})</span>
           </button>
+
+          {isFullscreen && (
+            <button
+              type="button"
+              className="exit-fullscreen-btn"
+              onClick={() => setIsFullscreen(false)}
+            >
+              <XIcon size={14} />
+              <span>Exit Fullscreen</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -389,6 +477,37 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
           ) : (
             <div ref={mapRef} className="leaflet-map-element" id="gis-leaflet-canvas" />
           )}
+
+          {/* Top-Left / Map Controls Stack: Zoom In (+), Zoom Out (-), and Fullscreen directly below */}
+          <div className="map-custom-controls">
+            <button
+              type="button"
+              className="map-ctrl-btn"
+              onClick={handleZoomIn}
+              aria-label="Zoom In"
+              title="Zoom In (+)"
+            >
+              <PlusIcon size={14} color="#334155" />
+            </button>
+            <button
+              type="button"
+              className="map-ctrl-btn"
+              onClick={handleZoomOut}
+              aria-label="Zoom Out"
+              title="Zoom Out (-)"
+            >
+              <MinusIcon size={14} color="#334155" />
+            </button>
+            <button
+              type="button"
+              className={`map-ctrl-btn ${isFullscreen ? 'active-fullscreen' : ''}`}
+              onClick={toggleFullscreen}
+              aria-label={isFullscreen ? 'Exit Fullscreen' : 'Toggle Fullscreen'}
+              title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Open Full Screen Map'}
+            >
+              {isFullscreen ? <XIcon size={14} color="#dc2626" /> : <MaximizeIcon size={14} color="#334155" />}
+            </button>
+          </div>
 
           {/* Map Legend */}
           <div className="gis-floating-legend">

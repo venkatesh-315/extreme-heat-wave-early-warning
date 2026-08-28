@@ -1,5 +1,5 @@
 // Authentication and Session State Service for ThermoGuard
-const AUTH_STORAGE_KEY = 'thermoguard_auth_user_v1';
+const AUTH_STORAGE_KEY = 'thermoguard_auth_user_session';
 
 export const USER_ROLES = {
   AUTHORITY: 'authority',
@@ -31,7 +31,7 @@ export const DEFAULT_USERS = {
 
 export function getCurrentUser() {
   try {
-    const saved = localStorage.getItem(AUTH_STORAGE_KEY);
+    const saved = sessionStorage.getItem(AUTH_STORAGE_KEY);
     if (saved) {
       return JSON.parse(saved);
     }
@@ -44,9 +44,9 @@ export function getCurrentUser() {
 export function saveCurrentUser(user) {
   try {
     if (user) {
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+      sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
     } else {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
+      sessionStorage.removeItem(AUTH_STORAGE_KEY);
     }
   } catch (err) {
     console.error('Error saving auth user:', err);
@@ -61,5 +61,11 @@ export async function quickLoginByRole(role = 'authority') {
 }
 
 export function logoutUser() {
-  localStorage.removeItem(AUTH_STORAGE_KEY);
+  sessionStorage.removeItem(AUTH_STORAGE_KEY);
+  try {
+    localStorage.removeItem('thermoguard_auth_user_v1');
+  } catch {
+    // ignore
+  }
 }
+

@@ -1,25 +1,27 @@
 import React from 'react';
 
-// Exact User Location Pin matching user's uploaded image
-export const UserLocationPin = ({ size = 24, className = '', color = 'currentColor' }) => (
+// Google Maps Style Blue Dot Location Indicator (Pulsing halo, white border, solid blue core)
+export const UserLocationPin = ({ size = 20, className = '' }) => (
   <svg
     width={size}
     height={size}
-    viewBox="0 0 100 100"
+    viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     className={className}
+    style={{ display: 'inline-block', verticalAlign: 'middle', overflow: 'visible' }}
   >
-    <path
-      d="M50 10C31.22 10 16 25.22 16 44C16 66.5 45.8 88.5 47.1 89.4C48 90 49 90.3 50 90.3C51 90.3 52 90 52.9 89.4C54.2 88.5 84 66.5 84 44C84 25.22 68.78 10 50 10ZM50 81.3C40.6 73.1 23.6 56.6 23.6 44C23.6 29.44 35.44 17.6 50 17.6C64.56 17.6 76.4 29.44 76.4 44C76.4 56.6 59.4 73.1 50 81.3Z"
-      fill={color}
-    />
-    <path
-      d="M50 31C42.82 31 37 36.82 37 44C37 51.18 42.82 57 50 57C57.18 57 63 51.18 63 44C63 36.82 57.18 31 50 31ZM50 49.4C47.02 49.4 44.6 46.98 44.6 44C44.6 41.02 47.02 38.6 50 38.6C52.98 38.6 55.4 41.02 55.4 44C55.4 46.98 52.98 49.4 50 49.4Z"
-      fill={color}
-    />
+    <circle cx="12" cy="12" r="10" fill="#4285F4" fillOpacity="0.25">
+      <animate attributeName="r" values="7;11;7" dur="2.4s" repeatCount="indefinite" />
+      <animate attributeName="fill-opacity" values="0.35;0.1;0.35" dur="2.4s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="12" cy="12" r="6" fill="#ffffff" />
+    <circle cx="12" cy="12" r="4.5" fill="#1a73e8" />
   </svg>
 );
+
+export const GoogleMapsBlueDot = UserLocationPin;
+
 
 // ThermoGuard Brand Shield & Sun Icon
 export const ThermoGuardLogo = ({ size = 28, className = '' }) => (
@@ -441,7 +443,59 @@ export const GovInIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <circle cx="12" cy="12" r="10.5" stroke="#1d4ed8" strokeWidth="1.5" fill="#eff6ff" />
     <circle cx="12" cy="12" r="4.5" stroke="#ea580c" strokeWidth="1.2" strokeDasharray="1.5 1.5" />
-    <circle cx="12" cy="12" r="1.5" fill="#16a34a" />
+    <circle cx="12" cy="1.5" fill="#16a34a" />
     <path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="#1d4ed8" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
+
+// Audio & Voice Broadcast Icons
+export const Volume2Icon = ({ size = 18, className = '', color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+  </svg>
+);
+
+export const VolumeXIcon = ({ size = 18, className = '', color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+    <line x1="23" y1="9" x2="17" y2="15" />
+    <line x1="17" y1="9" x2="23" y2="15" />
+  </svg>
+);
+
+export const PlayIcon = ({ size = 16, className = '', color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke={color} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polygon points="5 3 19 12 5 21 5 3" />
+  </svg>
+);
+
+export const PauseIcon = ({ size = 16, className = '', color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke={color} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="6" y="4" width="4" height="16" />
+    <rect x="14" y="4" width="4" height="16" />
+  </svg>
+);
+
+export const StopIcon = ({ size = 16, className = '', color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke={color} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="4" y="4" width="16" height="16" rx="2" />
+  </svg>
+);
+
+export const GlobeIcon = ({ size = 18, className = '', color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
+export const RadioIcon = ({ size = 18, className = '', color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="2" />
+    <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14" />
+  </svg>
+);
+

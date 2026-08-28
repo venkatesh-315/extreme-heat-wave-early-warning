@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { MULTILINGUAL_SMS_TEMPLATES } from '../data/mockData';
+import {
+  ACTION_CENTER_TRANSLATIONS,
+  INDIAN_LANGUAGES,
+  MULTILINGUAL_EXPANDED_SMS
+} from '../data/translations';
 import {
   ShieldAlertIcon,
   MessageSquareIcon,
@@ -9,7 +13,8 @@ import {
   HospitalIcon,
   WaterIcon,
   UsersIcon,
-  BuildingIcon
+  BuildingIcon,
+  GlobeIcon
 } from './icons';
 import './Recommendations.css';
 
@@ -21,11 +26,15 @@ const PRIORITY_CONFIG = {
 };
 
 function Recommendations({ recommendations = [], location, thermalMetrics }) {
-  const [activeSmsIndex, setActiveSmsIndex] = useState(0);
+  const [selectedLang, setSelectedLang] = useState('hi-IN');
+  const [activeSmsTemplateId, setActiveSmsTemplateId] = useState('sms-general');
+  const [smsLang, setSmsLang] = useState('hi-IN');
   const [copiedId, setCopiedId] = useState(null);
   const [dispatchStatus, setDispatchStatus] = useState(null);
 
-  const selectedTemplate = MULTILINGUAL_SMS_TEMPLATES[activeSmsIndex] || MULTILINGUAL_SMS_TEMPLATES[0];
+  const currentLangConfig = ACTION_CENTER_TRANSLATIONS[selectedLang] || ACTION_CENTER_TRANSLATIONS['en-IN'];
+  const activeTemplate = MULTILINGUAL_EXPANDED_SMS.find((t) => t.id === activeSmsTemplateId) || MULTILINGUAL_EXPANDED_SMS[0];
+  const activeSmsVersion = activeTemplate.versions[smsLang] || activeTemplate.versions['en-IN'] || { text: '', script: '' };
 
   const handleCopy = (id, text) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -35,7 +44,8 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
   };
 
   const handleSimulateDispatch = (channel) => {
-    setDispatchStatus(`Queued broadcast via ${channel} to district telemetry gateways.`);
+    const langObj = INDIAN_LANGUAGES.find((l) => l.code === smsLang);
+    setDispatchStatus(`Queued broadcast via ${channel} in ${langObj?.name || 'Local Language'} (${langObj?.nativeName || ''}).`);
     setTimeout(() => setDispatchStatus(null), 3500);
   };
 
@@ -43,12 +53,60 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
 
   return (
     <div className="recommendations-section" id="recommendations-section">
-      {/* Executive Heat Action Plan Header */}
+      {/* 1. REGIONAL LANGUAGE TEXT TRANSLATOR BAR */}
+      <div className="regional-lang-banner card animate-fade-in">
+        <div className="rlb-top-bar">
+          <div className="rlb-left-identity">
+            <div className="rlb-icon-box">
+              <GlobeIcon size={22} color="#1d4ed8" />
+            </div>
+            <div>
+              <div className="rlb-badge-row">
+                <span className="rlb-multi-tag">
+                  <GlobeIcon size={12} />
+                  <span>8 Indian Regional Languages</span>
+                </span>
+                <span className="rlb-current-tag">
+                  Active: <strong>{currentLangConfig.nativeLabel} ({currentLangConfig.langName})</strong>
+                </span>
+              </div>
+              <h3 className="rlb-title">Regional Language Directives &amp; Action Plan</h3>
+              <p className="rlb-subtitle">
+                Select your preferred Indian language to view real-time NDMA heat action directives and advisories in native text.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Language Selector Pills */}
+        <div className="rlb-lang-strip">
+          <span className="rlb-lang-label">
+            <GlobeIcon size={14} />
+            <span>Select Language:</span>
+          </span>
+          <div className="rlb-lang-pills-list">
+            {INDIAN_LANGUAGES.map((lang) => (
+              <button
+                key={lang.code}
+                type="button"
+                className={`rlb-lang-pill ${selectedLang === lang.code ? 'active' : ''}`}
+                onClick={() => setSelectedLang(lang.code)}
+              >
+                <span className="rlb-flag">{lang.flag}</span>
+                <span className="rlb-native-name">{lang.nativeName}</span>
+                <span className="rlb-eng-name">({lang.name})</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Executive Heat Action Plan Header */}
       <div className="hap-executive-card card">
         <div className="hap-left">
           <div className="hap-badge">
             <ShieldAlertIcon size={13} color="#dc2626" />
-            <span>Heat Action Protocols</span>
+            <span>Heat Action Protocols &middot; {currentLangConfig.nativeLabel}</span>
           </div>
           <h3 className="section-title">
             Inter-Agency Directives &amp; Public Advisories &mdash; {location?.name}
@@ -74,10 +132,14 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
         </div>
       </div>
 
-      {/* Action Recommendations List */}
+      {/* 3. Action Recommendations List Rendered in Selected Local Language */}
       <div className="action-items-list">
         {recommendations.map((item, idx) => {
           const conf = PRIORITY_CONFIG[item.priority] || PRIORITY_CONFIG.LOW;
+          const trans = currentLangConfig.directiveTranslations?.[item.title] || null;
+          const title = trans?.title || item.title || item.category;
+          const action = trans?.action || item.action;
+
           return (
             <div
               key={idx}
@@ -90,17 +152,23 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
 
               <div className="action-body">
                 <div className="action-top-row">
-                  <span className="action-category">{item.category}</span>
-                  <span
-                    className="action-priority-badge"
-                    style={{ background: conf.bg, color: conf.color, border: `1px solid ${conf.border}` }}
-                  >
-                    {conf.label}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className="action-category">{item.category}</span>
+                    <span
+                      className="action-priority-badge"
+                      style={{ background: conf.bg, color: conf.color, border: `1px solid ${conf.border}` }}
+                    >
+                      {conf.label}
+                    </span>
+                  </div>
+
+                  <span className="directive-lang-badge">
+                    {currentLangConfig.nativeLabel}
                   </span>
                 </div>
 
-                <h4 className="action-title-text">{item.title || item.category}</h4>
-                <p className="action-desc-text">{item.action}</p>
+                <h4 className="action-title-text">{title}</h4>
+                <p className="action-desc-text">{action}</p>
 
                 {item.authority && (
                   <div className="action-authority">
@@ -113,29 +181,53 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
         })}
       </div>
 
-      {/* Multi-Lingual SMS & WhatsApp Broadcast Generator */}
+      {/* 4. MULTI-LINGUAL SMS & WHATSAPP BROADCAST ENGINE (TEXT ONLY) */}
       <div className="sms-broadcast-card card" id="sms-dispatcher">
         <div className="sms-card-header">
           <div>
-            <h4 className="section-title">
-              <MessageSquareIcon size={18} color="#1e40af" />
-              <span>Multi-Lingual Emergency Alert Broadcast Engine</span>
+            <div className="sms-badge-tag">
+              <MessageSquareIcon size={13} color="#1d4ed8" />
+              <span>Multi-Lingual SMS &amp; Messaging Templates</span>
+            </div>
+            <h4 className="section-title" style={{ marginTop: '4px' }}>
+              Multi-Lingual Emergency Alert Broadcast Engine
             </h4>
             <p className="section-desc">
-              Pre-approved bi-lingual advisory templates for SMS, WhatsApp, Wireless Emergency Alerts (WEA), and Radio.
+              Pre-approved emergency advisory templates translated into 8 regional Indian languages for SMS, WhatsApp, Wireless Emergency Alerts (WEA), and Radio.
             </p>
           </div>
         </div>
 
-        <div className="sms-language-tabs">
-          {MULTILINGUAL_SMS_TEMPLATES.map((tmpl, idx) => (
+        {/* Template Category Switcher */}
+        <div className="sms-template-selector-tabs">
+          {MULTILINGUAL_EXPANDED_SMS.map((tmpl) => (
             <button
               key={tmpl.id}
-              className={`sms-lang-tab ${activeSmsIndex === idx ? 'active' : ''}`}
-              onClick={() => setActiveSmsIndex(idx)}
+              type="button"
+              className={`sms-category-tab ${activeSmsTemplateId === tmpl.id ? 'active' : ''}`}
+              onClick={() => setActiveSmsTemplateId(tmpl.id)}
             >
-              <span className="sms-lang-tag">{tmpl.lang === 'Hindi' ? 'हिन्दी' : 'English'}</span>
-              <span className="sms-tab-name">{tmpl.label}</span>
+              <strong>{tmpl.label}</strong>
+              <span className="sms-cat-pill">{tmpl.category}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Regional Language Tabs for SMS */}
+        <div className="sms-language-tabs">
+          <span className="sms-lang-label">
+            <GlobeIcon size={13} />
+            <span>SMS Language:</span>
+          </span>
+          {INDIAN_LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              type="button"
+              className={`sms-lang-tab ${smsLang === lang.code ? 'active' : ''}`}
+              onClick={() => setSmsLang(lang.code)}
+            >
+              <span className="sms-lang-tag">{lang.nativeName}</span>
+              <span className="sms-tab-name">({lang.name})</span>
             </button>
           ))}
         </div>
@@ -148,7 +240,16 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
               <span>Cellular Broadcast</span>
             </div>
             <div className="phone-bubble-box">
-              <div className="sms-bubble">{selectedTemplate.content}</div>
+              <div className="sms-bubble">
+                <div className="sms-bubble-lang-header">
+                  <span className="lang-indicator-badge">
+                    {INDIAN_LANGUAGES.find((l) => l.code === smsLang)?.flag} {INDIAN_LANGUAGES.find((l) => l.code === smsLang)?.nativeName}
+                  </span>
+                  <span className="sms-chars-badge">{activeSmsVersion.text.length} chars</span>
+                </div>
+                <p className="sms-bubble-content-text">{activeSmsVersion.text}</p>
+              </div>
+
               <div className="sms-timestamp">District Disaster Management Authority &middot; Just Now</div>
             </div>
           </div>
@@ -158,7 +259,13 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
             <div className="target-audience-box">
               <div className="aud-row">
                 <span className="aud-lbl">Target Audience:</span>
-                <strong>{selectedTemplate.recipient}</strong>
+                <strong>{activeTemplate.recipient}</strong>
+              </div>
+              <div className="aud-row">
+                <span className="aud-lbl">Selected Language:</span>
+                <span className="aud-lang-pill">
+                  {INDIAN_LANGUAGES.find((l) => l.code === smsLang)?.flag} {INDIAN_LANGUAGES.find((l) => l.code === smsLang)?.nativeName} ({INDIAN_LANGUAGES.find((l) => l.code === smsLang)?.name})
+                </span>
               </div>
               <div className="aud-row">
                 <span className="aud-lbl">Estimated Reach:</span>
@@ -174,16 +281,24 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
-                onClick={() => handleCopy(selectedTemplate.id, selectedTemplate.content)}
+                onClick={() => handleCopy(`sms-${activeTemplate.id}-${smsLang}`, activeSmsVersion.text)}
               >
-                {copiedId === selectedTemplate.id ? <CheckIcon size={14} color="#16a34a" /> : <CopyIcon size={14} />}
-                <span>{copiedId === selectedTemplate.id ? 'Copied to Clipboard!' : 'Copy Alert Text'}</span>
+                {copiedId === `sms-${activeTemplate.id}-${smsLang}` ? (
+                  <CheckIcon size={14} color="#16a34a" />
+                ) : (
+                  <CopyIcon size={14} />
+                )}
+                <span>
+                  {copiedId === `sms-${activeTemplate.id}-${smsLang}`
+                    ? 'Copied to Clipboard!'
+                    : `Copy ${INDIAN_LANGUAGES.find((l) => l.code === smsLang)?.name} SMS`}
+                </span>
               </button>
 
               <button
                 type="button"
                 className="btn btn-primary btn-sm"
-                onClick={() => handleSimulateDispatch('SMS Gateway')}
+                onClick={() => handleSimulateDispatch('Cellular SMS Gateway')}
               >
                 <SendIcon size={14} />
                 <span>Dispatch SMS Broadcast</span>
@@ -195,7 +310,7 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
                 onClick={() => handleSimulateDispatch('WhatsApp Channel')}
               >
                 <MessageSquareIcon size={14} />
-                <span>WhatsApp Channel Blast</span>
+                <span>WhatsApp Blast</span>
               </button>
             </div>
 
@@ -209,7 +324,7 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
         </div>
       </div>
 
-      {/* Sector-Wise Operational Checklist */}
+      {/* 5. Sector-Wise Operational Checklist */}
       <div className="sector-checklist-card card">
         <h4 className="section-title">
           <BuildingIcon size={18} color="#1e40af" />

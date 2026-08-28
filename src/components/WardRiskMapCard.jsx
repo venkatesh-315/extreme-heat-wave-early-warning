@@ -27,25 +27,50 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeCategoryModal, setActiveCategoryModal] = useState(false);
 
-  // Invalidate Leaflet map size whenever fullscreen or container dimensions change
+  // Invalidate Leaflet map size, center map view, and re-enable zoom whenever fullscreen changes
   useEffect(() => {
     if (!mapInstanceRef.current) return;
-    const invalidate = () => {
+    const invalidateAndCenter = () => {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.invalidateSize();
+        mapInstanceRef.current.scrollWheelZoom.enable();
+        mapInstanceRef.current.dragging.enable();
+        mapInstanceRef.current.doubleClickZoom.enable();
+        mapInstanceRef.current.invalidateSize({ pan: false });
+        if (location?.lat && location?.lon) {
+          mapInstanceRef.current.panTo([location.lat, location.lon], { animate: false });
+        }
       }
     };
 
-    invalidate();
-    const t1 = setTimeout(invalidate, 80);
-    const t2 = setTimeout(invalidate, 250);
-    const t3 = setTimeout(invalidate, 450);
+    invalidateAndCenter();
+    const t1 = setTimeout(invalidateAndCenter, 60);
+    const t2 = setTimeout(invalidateAndCenter, 200);
+    const t3 = setTimeout(invalidateAndCenter, 450);
 
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
     };
+  }, [isFullscreen, location]);
+
+  // Disable page scrolling when full screen is active
+  useEffect(() => {
+    if (isFullscreen) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      const mainLayout = document.querySelector('.app-main-layout');
+      const originalMainOverflow = mainLayout ? mainLayout.style.overflow : '';
+      if (mainLayout) mainLayout.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        if (mainLayout) mainLayout.style.overflow = originalMainOverflow;
+      };
+    }
   }, [isFullscreen]);
 
   // Handle ESC key to exit fullscreen
@@ -81,7 +106,8 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
           zoom: 13,
           zoomControl: false,
           attributionControl: false,
-          scrollWheelZoom: false,
+          scrollWheelZoom: true, // Smooth mouse wheel zoom enabled!
+          doubleClickZoom: true,
           dragging: true,
           tap: true,
           touchZoom: true,
@@ -262,6 +288,27 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
               maxWidth: 290,
             });
         });
+
+        // Add Google Maps Style User Location Blue Dot Marker
+        const centerUserIcon = L.divIcon({
+          html: `<div class="gmaps-user-location-wrap">
+            <div class="gmaps-user-location-halo"></div>
+            <div class="gmaps-user-location-dot"></div>
+          </div>`,
+          className: '',
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+          popupAnchor: [0, -14],
+        });
+
+        L.marker([centerLat, centerLon], { icon: centerUserIcon, zIndexOffset: 1000 })
+          .addTo(map)
+          .bindPopup(`
+            <div class="uploaded-style-popup" style="padding: 12px; text-align: center;">
+              <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">${location.name}</div>
+              <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">Your Selected Station Position</div>
+            </div>
+          `);
 
         mapInstanceRef.current = map;
       } catch (err) {

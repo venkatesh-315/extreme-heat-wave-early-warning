@@ -40,7 +40,16 @@ import {
 
 import './App.css';
 
+const VALID_TABS = ['dashboard', 'heatmap', 'forecast', 'health', 'alerts', 'action', 'reports', 'settings'];
+
+function getInitialTab() {
+  if (typeof window === 'undefined') return 'dashboard';
+  const path = window.location.pathname.replace(/^\//, '').toLowerCase();
+  return VALID_TABS.includes(path) ? path : 'dashboard';
+}
+
 function App() {
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
   const [userSettings, setUserSettings] = useState(() => getUserSettings());
   const [selectedLocation, setSelectedLocation] = useState(CURATED_INDIAN_LOCATIONS[0]);
@@ -54,7 +63,7 @@ function App() {
   const [lastUpdatedTime, setLastUpdatedTime] = useState('10:20 AM');
   const [isCalculating, setIsCalculating] = useState(false);
   const [hasData, setHasData] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => getInitialTab());
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Settings State Form
@@ -104,21 +113,65 @@ function App() {
     }
   }, []);
 
-  // Initial load: Default to Hyderabad, Telangana matching the uploaded design
+  // Unified Single-Cycle Initial Loading Screen Trigger
   useEffect(() => {
-    const hydLocation = CURATED_INDIAN_LOCATIONS.find((l) => l.name.toLowerCase().includes('hyderabad')) || CURATED_INDIAN_LOCATIONS[0];
     let isMounted = true;
+    const hydLocation = CURATED_INDIAN_LOCATIONS.find((l) => l.name.toLowerCase().includes('hyderabad')) || CURATED_INDIAN_LOCATIONS[0];
 
-    (async () => {
-      if (isMounted) {
-        await handleLocationSelect(hydLocation);
-      }
-    })();
+    const initApp = async () => {
+      const startTime = Date.now();
+      // Fetch initial data silently so it completes during this single loader cycle
+      await handleLocationSelect(hydLocation, true);
+      const elapsed = Date.now() - startTime;
+      const minPresentationTime = 1100;
+      const remainingTime = Math.max(0, minPresentationTime - elapsed);
+
+      setTimeout(() => {
+        if (isMounted) {
+          setIsInitialLoading(false);
+        }
+      }, remainingTime);
+    };
+
+    initApp();
 
     return () => {
       isMounted = false;
     };
   }, [handleLocationSelect]);
+
+  // URL Path Synchronization with Auth State and Active Tabs
+  useEffect(() => {
+    if (isInitialLoading) return;
+
+    if (!currentUser) {
+      if (window.location.pathname !== '/login') {
+        window.history.replaceState(null, '', '/login');
+      }
+    } else {
+      const currentPath = window.location.pathname.replace(/^\//, '').toLowerCase();
+      if (currentPath !== activeTab) {
+        window.history.replaceState(null, '', `/${activeTab}`);
+      }
+    }
+  }, [currentUser, isInitialLoading, activeTab]);
+
+  // Browser Back/Forward navigation listener (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.replace(/^\//, '').toLowerCase();
+      if (path === 'login') {
+        if (currentUser) {
+          logoutUser();
+          setCurrentUser(null);
+        }
+      } else if (VALID_TABS.includes(path)) {
+        setActiveTab(path);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [currentUser]);
 
   // Auto-Refresh Timer Handler
   useEffect(() => {
@@ -148,6 +201,7 @@ function App() {
   const handleTabSelect = (tabId) => {
     setIsSidebarOpen(false);
     setActiveTab(tabId);
+    window.history.pushState(null, '', `/${tabId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -162,22 +216,33 @@ function App() {
     setTimeout(() => setSettingsSaveAlert(false), 3000);
   };
 
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+    window.history.pushState(null, '', `/${activeTab || 'dashboard'}`);
+  };
+
   const handleLogout = () => {
     logoutUser();
     setCurrentUser(null);
+    window.history.pushState(null, '', '/login');
   };
 
   const tempUnit = userSettings.tempUnit || 'C';
 
-  // If user is not authenticated, display full-screen Login Page
+  // 1. Initial Website Entry: Show full-screen loader immediately (clean logo only)
+  if (isInitialLoading) {
+    return <Loader fullScreen={true} />;
+  }
+
+  // 2. Default View: If user is not authenticated, display full-screen Login Page (URL: /login)
   if (!currentUser) {
-    return <LoginPage onLoginSuccess={(user) => setCurrentUser(user)} />;
+    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
   }
 
   return (
     <div className="thermoguard-app">
       {/* Full-Screen Animated Loader during computation */}
-      {isCalculating && <Loader fullScreen={true} />}
+      {isCalculating && !isInitialLoading && <Loader fullScreen={true} />}
 
       {/* Left Sticky Sidebar for Desktop & Tablet Drawer (Stationary when page scrolls) */}
       <Sidebar
