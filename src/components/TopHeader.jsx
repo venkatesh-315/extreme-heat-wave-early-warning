@@ -33,8 +33,10 @@ function TopHeader({
   const [currentTime, setCurrentTime] = useState('');
   const [currentDate, setCurrentDate] = useState('');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const locationMenuRef = useRef(null);
   const notifMenuRef = useRef(null);
+  const userMenuRef = useRef(null);
   const inputRef = useRef(null);
 
   // Synchronize searchQuery with selectedLocation whenever selectedLocation changes
@@ -101,6 +103,9 @@ function TopHeader({
       }
       if (notifMenuRef.current && !notifMenuRef.current.contains(e.target)) {
         setIsNotificationsOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setIsUserMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -170,26 +175,28 @@ function TopHeader({
         {/* Location Dropdown Pill */}
         <div className="location-picker-wrapper" ref={locationMenuRef}>
           <button
-            className="location-pill-btn"
+            className={`location-pill-btn ${isLocationMenuOpen ? 'active' : ''}`}
             onClick={toggleLocationMenu}
             aria-expanded={isLocationMenuOpen}
+            aria-label="Select Monitored Location"
           >
-            <UserLocationPin size={16} color="#475569" />
+            <UserLocationPin size={16} color="#e11d48" />
             <span className="location-name">{displayName}</span>
             <ChevronDownIcon size={14} color="#64748b" className={`chevron ${isLocationMenuOpen ? 'up' : ''}`} />
           </button>
 
           {/* Location Dropdown Menu */}
           {isLocationMenuOpen && (
-            <div className="location-dropdown-menu">
+            <div className="location-dropdown-menu animate-fade-in">
               <div className="location-search-box">
-                <SearchIcon size={16} color="#94a3b8" />
+                <SearchIcon size={18} color="#2563eb" />
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Search city or district..."
+                  placeholder="Search city, district, or PIN..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search city or district"
                 />
                 {searchQuery && (
                   <button
@@ -200,14 +207,14 @@ function TopHeader({
                     }}
                     title="Clear search text"
                   >
-                    <XIcon size={14} />
+                    <XIcon size={15} />
                   </button>
                 )}
               </div>
 
               {/* GPS Locate Action */}
               <button className="gps-locate-item" onClick={handleGpsLocate}>
-                <CrosshairIcon size={15} color="#2563eb" />
+                <CrosshairIcon size={16} color="#2563eb" />
                 <span>Use Current Live GPS Location</span>
               </button>
 
@@ -282,7 +289,7 @@ function TopHeader({
         </div>
       </div>
 
-      {/* Right Header Section: Notification & Clock */}
+      {/* Right Header Section: Notification, Avatar & Clock */}
       <div className="top-header-right">
         {/* Notification Bell */}
         <div className="notif-wrapper" ref={notifMenuRef}>
@@ -340,30 +347,61 @@ function TopHeader({
           )}
         </div>
 
-        {/* User Profile Pill directly beside left of Time */}
-        <div className="header-user-profile-pill">
-          <div className="header-user-avatar">
-            <span>{currentUser?.avatar || (currentUser?.role === 'citizen' ? 'PU' : 'OF')}</span>
-            <span className="user-online-dot" />
-          </div>
-          <div className="header-user-details">
-            <span className="header-user-fullname">
-              {currentUser?.name || (currentUser?.role === 'citizen' ? 'Public User #8204' : 'Officer #4102')}
+        {/* User Circular Avatar Button with Dropdown (displays only circle, reveals Logout on click) */}
+        <div className="header-user-menu-wrap" ref={userMenuRef}>
+          <button
+            type="button"
+            className={`header-avatar-btn ${isUserMenuOpen ? 'active' : ''}`}
+            onClick={() => setIsUserMenuOpen((prev) => !prev)}
+            aria-label="User Account Menu"
+            aria-expanded={isUserMenuOpen}
+            title={currentUser?.name || 'User Account'}
+          >
+            <span className="header-user-avatar">
+              <span>{currentUser?.avatar || (currentUser?.role === 'citizen' ? 'PU' : 'OF')}</span>
+              <span className="user-online-dot" />
             </span>
-            <span className="header-user-sub">
-              {currentUser?.department || (currentUser?.role === 'citizen' ? 'Civic Safety Network' : 'Disaster Control Desk')}
-            </span>
-          </div>
-          {onLogout && (
-            <button
-              type="button"
-              className="header-logout-quick-btn"
-              onClick={onLogout}
-              title="Switch Account / Sign Out"
-              aria-label="Switch Account / Sign Out"
-            >
-              <LogOutIcon size={13} color="#64748b" />
-            </button>
+          </button>
+
+          {isUserMenuOpen && (
+            <div className="header-user-dropdown animate-fade-in">
+              <div className="user-dropdown-header">
+                <div className="user-dropdown-avatar">
+                  <span>{currentUser?.avatar || (currentUser?.role === 'citizen' ? 'PU' : 'OF')}</span>
+                </div>
+                <div className="user-dropdown-info">
+                  <span className="user-dropdown-name">
+                    {currentUser?.name || (currentUser?.role === 'citizen' ? 'Public User #8204' : 'Officer #4102')}
+                  </span>
+                  <span className="user-dropdown-sub">
+                    {currentUser?.department || (currentUser?.role === 'citizen' ? 'Civic Safety Network' : 'Disaster Control Desk')}
+                  </span>
+                  <span className="user-dropdown-email">
+                    {currentUser?.email || (currentUser?.role === 'citizen' ? 'user8204@thermoguard.in' : 'officer4102@gov.in')}
+                  </span>
+                </div>
+              </div>
+
+              <div className="user-dropdown-badge-row">
+                <span className={`user-role-badge ${currentUser?.role || 'authority'}`}>
+                  {currentUser?.role === 'citizen' ? 'Citizen Verified Access' : 'Authorized Duty Officer'}
+                </span>
+              </div>
+
+              {onLogout && (
+                <button
+                  type="button"
+                  className="user-dropdown-logout-btn"
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    onLogout();
+                  }}
+                >
+                  <LogOutIcon size={16} color="#dc2626" />
+                  <span>Log Out</span>
+                </button>
+              )}
+            </div>
           )}
         </div>
 
