@@ -100,7 +100,7 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
           mapInstanceRef.current = null;
         }
 
-        // Initialize map with clean light Carto Voyager style
+        // Initialize map with OpenStreetMap tiles
         const map = L.map(mapContainerRef.current, {
           center: [location.lat, location.lon],
           zoom: 13,
@@ -113,128 +113,43 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
           touchZoom: true,
         });
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-          maxZoom: 18,
-          subdomains: 'abcd',
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 19,
         }).addTo(map);
 
         const centerLat = location.lat;
         const centerLon = location.lon;
 
-        // Realistic ward locations matching the uploaded design
-        const wardSpots = [
-          {
-            id: 'w1',
-            lat: centerLat,
-            lon: centerLon,
-            name: 'Ward 1 · Central Commercial & Transit Hub',
-            shortName: 'Ward 1 · Central Commercial',
-            type: 'Dense Concrete / Urban Heat Island',
-            categoryTag: 'HIGH',
-            tagBg: '#fff7ed',
-            tagColor: '#ea580c',
-            population: '95,000',
-            wbgt: 30.2,
-            airTemp: 29.4,
-            heatIndex: 32.8,
-            mortalityRisk: 35,
-            color: '#f97316',
-          },
-          {
-            id: 'w2',
-            lat: centerLat + 0.016,
-            lon: centerLon - 0.014,
-            name: 'Ward 2 · North Industrial & Labour Colony',
-            shortName: 'Ward 2 · North Labour Colony',
-            type: 'Industrial Tin-Sheds & High Exposure',
-            categoryTag: 'VERY HIGH',
-            tagBg: '#fff1f2',
-            tagColor: '#dc2626',
-            population: '140,000',
-            wbgt: 34.6,
-            airTemp: 33.8,
-            heatIndex: 38.2,
-            mortalityRisk: 68,
-            color: '#ea580c',
-          },
-          {
-            id: 'w3',
-            lat: centerLat - 0.018,
-            lon: centerLon + 0.018,
-            name: 'Ward 3 · East Residential & Slum Cluster',
-            shortName: 'Ward 3 · East Slum Cluster',
-            type: 'Informal Settlements / Low Green Cover',
-            categoryTag: 'EXTREME',
-            tagBg: '#fff1f2',
-            tagColor: '#991b1b',
-            population: '110,000',
-            wbgt: 37.8,
-            airTemp: 36.2,
-            heatIndex: 44.5,
-            mortalityRisk: 82,
-            color: '#991b1b',
-          },
-          {
-            id: 'w4',
-            lat: centerLat - 0.024,
-            lon: centerLon - 0.022,
-            name: 'Ward 4 · South Green Institutional Area',
-            shortName: 'Ward 4 · South Green Area',
-            type: 'High Canopy & Parkland Buffer',
-            categoryTag: 'LOW',
-            tagBg: '#f0fdf4',
-            tagColor: '#16a34a',
-            population: '60,000',
-            wbgt: 24.8,
-            airTemp: 25.1,
-            heatIndex: 26.2,
-            mortalityRisk: 12,
-            color: '#22c55e',
-          },
-          {
-            id: 'w5',
-            lat: centerLat + 0.022,
-            lon: centerLon + 0.025,
-            name: 'Ward 5 · West High-Density Old City',
-            shortName: 'Ward 5 · Old City',
-            type: 'Narrow Lanes & Trapped Heat',
-            categoryTag: 'MODERATE',
-            tagBg: '#fefce8',
-            tagColor: '#ca8a04',
-            population: '175,000',
-            wbgt: 28.6,
-            airTemp: 28.0,
-            heatIndex: 30.4,
-            mortalityRisk: 28,
-            color: '#eab308',
-          },
-        ];
+        // Use live dynamic wards calculated for selected location coordinates & live weather
+        const wardSpots = (wards && wards.length > 0) ? wards : [];
 
         // Add circle heat zones + Pin with Location Name directly below it
         wardSpots.forEach((spot) => {
+          const spotColor = spot.color || spot.tagColor || '#ea580c';
           // Heat zone background glow
           L.circle([spot.lat, spot.lon], {
             radius: 800,
-            color: spot.color,
+            color: spotColor,
             weight: 1,
-            fillColor: spot.color,
+            fillColor: spotColor,
             fillOpacity: 0.22,
           }).addTo(map);
 
           const formattedWbgt = formatTemp(spot.wbgt, tempUnit);
-          const formattedAirTemp = formatTemp(spot.airTemp, tempUnit);
+          const formattedAirTemp = formatTemp(spot.airTemp || spot.temperature, tempUnit);
           const formattedHeatIndex = formatTemp(spot.heatIndex, tempUnit);
 
-          // Custom DivIcon matching exact reference image:
+          // Custom DivIcon matching exact reference design:
           // Pin circle with WBGT + Location Name directly below the marked spot
           const customMarkerHtml = `
             <div class="ward-spot-marker-container">
-              <div class="ward-pin-circle" style="border-color: ${spot.color};">
+              <div class="ward-pin-circle" style="border-color: ${spotColor};">
                 <span class="ward-pin-temp">${formattedWbgt}&deg;</span>
                 <span class="ward-pin-unit">WBGT</span>
               </div>
-              <div class="ward-spot-name-below" style="border-color: ${spot.color}44;">
-                ${spot.shortName}
+              <div class="ward-spot-name-below" style="border-color: ${spotColor}44;">
+                ${spot.shortName || spot.name}
               </div>
             </div>
           `;
@@ -247,21 +162,21 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
             popupAnchor: [0, -22],
           });
 
-          // Exact Popup styled like the user's uploaded reference image
+          // Exact Popup styled like reference design with live telemetry
           const popupHtml = `
             <div class="uploaded-style-popup">
               <div class="popup-top-tag-row">
-                <span class="popup-cat-badge" style="background: ${spot.tagBg}; color: ${spot.tagColor}; border: 1px solid ${spot.tagColor}44;">
-                  ${spot.categoryTag}
+                <span class="popup-cat-badge" style="background: ${spot.tagBg || '#fff7ed'}; color: ${spotColor}; border: 1px solid ${spotColor}44;">
+                  ${spot.categoryTag || 'LIVE'}
                 </span>
                 <span class="popup-pop-info">Pop: ${spot.population}</span>
               </div>
               <div class="popup-spot-title">${spot.name}</div>
-              <div class="popup-spot-microclimate">${spot.type}</div>
+              <div class="popup-spot-microclimate">${spot.microclimateType || spot.type}</div>
               <div class="popup-metrics-grid-card">
                 <div class="pm-cell">
                   <div class="pm-label">WBGT</div>
-                  <div class="pm-value" style="color: ${spot.color};">${formattedWbgt}&deg;${tempUnit}</div>
+                  <div class="pm-value" style="color: ${spotColor};">${formattedWbgt}&deg;${tempUnit}</div>
                 </div>
                 <div class="pm-cell">
                   <div class="pm-label">Air Temp</div>
@@ -269,11 +184,11 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
                 </div>
                 <div class="pm-cell">
                   <div class="pm-label">Heat Index</div>
-                  <div class="pm-value" style="color: ${spot.color};">${formattedHeatIndex}&deg;${tempUnit}</div>
+                  <div class="pm-value" style="color: ${spotColor};">${formattedHeatIndex}&deg;${tempUnit}</div>
                 </div>
                 <div class="pm-cell">
                   <div class="pm-label">Mortality Risk</div>
-                  <div class="pm-value" style="color: ${spot.color};">${spot.mortalityRisk}%</div>
+                  <div class="pm-value" style="color: ${spotColor};">${spot.mortalityRisk}%</div>
                 </div>
               </div>
             </div>

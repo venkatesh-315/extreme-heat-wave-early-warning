@@ -6,14 +6,27 @@ import {
 } from './icons';
 import './AtRiskPopulationCard.css';
 
+function formatIndianNumber(num) {
+  if (!num || isNaN(num)) return '1.20 Lakh';
+  if (num >= 10000000) {
+    return `${(num / 10000000).toFixed(2)} Cr`;
+  }
+  if (num >= 100000) {
+    return `${(num / 100000).toFixed(2)} Lakh`;
+  }
+  return num.toLocaleString('en-IN');
+}
+
 function AtRiskPopulationCard({ location }) {
+  const pop = location?.population || 2500000;
+
   const groups = [
     {
       id: 'elderly',
       icon: UsersIcon,
       bgColor: '#fef2f2',
       iconColor: '#ef4444',
-      count: '2.41 Lakh',
+      count: formatIndianNumber(Math.round(pop * 0.115)), // ~11.5% elderly
       label: 'Elderly (60+)',
     },
     {
@@ -21,7 +34,7 @@ function AtRiskPopulationCard({ location }) {
       icon: UsersIcon,
       bgColor: '#fff7ed',
       iconColor: '#f97316',
-      count: '1.87 Lakh',
+      count: formatIndianNumber(Math.round(pop * 0.142)), // ~14.2% outdoor labour
       label: 'Outdoor Workers',
     },
     {
@@ -29,7 +42,7 @@ function AtRiskPopulationCard({ location }) {
       icon: UsersIcon,
       bgColor: '#f0fdf4',
       iconColor: '#22c55e',
-      count: '1.32 Lakh',
+      count: formatIndianNumber(Math.round(pop * 0.082)), // ~8.2% young children
       label: 'Children (<5 yrs)',
     },
     {
@@ -37,7 +50,7 @@ function AtRiskPopulationCard({ location }) {
       icon: HeartPulseIcon,
       bgColor: '#faf5ff',
       iconColor: '#a855f7',
-      count: '4.65 Lakh',
+      count: formatIndianNumber(Math.round(pop * 0.128)), // ~12.8% chronic comorbidities
       label: 'Chronic Illness',
     },
   ];

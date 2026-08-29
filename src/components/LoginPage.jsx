@@ -131,7 +131,7 @@ function LoginPage({ onLoginSuccess }) {
     setCitizenForm((prev) => ({ ...prev, otpCode: generatedOtp }));
     setStatusMessage({
       type: 'success',
-      text: `OTP sent successfully to +91 ${phoneClean.slice(0, 5)} ${phoneClean.slice(5)}. Mock OTP: ${generatedOtp}`
+      text: `OTP sent successfully to +91 ${phoneClean.slice(0, 5)} ${phoneClean.slice(5)}. Verification Code: ${generatedOtp}`
     });
     setTimeout(() => setStatusMessage(null), 6000);
   };

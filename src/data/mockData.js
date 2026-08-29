@@ -3,7 +3,7 @@
 // Extreme Heatwave Early Warning & Emergency Response System
 // ============================================================
 
-import { CURATED_INDIAN_LOCATIONS } from '../services/geocodingService';
+import { CURATED_INDIAN_LOCATIONS } from '../services/geocodingService.js';
 import {
   calculateHeatIndex,
   calculateWBGT,
@@ -11,7 +11,7 @@ import {
   calculateMortalityRisk,
   getStressCategory,
   getImdWarningLevel,
-} from '../services/weatherService';
+} from '../services/weatherService.js';
 
 export const INDIAN_CITIES = CURATED_INDIAN_LOCATIONS;
 
@@ -54,52 +54,140 @@ export const HISTORICAL_MORTALITY = [
 ];
 
 /**
- * Generate Ward-level heat zones around coordinates
+ * Generate Ward-level microclimate heat zones around coordinates from live weather data
  */
-export function generateWardData(lat, lon, baseTemp = 43.5, baseHumidity = 30) {
-  const zoneOffsets = [
-    { name: 'Ward 1 · Central Commercial & Transit Hub', offsetLat: 0.015, offsetLon: -0.012, type: 'Dense Concrete / Urban Heat Island', pop: '95,000' },
-    { name: 'Ward 2 · North Industrial & Labour Colony', offsetLat: 0.045, offsetLon: 0.022, type: 'Industrial Tin-Sheds & High Exposure', pop: '140,000' },
-    { name: 'Ward 3 · East Residential & Slum Cluster', offsetLat: -0.022, offsetLon: 0.048, type: 'Informal Settlements / Low Green Cover', pop: '110,000' },
-    { name: 'Ward 4 · South Green Institutional Area', offsetLat: -0.052, offsetLon: 0.012, type: 'High Canopy & Parkland Buffer', pop: '60,000' },
-    { name: 'Ward 5 · West High-Density Old City', offsetLat: 0.012, offsetLon: -0.058, type: 'Narrow Lanes & Trapped Heat', pop: '175,000' },
-    { name: 'Ward 6 · North-East Peri-Urban Sector', offsetLat: 0.038, offsetLon: 0.042, type: 'Open Brick Kilns & Unpaved Land', pop: '85,000' },
+export function generateWardData(lat, lon, baseTemp = 36.0, baseHumidity = 50, solarRadiation = 750, windSpeed = 12) {
+  const centerLat = Number(lat);
+  const centerLon = Number(lon);
+
+  const zoneConfigs = [
+    {
+      id: 'w1',
+      name: 'Ward 1 · Central Commercial & Transit Hub',
+      shortName: 'Ward 1 · Central Commercial',
+      offsetLat: 0.0,
+      offsetLon: 0.0,
+      type: 'Dense Concrete / Urban Heat Island',
+      tempDelta: 1.8,
+      humDelta: -5,
+      pop: '95,000',
+    },
+    {
+      id: 'w2',
+      name: 'Ward 2 · North Industrial & Labour Colony',
+      shortName: 'Ward 2 · North Labour Colony',
+      offsetLat: 0.016,
+      offsetLon: -0.014,
+      type: 'Industrial Tin-Sheds & High Exposure',
+      tempDelta: 2.3,
+      humDelta: -4,
+      pop: '140,000',
+    },
+    {
+      id: 'w3',
+      name: 'Ward 3 · East Residential & Slum Cluster',
+      shortName: 'Ward 3 · East Slum Cluster',
+      offsetLat: -0.018,
+      offsetLon: 0.018,
+      type: 'Informal Settlements / Low Green Cover',
+      tempDelta: 1.2,
+      humDelta: 3,
+      pop: '110,000',
+    },
+    {
+      id: 'w4',
+      name: 'Ward 4 · South Green Institutional Area',
+      shortName: 'Ward 4 · South Green Area',
+      offsetLat: -0.024,
+      offsetLon: -0.022,
+      type: 'High Canopy & Parkland Buffer',
+      tempDelta: -1.6,
+      humDelta: 7,
+      pop: '60,000',
+    },
+    {
+      id: 'w5',
+      name: 'Ward 5 · West High-Density Old City',
+      shortName: 'Ward 5 · Old City',
+      offsetLat: 0.022,
+      offsetLon: 0.025,
+      type: 'Narrow Lanes & Trapped Heat',
+      tempDelta: 0.9,
+      humDelta: -2,
+      pop: '175,000',
+    },
+    {
+      id: 'w6',
+      name: 'Ward 6 · Peri-Urban Agricultural Belt',
+      shortName: 'Ward 6 · Peri-Urban Sector',
+      offsetLat: 0.035,
+      offsetLon: -0.030,
+      type: 'Open Soil & High Direct Sunlight',
+      tempDelta: 0.2,
+      humDelta: 4,
+      pop: '85,000',
+    },
   ];
 
-  return zoneOffsets.map((z, i) => {
-    // Thermal microclimate variation
-    const isUhi = i === 0 || i === 1 || i === 4;
-    const tempDelta = isUhi ? 1.8 + Math.random() * 1.5 : -1.2 + Math.random() * 0.8;
-    const humDelta = isUhi ? -4 : 6;
-
-    const t = parseFloat((baseTemp + tempDelta).toFixed(1));
-    const rh = Math.max(12, Math.min(90, Math.round(baseHumidity + humDelta)));
-    const w = 2.5;
-    const sr = 900;
+  return zoneConfigs.map((z) => {
+    const t = parseFloat((baseTemp + z.tempDelta).toFixed(1));
+    const rh = Math.max(12, Math.min(95, Math.round(baseHumidity + z.humDelta)));
+    const w = (windSpeed || 12) / 3.6;
+    const sr = solarRadiation || 750;
 
     const wbgt = calculateWBGT(t, rh, w, sr);
     const hi = calculateHeatIndex(t, rh);
     const utci = calculateUTCI(t, rh, w, sr);
     const risk = calculateMortalityRisk(wbgt, utci, hi, t);
+    const stressCat = getStressCategory(wbgt, t);
+    const imdAlert = getImdWarningLevel(t, wbgt, centerLat);
+
+    let tagColor = '#16a34a';
+    let tagBg = '#f0fdf4';
+    let categoryTag = 'LOW';
+
+    if (risk >= 70 || wbgt >= 35) {
+      categoryTag = 'CRITICAL';
+      tagColor = '#991b1b';
+      tagBg = '#fff1f2';
+    } else if (risk >= 55 || wbgt >= 32) {
+      categoryTag = 'VERY HIGH';
+      tagColor = '#dc2626';
+      tagBg = '#fef2f2';
+    } else if (risk >= 40 || wbgt >= 29) {
+      categoryTag = 'HIGH';
+      tagColor = '#ea580c';
+      tagBg = '#fff7ed';
+    } else if (risk >= 20 || wbgt >= 26) {
+      categoryTag = 'MODERATE';
+      tagColor = '#ca8a04';
+      tagBg = '#fefce8';
+    }
 
     return {
-      id: `ward-${i + 1}`,
+      id: z.id,
       name: z.name,
+      shortName: z.shortName,
       microclimateType: z.type,
       population: z.pop,
-      lat: lat + z.offsetLat,
-      lon: lon + z.offsetLon,
+      lat: centerLat + z.offsetLat,
+      lon: centerLon + z.offsetLon,
       temperature: t,
+      airTemp: t,
       humidity: rh,
       wbgt: parseFloat(wbgt.toFixed(1)),
       heatIndex: parseFloat(hi.toFixed(1)),
       utci: parseFloat(utci.toFixed(1)),
       mortalityRisk: risk,
-      stressCategory: getStressCategory(wbgt, t),
-      imdAlert: getImdWarningLevel(t, wbgt, lat),
-      coolingCenters: isUhi ? 3 : 1,
-      hospitals: isUhi ? 2 : 1,
-      waterKiosks: isUhi ? 8 : 4,
+      stressCategory: stressCat,
+      categoryTag: categoryTag,
+      tagColor: tagColor,
+      tagBg: tagBg,
+      color: tagColor,
+      imdAlert: imdAlert,
+      coolingCenters: z.tempDelta > 0 ? 3 : 1,
+      hospitals: z.tempDelta > 0 ? 2 : 1,
+      waterKiosks: z.tempDelta > 0 ? 8 : 4,
     };
   });
 }

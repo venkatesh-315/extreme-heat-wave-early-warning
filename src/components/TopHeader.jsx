@@ -402,10 +402,10 @@ function TopHeader({
           )}
         </div>
 
-        {/* Current Date & Time Display */}
+        {/* Current Date & Time Display (Live Present Date & Time) */}
         <div className="datetime-display">
-          <div className="time-text">{currentTime || '10:24 AM'}</div>
-          <div className="date-text">{currentDate || '26 Aug 2025'}</div>
+          <div className="time-text">{currentTime || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}</div>
+          <div className="date-text">{currentDate || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
         </div>
       </div>
     </header>

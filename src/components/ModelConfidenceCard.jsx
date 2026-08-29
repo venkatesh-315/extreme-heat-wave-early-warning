@@ -2,7 +2,9 @@ import React from 'react';
 import { InfoIcon } from './icons';
 import './ModelConfidenceCard.css';
 
-function ModelConfidenceCard({ confidence = 87, lastUpdated = '10:15 AM' }) {
+function ModelConfidenceCard({ confidence = 89, lastUpdated }) {
+  const displayTime = lastUpdated || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
   // SVG calculation for circular gauge
   const radius = 32;
   const circumference = 2 * Math.PI * radius;
@@ -49,7 +51,7 @@ function ModelConfidenceCard({ confidence = 87, lastUpdated = '10:15 AM' }) {
         <div className="confidence-text-block">
           <div className="conf-rating-title">High Confidence</div>
           <p className="conf-desc">Model accuracy is high for this forecast.</p>
-          <div className="conf-timestamp">Last Updated: {lastUpdated}</div>
+          <div className="conf-timestamp">Last Updated: {displayTime}</div>
         </div>
       </div>
     </div>
