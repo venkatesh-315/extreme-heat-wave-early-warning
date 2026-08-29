@@ -1,0 +1,9 @@
+const express = require('express');
+const router = express.Router();
+const thermalStressController = require('../controllers/thermalStressController');
+const { validateCalculation } = require('../middleware/validationMiddleware');
+
+router.get('/current', thermalStressController.getCurrentThermalStress);
+router.post('/calculate', validateCalculation, thermalStressController.calculateMetrics);
+
+module.exports = router;
