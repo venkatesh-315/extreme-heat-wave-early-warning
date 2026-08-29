@@ -120,7 +120,7 @@
   position: absolute;
   top: 14px;
   left: 14px;
-  z-index: 1000 !important;
+  z-index: 850 !important;
   display: flex;
   flex-direction: column;
   background: #ffffff;
@@ -180,7 +180,7 @@
   position: absolute;
   top: 14px;
   right: 14px;
-  z-index: 1000 !important;
+  z-index: 850 !important;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -727,7 +727,7 @@
   .map-custom-controls {
     top: 10px;
     left: 10px;
-    z-index: 1000 !important;
+    z-index: 850 !important;
   }
   .map-ctrl-btn {
     width: 30px;
@@ -741,7 +741,7 @@
     font-size: 0.65rem;
     gap: 3px;
     max-width: calc(100% - 20px);
-    z-index: 1000 !important;
+    z-index: 850 !important;
   }
   .legend-items {
     gap: 4px;
@@ -803,13 +803,13 @@
   .map-custom-controls {
     top: 8px;
     left: 8px;
-    z-index: 1000 !important;
+    z-index: 850 !important;
   }
   .gis-floating-legend {
     bottom: 8px;
     right: 8px;
     padding: 5px 7px;
-    z-index: 1000 !important;
+    z-index: 850 !important;
   }
   .legend-head {
     font-size: 0.62rem;

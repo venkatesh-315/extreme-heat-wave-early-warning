@@ -184,6 +184,19 @@ function EmergencyDirectory({ resources = [], locationName = '', onFocusOnMap })
                   <span>Get Directions</span>
                 </a>
 
+                {item.searchMapsUrl && (
+                  <a
+                    href={item.searchMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-secondary btn-sm res-search-btn"
+                    title="View facility details on Google Maps"
+                  >
+                    <SearchIcon size={13} />
+                    <span>View on Maps</span>
+                  </a>
+                )}
+
                 {onFocusOnMap && (
                   <button
                     type="button"

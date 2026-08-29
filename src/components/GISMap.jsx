@@ -11,7 +11,8 @@ import {
   CrosshairIcon,
   MaximizeIcon,
   PlusIcon,
-  MinusIcon
+  MinusIcon,
+  SearchIcon,
 } from './icons';
 import './GISMap.css';
 
@@ -417,6 +418,11 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
                   <a href="${res.mapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn">
                     Get GPS Directions
                   </a>
+                  ${res.searchMapsUrl ? `
+                    <a href="${res.searchMapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn popup-search-link" style="background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1;">
+                      Verify on Maps
+                    </a>
+                  ` : ''}
                 </div>
               </div>
             `);
@@ -711,6 +717,12 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
                 <NavigationIcon size={13} />
                 <span>Get Directions</span>
               </a>
+              {selectedResource.searchMapsUrl && (
+                <a href={selectedResource.searchMapsUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" title="Verify location on Google Maps">
+                  <SearchIcon size={13} />
+                  <span>View on Maps</span>
+                </a>
+              )}
             </div>
           </div>
         </div>

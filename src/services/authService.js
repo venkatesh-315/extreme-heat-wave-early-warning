@@ -31,9 +31,15 @@ export const DEFAULT_USERS = {
 
 export function getCurrentUser() {
   try {
-    const saved = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    // Check persistent localStorage first
+    const saved = localStorage.getItem(AUTH_STORAGE_KEY) || sessionStorage.getItem(AUTH_STORAGE_KEY);
     if (saved) {
-      return JSON.parse(saved);
+      const user = JSON.parse(saved);
+      // Ensure sync to localStorage if it was only in sessionStorage
+      if (!localStorage.getItem(AUTH_STORAGE_KEY)) {
+        localStorage.setItem(AUTH_STORAGE_KEY, saved);
+      }
+      return user;
     }
   } catch (err) {
     console.error('Error reading auth user from storage:', err);
@@ -44,8 +50,11 @@ export function getCurrentUser() {
 export function saveCurrentUser(user) {
   try {
     if (user) {
-      sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+      const userStr = JSON.stringify(user);
+      localStorage.setItem(AUTH_STORAGE_KEY, userStr);
+      sessionStorage.setItem(AUTH_STORAGE_KEY, userStr);
     } else {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
       sessionStorage.removeItem(AUTH_STORAGE_KEY);
     }
   } catch (err) {
@@ -139,11 +148,12 @@ export async function loginWithCredentials(credentials = {}) {
 }
 
 export function logoutUser() {
-  sessionStorage.removeItem(AUTH_STORAGE_KEY);
   try {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem('thermoguard_auth_user_v1');
-  } catch {
-    // ignore
+  } catch (err) {
+    console.error('Error logging out user:', err);
   }
 }
 

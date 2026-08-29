@@ -298,7 +298,7 @@
     transform: translateX(-100%);
     box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
-    z-index: 1000;
+    z-index: 2000;
   }
 
   .app-sidebar.open {
@@ -333,7 +333,7 @@
     background: rgba(15, 23, 42, 0.45);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    z-index: 999;
+    z-index: 1999;
     animation: backdropFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 }

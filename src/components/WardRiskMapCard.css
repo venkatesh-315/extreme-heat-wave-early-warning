@@ -219,7 +219,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  z-index: 1000 !important;
+  z-index: 850 !important;
   display: flex;
   flex-direction: column;
   background: #ffffff;
@@ -259,7 +259,7 @@
   position: absolute;
   bottom: 8px;
   left: 8px;
-  z-index: 1000 !important;
+  z-index: 850 !important;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -575,7 +575,7 @@
   .map-custom-controls {
     top: 8px;
     left: 8px;
-    z-index: 1000 !important;
+    z-index: 850 !important;
   }
   .ward-floating-mini-legend {
     bottom: 8px;
@@ -584,7 +584,7 @@
     right: auto;
     padding: 3px 6px;
     gap: 5px;
-    z-index: 1000 !important;
+    z-index: 850 !important;
   }
   .mini-legend-title {
     font-size: 0.58rem;
