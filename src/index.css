@@ -217,8 +217,8 @@ body {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes spin {
@@ -232,7 +232,7 @@ body {
   100% { transform: scale(0.95); opacity: 0.9; }
 }
 
-.animate-fade-in { animation: fadeIn 0.3s ease forwards; }
+.animate-fade-in { animation: fadeIn 0.25s ease-out; }
 .animate-spin { animation: spin 1s linear infinite; }
 .animate-pulse { animation: pulseDot 2s ease-in-out infinite; }
 

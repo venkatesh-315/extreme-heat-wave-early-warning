@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import TopHeader from './components/TopHeader';
 import MobileNav from './components/MobileNav';
@@ -240,6 +240,66 @@ function App() {
 
   const tempUnit = userSettings.tempUnit || 'C';
 
+  // Compute dynamic active emergency heat alerts based on live biometeorology & NDMA directives
+  const activeAlerts = useMemo(() => {
+    if (!thermalMetrics || !weatherData) return [];
+    const list = [];
+    const wbgt = thermalMetrics.wbgt ?? 30;
+    const temp = weatherData.temperature ?? 38;
+    const mortalityRisk = thermalMetrics.mortalityRisk ?? 25;
+    const imdAlert = thermalMetrics.imdAlert || {};
+
+    // 1. Critical Emergency Heat Warning (Red Alert)
+    if (imdAlert.level === 'Red Alert' || wbgt >= 32 || temp >= 44 || mortalityRisk >= 60) {
+      list.push({
+        id: 'alert-imd-red',
+        severity: 'red',
+        tag: 'RED ALERT',
+        title: imdAlert.title || 'Severe Heatwave Emergency Action',
+        description: `WBGT has reached critical ${wbgt}°C with ${mortalityRisk}% excess mortality vulnerability in ${selectedLocation?.name}. Strict outdoor work suspension active.`,
+        time: 'Live Telemetry',
+      });
+    } else if (imdAlert.level === 'Orange Alert' || wbgt >= 28 || temp >= 40 || mortalityRisk >= 40) {
+      list.push({
+        id: 'alert-imd-orange',
+        severity: 'orange',
+        tag: 'ORANGE WARNING',
+        title: imdAlert.title || 'Heatwave Warning & High Thermal Load',
+        description: `High thermal stress detected (WBGT ${wbgt}°C). Vulnerable groups and outdoor workers require active mitigation.`,
+        time: 'Live Telemetry',
+      });
+    }
+
+    // 2. High Priority / Critical NDMA Action Directives
+    if (recommendations && recommendations.length > 0) {
+      recommendations.forEach((rec, idx) => {
+        if (rec.priority === 'CRITICAL') {
+          list.push({
+            id: `rec-crit-${idx}`,
+            severity: 'red',
+            tag: 'MANDATORY DIRECTIVE',
+            title: rec.title,
+            description: `${rec.action}`,
+            time: 'Enforced Protocol',
+          });
+        } else if (rec.priority === 'HIGH' && list.length < 3) {
+          list.push({
+            id: `rec-high-${idx}`,
+            severity: 'orange',
+            tag: 'HIGH PRIORITY',
+            title: rec.title,
+            description: `${rec.action}`,
+            time: 'Active Advisory',
+          });
+        }
+      });
+    }
+
+    return list;
+  }, [thermalMetrics, weatherData, selectedLocation, recommendations]);
+
+  const alertCount = activeAlerts.length;
+
   // 1. Initial Website Entry: Show full-screen loader immediately (clean logo only)
   if (isInitialLoading) {
     return <Loader fullScreen={true} />;
@@ -263,6 +323,7 @@ function App() {
         onClose={() => setIsSidebarOpen(false)}
         currentUser={currentUser}
         onLogout={handleLogout}
+        alertCount={alertCount}
       />
 
       {/* Main Content Area */}
@@ -277,6 +338,8 @@ function App() {
           autoRefreshInterval={userSettings.autoRefreshInterval}
           currentUser={currentUser}
           onLogout={handleLogout}
+          alertCount={alertCount}
+          activeAlerts={activeAlerts}
         />
 
         <main className="dashboard-scroll-body">
@@ -550,7 +613,7 @@ function App() {
                       <strong style={{ fontSize: '0.85rem', color: '#15803d' }}>Live Present Date Biometeorology Stream</strong>
                     </div>
                     <p style={{ fontSize: '0.78rem', color: '#166534', margin: 0, lineHeight: 1.5 }}>
-                      Real-time live telemetry streaming ISO 7933 Outdoor WBGT, UTCI thermoregulation, NOAA Heat Index, and IMD heatwave thresholds with zero mock data.
+                      Real-time live telemetry streaming ISO 7933 Outdoor WBGT, UTCI thermoregulation, NOAA Heat Index, and verified Indian healthcare infrastructure.
                     </p>
                   </div>
 

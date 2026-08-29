@@ -7,7 +7,8 @@ import {
   SearchIcon,
   CrosshairIcon,
   XIcon,
-  LogOutIcon
+  LogOutIcon,
+  CheckCircleIcon
 } from './icons';
 import { searchLocations, reverseGeocode, CURATED_INDIAN_LOCATIONS } from '../services/geocodingService';
 import './TopHeader.css';
@@ -20,7 +21,9 @@ function TopHeader({
   onOpenAlerts,
   autoRefreshInterval = '1m',
   currentUser,
-  onLogout
+  onLogout,
+  alertCount = 0,
+  activeAlerts = []
 }) {
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   // Keep the previous location name in the input field
@@ -296,40 +299,41 @@ function TopHeader({
             aria-label="View Active Alerts"
           >
             <BellIcon size={18} color="#475569" />
-            <span className="notif-badge">3</span>
+            {alertCount > 0 && <span className="notif-badge">{alertCount}</span>}
           </button>
 
           {isNotificationsOpen && (
             <div className="notif-dropdown">
               <div className="notif-header">
                 <span className="notif-title">Active Emergency Alerts</span>
-                <span className="notif-count">3 New</span>
+                <span className={`notif-count ${alertCount > 0 ? 'active' : 'safe'}`}>
+                  {alertCount > 0 ? `${alertCount} Active` : '0 Active'}
+                </span>
               </div>
               <div className="notif-list">
-                <div className="notif-item red">
-                  <div className="notif-indicator" />
-                  <div className="notif-text">
-                    <strong>Extreme Heatwave Alert (Red)</strong>
-                    <p>WBGT exceeding dangerous thresholds in central urban zone.</p>
-                    <span className="notif-time">10 mins ago</span>
+                {activeAlerts.length > 0 ? (
+                  activeAlerts.map((alert) => (
+                    <div key={alert.id} className={`notif-item ${alert.severity || 'orange'}`}>
+                      <div className="notif-indicator" />
+                      <div className="notif-text">
+                        <div className="notif-item-top">
+                          <strong>{alert.title}</strong>
+                          {alert.tag && <span className="notif-tag-pill">{alert.tag}</span>}
+                        </div>
+                        <p>{alert.description}</p>
+                        <span className="notif-time">{alert.time || 'Live Telemetry'}</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="notif-empty-state">
+                    <CheckCircleIcon size={26} color="#16a34a" />
+                    <div className="notif-empty-title">All Parameters Safe</div>
+                    <p className="notif-empty-text">
+                      Thermal stress indices for {selectedLocation?.name || 'this location'} are within normal baseline thresholds. No mandatory emergency alert active.
+                    </p>
                   </div>
-                </div>
-                <div className="notif-item orange">
-                  <div className="notif-indicator" />
-                  <div className="notif-text">
-                    <strong>Outdoor Work Restriction Enforced</strong>
-                    <p>Mandatory suspension for construction from 12 PM - 4 PM.</p>
-                    <span className="notif-time">25 mins ago</span>
-                  </div>
-                </div>
-                <div className="notif-item blue">
-                  <div className="notif-indicator" />
-                  <div className="notif-text">
-                    <strong>Cooling Centers Activated</strong>
-                    <p>12 municipal shelters and water distribution points operational.</p>
-                    <span className="notif-time">1 hour ago</span>
-                  </div>
-                </div>
+                )}
               </div>
               <button
                 className="notif-view-all"
@@ -338,7 +342,7 @@ function TopHeader({
                   if (onOpenAlerts) onOpenAlerts();
                 }}
               >
-                Open Full Alerts Center &rarr;
+                Open Full Alerts &amp; Heat Action Center &rarr;
               </button>
             </div>
           )}

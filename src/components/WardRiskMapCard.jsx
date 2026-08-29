@@ -22,10 +22,32 @@ const RISK_CATEGORIES = [
 function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const controlsRef = useRef(null);
+  const legendRef = useRef(null);
   const [selectedFilter, setSelectedFilter] = useState('Risk Index');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeCategoryModal, setActiveCategoryModal] = useState(false);
+
+  // Disable click/touch/drag propagation on custom controls and legend
+  useEffect(() => {
+    const disablePropagation = async () => {
+      try {
+        const L = await import('leaflet');
+        if (controlsRef.current) {
+          L.DomEvent.disableClickPropagation(controlsRef.current);
+          L.DomEvent.disableScrollPropagation(controlsRef.current);
+        }
+        if (legendRef.current) {
+          L.DomEvent.disableClickPropagation(legendRef.current);
+          L.DomEvent.disableScrollPropagation(legendRef.current);
+        }
+      } catch {
+        // ignore
+      }
+    };
+    disablePropagation();
+  }, []);
 
   // Invalidate Leaflet map size, center map view, and re-enable zoom whenever fullscreen changes
   useEffect(() => {
@@ -54,21 +76,56 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
     };
   }, [isFullscreen, location]);
 
-  // Disable page scrolling when full screen is active
+  // Disable page background scrolling completely when full screen is active
   useEffect(() => {
     if (isFullscreen) {
       const originalBodyOverflow = document.body.style.overflow;
       const originalHtmlOverflow = document.documentElement.style.overflow;
+      const originalBodyTouch = document.body.style.touchAction;
+
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
       document.documentElement.style.overflow = 'hidden';
+      document.documentElement.style.touchAction = 'none';
+
+      const appRoot = document.querySelector('.thermoguard-app');
+      const originalAppOverflow = appRoot ? appRoot.style.overflow : '';
+      if (appRoot) {
+        appRoot.style.overflow = 'hidden';
+      }
+
       const mainLayout = document.querySelector('.app-main-layout');
       const originalMainOverflow = mainLayout ? mainLayout.style.overflow : '';
-      if (mainLayout) mainLayout.style.overflow = 'hidden';
+      if (mainLayout) {
+        mainLayout.style.overflow = 'hidden';
+      }
+
+      const scrollBody = document.querySelector('.dashboard-scroll-body');
+      const originalScrollOverflow = scrollBody ? scrollBody.style.overflow : '';
+      if (scrollBody) {
+        scrollBody.style.overflow = 'hidden';
+      }
+
+      const preventBackgroundScroll = (e) => {
+        const modal = document.querySelector('.ward-map-card.fullscreen');
+        if (modal && !modal.contains(e.target)) {
+          e.preventDefault();
+        }
+      };
+
+      window.addEventListener('wheel', preventBackgroundScroll, { passive: false });
+      window.addEventListener('touchmove', preventBackgroundScroll, { passive: false });
 
       return () => {
         document.body.style.overflow = originalBodyOverflow;
+        document.body.style.touchAction = originalBodyTouch;
         document.documentElement.style.overflow = originalHtmlOverflow;
+        document.documentElement.style.touchAction = '';
+        if (appRoot) appRoot.style.overflow = originalAppOverflow;
         if (mainLayout) mainLayout.style.overflow = originalMainOverflow;
+        if (scrollBody) scrollBody.style.overflow = originalScrollOverflow;
+        window.removeEventListener('wheel', preventBackgroundScroll);
+        window.removeEventListener('touchmove', preventBackgroundScroll);
       };
     }
   }, [isFullscreen]);
@@ -324,7 +381,7 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
           <div ref={mapContainerRef} className="ward-leaflet-map" />
 
           {/* Top-Left Map Zoom & Fullscreen Controls */}
-          <div className="map-custom-controls">
+          <div ref={controlsRef} className="map-custom-controls">
             <button className="map-ctrl-btn" onClick={handleZoomIn} aria-label="Zoom In">
               <PlusIcon size={13} color="#334155" />
             </button>
@@ -341,9 +398,22 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
             </button>
           </div>
 
-          {/* Sleek, Reduced-Size Mini Risk Scale Legend on Bottom Left */}
-          <div className="ward-floating-mini-legend">
-            <div className="mini-legend-title">Risk Scale (0-100)</div>
+          {/* Prominent Floating 'X' Close Button in Fullscreen Mode */}
+          {isFullscreen && (
+            <button
+              type="button"
+              className="fullscreen-floating-close-btn"
+              onClick={() => setIsFullscreen(false)}
+              aria-label="Close Fullscreen Map"
+              title="Close Fullscreen (Esc)"
+            >
+              <XIcon size={18} color="#ffffff" />
+            </button>
+          )}
+
+          {/* Sleek, Compact Mini Risk Scale Legend along bottom edge */}
+          <div ref={legendRef} className="ward-floating-mini-legend">
+            <span className="mini-legend-title">Risk:</span>
             <div className="mini-legend-rows">
               {RISK_CATEGORIES.map((item) => (
                 <div key={item.id} className="mini-legend-item">

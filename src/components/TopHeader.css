@@ -426,11 +426,19 @@
 
 .notif-count {
   font-size: 0.72rem;
-  background: #fee2e2;
-  color: #dc2626;
   font-weight: 700;
   padding: 2px 7px;
   border-radius: 9999px;
+}
+
+.notif-count.active {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.notif-count.safe {
+  background: #dcfce7;
+  color: #15803d;
 }
 
 .notif-list {
@@ -438,13 +446,15 @@
   flex-direction: column;
   gap: 8px;
   margin-bottom: 10px;
+  max-height: 280px;
+  overflow-y: auto;
 }
 
 .notif-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 8px;
+  padding: 8px 10px;
   border-radius: 8px;
   background: #f8fafc;
   border: 1px solid #f1f5f9;
@@ -455,13 +465,37 @@
   border-color: #fecdd3;
 }
 
+.notif-item.orange {
+  background: #fff7ed;
+  border-color: #ffedd5;
+}
+
+.notif-item.red .notif-indicator {
+  background: #dc2626;
+}
+
+.notif-item.orange .notif-indicator {
+  background: #ea580c;
+}
+
 .notif-indicator {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #dc2626;
+  background: #ea580c;
   margin-top: 5px;
   flex-shrink: 0;
+}
+
+.notif-text {
+  flex: 1;
+}
+
+.notif-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
 }
 
 .notif-text strong {
@@ -470,15 +504,60 @@
   display: block;
 }
 
+.notif-tag-pill {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  white-space: nowrap;
+}
+
+.notif-item.orange .notif-tag-pill {
+  background: #fff7ed;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
 .notif-text p {
   font-size: 0.72rem;
-  color: #64748b;
+  color: #475569;
   margin: 2px 0 4px;
+  line-height: 1.35;
 }
 
 .notif-time {
   font-size: 0.65rem;
   color: #94a3b8;
+  display: block;
+}
+
+.notif-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 18px 12px;
+  gap: 6px;
+  background: #f0fdf4;
+  border-radius: 10px;
+  border: 1px solid #dcfce7;
+}
+
+.notif-empty-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #166534;
+}
+
+.notif-empty-text {
+  font-size: 0.72rem;
+  color: #475569;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .notif-view-all {

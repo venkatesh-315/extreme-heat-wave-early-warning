@@ -36,6 +36,8 @@ const getRiskLabel = (risk) => {
 function GISMap({ location, wards = [], emergencyResources = [], focusedResource = null }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const controlsRef = useRef(null);
+  const legendRef = useRef(null);
   const markersMapRef = useRef({});
   const layerGroupsRef = useRef({
     heatZones: null,
@@ -54,6 +56,26 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
   });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapError, setMapError] = useState(false);
+
+  // Disable click and touch propagation on custom controls and legend so Leaflet map does not intercept them
+  useEffect(() => {
+    const disablePropagation = async () => {
+      try {
+        const L = await import('leaflet');
+        if (controlsRef.current) {
+          L.DomEvent.disableClickPropagation(controlsRef.current);
+          L.DomEvent.disableScrollPropagation(controlsRef.current);
+        }
+        if (legendRef.current) {
+          L.DomEvent.disableClickPropagation(legendRef.current);
+          L.DomEvent.disableScrollPropagation(legendRef.current);
+        }
+      } catch {
+        // ignore
+      }
+    };
+    disablePropagation();
+  }, []);
 
   // Invalidate Leaflet Map Size, center map view, and re-enable zoom whenever Fullscreen changes
   useEffect(() => {
@@ -80,21 +102,56 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
     };
   }, [isFullscreen, location]);
 
-  // Disable page scrolling when full screen is active
+  // Disable page background scrolling completely when full screen is active
   useEffect(() => {
     if (isFullscreen) {
       const originalBodyOverflow = document.body.style.overflow;
       const originalHtmlOverflow = document.documentElement.style.overflow;
+      const originalBodyTouch = document.body.style.touchAction;
+
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
       document.documentElement.style.overflow = 'hidden';
+      document.documentElement.style.touchAction = 'none';
+
+      const appRoot = document.querySelector('.thermoguard-app');
+      const originalAppOverflow = appRoot ? appRoot.style.overflow : '';
+      if (appRoot) {
+        appRoot.style.overflow = 'hidden';
+      }
+
       const mainLayout = document.querySelector('.app-main-layout');
       const originalMainOverflow = mainLayout ? mainLayout.style.overflow : '';
-      if (mainLayout) mainLayout.style.overflow = 'hidden';
+      if (mainLayout) {
+        mainLayout.style.overflow = 'hidden';
+      }
+
+      const scrollBody = document.querySelector('.dashboard-scroll-body');
+      const originalScrollOverflow = scrollBody ? scrollBody.style.overflow : '';
+      if (scrollBody) {
+        scrollBody.style.overflow = 'hidden';
+      }
+
+      const preventBackgroundScroll = (e) => {
+        const modal = document.querySelector('.gis-wrapper.fullscreen-mode');
+        if (modal && !modal.contains(e.target)) {
+          e.preventDefault();
+        }
+      };
+
+      window.addEventListener('wheel', preventBackgroundScroll, { passive: false });
+      window.addEventListener('touchmove', preventBackgroundScroll, { passive: false });
 
       return () => {
         document.body.style.overflow = originalBodyOverflow;
+        document.body.style.touchAction = originalBodyTouch;
         document.documentElement.style.overflow = originalHtmlOverflow;
+        document.documentElement.style.touchAction = '';
+        if (appRoot) appRoot.style.overflow = originalAppOverflow;
         if (mainLayout) mainLayout.style.overflow = originalMainOverflow;
+        if (scrollBody) scrollBody.style.overflow = originalScrollOverflow;
+        window.removeEventListener('wheel', preventBackgroundScroll);
+        window.removeEventListener('touchmove', preventBackgroundScroll);
       };
     }
   }, [isFullscreen]);
@@ -401,7 +458,15 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
   const waterCount = emergencyResources.filter((r) => r.type === 'water').length;
 
   return (
-    <div className={`gis-wrapper card ${isFullscreen ? 'fullscreen-mode' : ''}`} id="gis-interactive-map">
+    <>
+      {isFullscreen && (
+        <div
+          className="map-fullscreen-backdrop"
+          onClick={() => setIsFullscreen(false)}
+          aria-hidden="true"
+        />
+      )}
+      <div className={`gis-wrapper card ${isFullscreen ? 'fullscreen-mode' : ''}`} id="gis-interactive-map">
       <div className="gis-top-bar">
         <div className="gis-header-titles">
           <h3 className="section-title">
@@ -478,7 +543,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
           )}
 
           {/* Top-Left / Map Controls Stack: Zoom In (+), Zoom Out (-), and Fullscreen directly below */}
-          <div className="map-custom-controls">
+          <div ref={controlsRef} className="map-custom-controls">
             <button
               type="button"
               className="map-ctrl-btn"
@@ -508,8 +573,21 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             </button>
           </div>
 
+          {/* Prominent Floating 'X' Close Button in Fullscreen Mode */}
+          {isFullscreen && (
+            <button
+              type="button"
+              className="fullscreen-floating-close-btn"
+              onClick={() => setIsFullscreen(false)}
+              aria-label="Close Fullscreen Map"
+              title="Close Fullscreen (Esc)"
+            >
+              <XIcon size={20} color="#ffffff" />
+            </button>
+          )}
+
           {/* Map Legend */}
-          <div className="gis-floating-legend">
+          <div ref={legendRef} className="gis-floating-legend">
             <span className="legend-head">Risk Scale (WBGT):</span>
             <div className="legend-items">
               <span className="leg-dot" style={{ background: '#16a34a' }}>&lt;26&deg; Safe</span>
@@ -637,7 +715,8 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 
