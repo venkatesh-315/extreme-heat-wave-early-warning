@@ -7,9 +7,7 @@ import {
   SearchIcon,
   CrosshairIcon,
   XIcon,
-  LogOutIcon,
-  Building2Icon,
-  UsersIcon
+  LogOutIcon
 } from './icons';
 import { searchLocations, reverseGeocode, CURATED_INDIAN_LOCATIONS } from '../services/geocodingService';
 import './TopHeader.css';
@@ -20,7 +18,6 @@ function TopHeader({
   onToggleSidebar,
   isSidebarOpen = false,
   onOpenAlerts,
-  isLive = true,
   autoRefreshInterval = '1m',
   currentUser,
   onLogout

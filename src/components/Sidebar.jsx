@@ -10,9 +10,7 @@ import {
   ReportsIcon,
   SettingsIcon,
   XIcon,
-  LogOutIcon,
-  Building2Icon,
-  UsersIcon
+  LogOutIcon
 } from './icons';
 import './Sidebar.css';
 
@@ -27,9 +25,7 @@ const NAV_ITEMS = [
   { id: 'settings', label: 'Settings', icon: SettingsIcon },
 ];
 
-function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose, currentUser, onLogout }) {
-  const isAuthority = currentUser?.role === 'authority';
-
+function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose, _currentUser, onLogout }) {
   return (
     <>
       {/* Backdrop for Mobile Drawer */}

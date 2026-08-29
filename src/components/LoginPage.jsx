@@ -8,15 +8,72 @@ import {
   Building2Icon,
   UsersIcon,
   ArrowRightIcon,
-  CheckCircleIcon
+  LockIcon,
+  MailIcon,
+  EyeIcon,
+  EyeOffIcon,
+  SmartphoneIcon,
+  KeyRoundIcon,
+  AlertTriangleIcon,
+  CheckIcon
 } from './icons';
-import { quickLoginByRole } from '../services/authService';
+import { loginWithCredentials } from '../services/authService';
 import './LoginPage.css';
+
+const AUTHORITY_DEPARTMENTS = [
+  'SDMA / Municipal Disaster Control Command',
+  'NDMA - National Disaster Management Authority',
+  'District Emergency Operation Centre (DEOC)',
+  'Public Health & Heat Action Taskforce',
+  'IMD Meteorological Duty Desk',
+  'Municipal Corporation Health & Sanitation'
+];
+
+const CITIZEN_LOCATIONS = [
+  'New Delhi (Central / Connaught Place)',
+  'Ahmedabad (East / Maninagar)',
+  'Nagpur (Civil Lines / Sitabuldi)',
+  'Hyderabad (Banjara Hills / Secunderabad)',
+  'Varanasi (Dashashwamedh & Godowlia)',
+  'Mumbai (Bandra / Suburban Coastal)',
+  'Kolkata (Park Street / Salt Lake)',
+  'Auto-detect Nearest Ward (GPS Live)'
+];
 
 function LoginPage({ onLoginSuccess }) {
   const [role, setRole] = useState('authority'); // 'authority' | 'citizen'
   const [isLoading, setIsLoading] = useState(false);
   const [roleTransitioning, setRoleTransitioning] = useState(false);
+  const [statusMessage, setStatusMessage] = useState(null);
+
+  // Authority Form State
+  const [authorityForm, setAuthorityForm] = useState({
+    officerIdOrEmail: '',
+    department: AUTHORITY_DEPARTMENTS[0],
+    passcode: '',
+    rememberDevice: true,
+    showPassword: false
+  });
+
+  // Citizen Form State
+  const [citizenMode, setCitizenMode] = useState('otp'); // 'otp' | 'password'
+  const [citizenForm, setCitizenForm] = useState({
+    phone: '',
+    email: '',
+    otpCode: '',
+    password: '',
+    alertLocation: CITIZEN_LOCATIONS[0],
+    alertsOptIn: true,
+    showPassword: false
+  });
+
+  // OTP Simulation State
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpTimer, setOtpTimer] = useState(0);
+
+  // Form Validation Errors
+  const [errors, setErrors] = useState({});
+
   const tabIndicatorRef = useRef(null);
   const authTabRef = useRef(null);
   const publicTabRef = useRef(null);
@@ -31,28 +88,143 @@ function LoginPage({ onLoginSuccess }) {
     }
   }, [role]);
 
-  // Role switch handler with animation trigger
+  // Handle countdown timer for OTP
+  useEffect(() => {
+    let interval = null;
+    if (otpTimer > 0) {
+      interval = setInterval(() => {
+        setOtpTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [otpTimer]);
+
+  // Clear errors when switching role or mode
   const handleSwitchRole = (newRole) => {
     if (newRole === role) return;
     setRoleTransitioning(true);
     setRole(newRole);
+    setErrors({});
+    setStatusMessage(null);
     setTimeout(() => {
       setRoleTransitioning(false);
     }, 280);
   };
 
-  // Direct login simulator
-  const handleLogin = async (selectedRole = role) => {
+  // Handle OTP Trigger Simulation
+  const handleSendOtp = () => {
+    const phoneClean = citizenForm.phone.replace(/[^0-9]/g, '');
+    if (!phoneClean || phoneClean.length < 10) {
+      setErrors((prev) => ({
+        ...prev,
+        phone: 'Please enter a valid 10-digit mobile number first'
+      }));
+      return;
+    }
+    setErrors((prev) => ({ ...prev, phone: null }));
+    setOtpSent(true);
+    setOtpTimer(30);
+    // Generate a friendly 6-digit mock OTP and prefill/notify
+    const generatedOtp = '849201';
+    setCitizenForm((prev) => ({ ...prev, otpCode: generatedOtp }));
+    setStatusMessage({
+      type: 'success',
+      text: `OTP sent successfully to +91 ${phoneClean.slice(0, 5)} ${phoneClean.slice(5)}. Mock OTP: ${generatedOtp}`
+    });
+    setTimeout(() => setStatusMessage(null), 6000);
+  };
+
+  // Authority Form Submit
+  const handleAuthoritySubmit = async (e) => {
+    if (e) e.preventDefault();
+    const newErrors = {};
+
+    if (!authorityForm.officerIdOrEmail.trim()) {
+      newErrors.officerIdOrEmail = 'Officer ID or Official Email is required';
+    }
+    if (!authorityForm.passcode.trim()) {
+      newErrors.passcode = 'Authorized passcode is required';
+    } else if (authorityForm.passcode.length < 4) {
+      newErrors.passcode = 'Passcode must be at least 4 characters';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
     setIsLoading(true);
+
     try {
-      // Simulate authenticating session
-      await new Promise((resolve) => setTimeout(resolve, 400));
-      const user = await quickLoginByRole(selectedRole);
+      await new Promise((resolve) => setTimeout(resolve, 450));
+      const user = await loginWithCredentials({
+        role: 'authority',
+        officerIdOrEmail: authorityForm.officerIdOrEmail,
+        department: authorityForm.department,
+        rememberDevice: authorityForm.rememberDevice
+      });
       if (onLoginSuccess) {
         onLoginSuccess(user);
       }
     } catch (err) {
-      console.error('Login error:', err);
+      console.error('Authority login error:', err);
+      setErrors({ general: 'Authentication failed. Please verify credentials.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Citizen Form Submit
+  const handleCitizenSubmit = async (e) => {
+    if (e) e.preventDefault();
+    const newErrors = {};
+
+    if (citizenMode === 'otp') {
+      const phoneClean = citizenForm.phone.replace(/[^0-9]/g, '');
+      if (!phoneClean || phoneClean.length < 10) {
+        newErrors.phone = 'Please enter a valid 10-digit mobile number';
+      }
+      if (!citizenForm.otpCode.trim()) {
+        newErrors.otpCode = 'Please enter the 6-digit OTP received';
+      } else if (citizenForm.otpCode.trim().length < 4) {
+        newErrors.otpCode = 'Enter a valid verification OTP';
+      }
+    } else {
+      if (!citizenForm.email.trim() || !citizenForm.email.includes('@')) {
+        newErrors.email = 'Please enter a valid email address';
+      }
+      if (!citizenForm.password.trim()) {
+        newErrors.password = 'Please enter your password';
+      } else if (citizenForm.password.length < 4) {
+        newErrors.password = 'Password must be at least 4 characters';
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    setIsLoading(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 450));
+      const user = await loginWithCredentials({
+        role: 'citizen',
+        phoneOrEmail: citizenMode === 'otp' ? citizenForm.phone : citizenForm.email,
+        alertLocation: citizenForm.alertLocation,
+        alertsOptIn: citizenForm.alertsOptIn
+      });
+      if (onLoginSuccess) {
+        onLoginSuccess(user);
+      }
+    } catch (err) {
+      console.error('Citizen login error:', err);
+      setErrors({ general: 'Login failed. Please check your inputs.' });
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +250,7 @@ function LoginPage({ onLoginSuccess }) {
           {/* Top Brand Logo */}
           <div className="hero-brand-header">
             <div className="hero-logo-box">
-              <ThermoGuardLogo size={36} />
+              <ThermoGuardLogo size={38} />
             </div>
             <div className="hero-brand-text">
               <span className="brand-name">THERMOGUARD</span>
@@ -157,14 +329,36 @@ function LoginPage({ onLoginSuccess }) {
         <div className="auth-form-card">
           {/* Card Header */}
           <div className="auth-card-header">
-            <h2 className="auth-welcome-title">Welcome Back!</h2>
-            <p className="auth-welcome-desc">Sign in to access your ThermoGuard dashboard</p>
+            <h2 className="auth-welcome-title">
+              {role === 'authority' ? 'Authority Portal' : 'Citizen Heat Safety'}
+            </h2>
+            <p className="auth-welcome-desc">
+              {role === 'authority'
+                ? 'Sign in to access disaster command desk, ward GIS & alert dispatch'
+                : 'Sign in to monitor live thermal stress, find cooling centers & get alerts'}
+            </p>
           </div>
+
+          {/* Status Message Notification */}
+          {statusMessage && (
+            <div className={`auth-status-toast ${statusMessage.type} animate-fade-in`}>
+              <CheckIcon size={15} color="#16a34a" />
+              <span>{statusMessage.text}</span>
+            </div>
+          )}
+
+          {/* General Error Notice */}
+          {errors.general && (
+            <div className="auth-error-banner animate-fade-in">
+              <AlertTriangleIcon size={16} color="#dc2626" />
+              <span>{errors.general}</span>
+            </div>
+          )}
 
           {/* Role Navigation Switcher Tabs */}
           <div className="role-nav-tabs" role="tablist">
             <div ref={tabIndicatorRef} className={`role-tab-indicator ${role}`} />
-            
+
             <button
               ref={authTabRef}
               type="button"
@@ -190,66 +384,425 @@ function LoginPage({ onLoginSuccess }) {
             </button>
           </div>
 
-          {/* Dynamic Role Info Card with Animated Switch */}
+          {/* Dynamic Content: Authority Form vs Citizen Form */}
           <div className={`role-context-panel ${roleTransitioning ? 'transitioning' : 'visible'}`}>
             {role === 'authority' ? (
-              <div className="role-info-card authority animate-role-card">
-                <div className="role-header-line">
-                  <span className="role-badge authority">MUNICIPAL &amp; DISASTER AUTHORITY</span>
-                  <span className="role-security-badge">
-                    <CheckCircleIcon size={13} color="#16a34a" />
-                    <span>Authorized Portal</span>
-                  </span>
+              /* AUTHORITY LOGIN FORM */
+              <form className="auth-inputs-form" onSubmit={handleAuthoritySubmit} noValidate>
+                {/* Field 1: Officer ID / Official Email */}
+                <div className="auth-form-group">
+                  <label htmlFor="auth-officer-id" className="auth-field-label">
+                    <span>Officer ID / Official Govt Email</span>
+                    <span className="required-star">*</span>
+                  </label>
+                  <div className={`auth-input-wrapper ${errors.officerIdOrEmail ? 'has-error' : ''}`}>
+                    <span className="auth-input-icon">
+                      <MailIcon size={17} color="#64748b" />
+                    </span>
+                    <input
+                      id="auth-officer-id"
+                      type="text"
+                      className="auth-text-input"
+                      placeholder="e.g. officer.sharma@gov.in or AUTH-4102"
+                      value={authorityForm.officerIdOrEmail}
+                      onChange={(e) => {
+                        setAuthorityForm((prev) => ({ ...prev, officerIdOrEmail: e.target.value }));
+                        if (errors.officerIdOrEmail) setErrors((prev) => ({ ...prev, officerIdOrEmail: null }));
+                      }}
+                      autoComplete="username"
+                    />
+                  </div>
+                  {errors.officerIdOrEmail && (
+                    <span className="auth-field-error-msg">{errors.officerIdOrEmail}</span>
+                  )}
                 </div>
-                <p className="role-info-summary">
-                  Access municipal directives, hyper-local ward GIS telemetry, SMS broadcast gateways, and disaster response dispatch.
-                </p>
-              </div>
+
+                {/* Field 2: Department / Jurisdiction Selector */}
+                <div className="auth-form-group">
+                  <label htmlFor="auth-department" className="auth-field-label">
+                    <span>Jurisdiction / Department</span>
+                  </label>
+                  <div className="auth-input-wrapper select-wrapper">
+                    <span className="auth-input-icon">
+                      <Building2Icon size={17} color="#64748b" />
+                    </span>
+                    <select
+                      id="auth-department"
+                      className="auth-select-input"
+                      value={authorityForm.department}
+                      onChange={(e) =>
+                        setAuthorityForm((prev) => ({ ...prev, department: e.target.value }))
+                      }
+                    >
+                      {AUTHORITY_DEPARTMENTS.map((dept) => (
+                        <option key={dept} value={dept}>
+                          {dept}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Field 3: Official Passcode */}
+                <div className="auth-form-group">
+                  <div className="auth-label-row">
+                    <label htmlFor="auth-passcode" className="auth-field-label">
+                      <span>Confidential Passcode</span>
+                      <span className="required-star">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      className="auth-label-link-btn"
+                      onClick={() =>
+                        setStatusMessage({
+                          type: 'info',
+                          text: 'For authorization recovery, contact your State Disaster Management IT Cell.'
+                        })
+                      }
+                    >
+                      Forgot Passcode?
+                    </button>
+                  </div>
+                  <div className={`auth-input-wrapper ${errors.passcode ? 'has-error' : ''}`}>
+                    <span className="auth-input-icon">
+                      <LockIcon size={17} color="#64748b" />
+                    </span>
+                    <input
+                      id="auth-passcode"
+                      type={authorityForm.showPassword ? 'text' : 'password'}
+                      className="auth-text-input"
+                      placeholder="Enter confidential passcode"
+                      value={authorityForm.passcode}
+                      onChange={(e) => {
+                        setAuthorityForm((prev) => ({ ...prev, passcode: e.target.value }));
+                        if (errors.passcode) setErrors((prev) => ({ ...prev, passcode: null }));
+                      }}
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      className="auth-pw-toggle-btn"
+                      onClick={() =>
+                        setAuthorityForm((prev) => ({ ...prev, showPassword: !prev.showPassword }))
+                      }
+                      title={authorityForm.showPassword ? 'Hide passcode' : 'Show passcode'}
+                      aria-label="Toggle password visibility"
+                    >
+                      {authorityForm.showPassword ? (
+                        <EyeOffIcon size={17} color="#64748b" />
+                      ) : (
+                        <EyeIcon size={17} color="#64748b" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.passcode && (
+                    <span className="auth-field-error-msg">{errors.passcode}</span>
+                  )}
+                </div>
+
+                {/* Field 4: Remember Device Checkbox */}
+                <div className="auth-checkbox-group">
+                  <label className="auth-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={authorityForm.rememberDevice}
+                      onChange={(e) =>
+                        setAuthorityForm((prev) => ({ ...prev, rememberDevice: e.target.checked }))
+                      }
+                    />
+                    <span className="checkbox-custom" />
+                    <span className="checkbox-text">Authorized terminal (keep 24-hour command session)</span>
+                  </label>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  className={`auth-primary-submit-btn authority-accent ${isLoading ? 'loading' : ''}`}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <span className="btn-loading-state">
+                      <span className="btn-spinner" />
+                      <span>Entering Authority Portal...</span>
+                    </span>
+                  ) : (
+                    <span className="btn-label-state">
+                      <span>Enter Authority Portal</span>
+                      <ArrowRightIcon size={18} />
+                    </span>
+                  )}
+                </button>
+              </form>
             ) : (
-              <div className="role-info-card citizen animate-role-card">
-                <div className="role-header-line">
-                  <span className="role-badge citizen">CITIZEN &amp; COMMUNITY ACCESS</span>
-                  <span className="role-security-badge">
-                    <CheckCircleIcon size={13} color="#0284c7" />
-                    <span>Open Access</span>
-                  </span>
+              /* CITIZEN LOGIN FORM */
+              <form className="auth-inputs-form" onSubmit={handleCitizenSubmit} noValidate>
+                {/* Citizen Auth Mode Toggle (Mobile OTP vs Email/Password) */}
+                <div className="citizen-mode-switch">
+                  <button
+                    type="button"
+                    className={`mode-pill-btn ${citizenMode === 'otp' ? 'active' : ''}`}
+                    onClick={() => {
+                      setCitizenMode('otp');
+                      setErrors({});
+                    }}
+                  >
+                    <SmartphoneIcon size={15} />
+                    <span>Mobile Number &amp; OTP</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`mode-pill-btn ${citizenMode === 'password' ? 'active' : ''}`}
+                    onClick={() => {
+                      setCitizenMode('password');
+                      setErrors({});
+                    }}
+                  >
+                    <MailIcon size={15} />
+                    <span>Email &amp; Password</span>
+                  </button>
                 </div>
-                <p className="role-info-summary">
-                  Real-time thermal stress index, nearby emergency cooling centers, drinking water kiosks, and personalized heat health advisories.
-                </p>
-              </div>
+
+                {/* OTP Mode Fields */}
+                {citizenMode === 'otp' ? (
+                  <>
+                    {/* Mobile Number Input with Country Code & Get OTP Button */}
+                    <div className="auth-form-group">
+                      <label htmlFor="citizen-phone" className="auth-field-label">
+                        <span>Mobile Phone Number</span>
+                        <span className="required-star">*</span>
+                      </label>
+                      <div className={`auth-input-wrapper phone-wrapper ${errors.phone ? 'has-error' : ''}`}>
+                        <div className="phone-country-tag">
+                          <span>🇮🇳 +91</span>
+                        </div>
+                        <input
+                          id="citizen-phone"
+                          type="tel"
+                          className="auth-text-input phone-input"
+                          placeholder="98765 43210"
+                          maxLength={10}
+                          value={citizenForm.phone}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, '');
+                            setCitizenForm((prev) => ({ ...prev, phone: val }));
+                            if (errors.phone) setErrors((prev) => ({ ...prev, phone: null }));
+                          }}
+                          autoComplete="tel"
+                        />
+                        <button
+                          type="button"
+                          className={`send-otp-action-btn ${otpTimer > 0 ? 'disabled' : ''}`}
+                          onClick={handleSendOtp}
+                          disabled={otpTimer > 0}
+                        >
+                          {otpTimer > 0 ? `Resend in ${otpTimer}s` : otpSent ? 'Resend OTP' : 'Get OTP'}
+                        </button>
+                      </div>
+                      {errors.phone && (
+                        <span className="auth-field-error-msg">{errors.phone}</span>
+                      )}
+                    </div>
+
+                    {/* 6-Digit OTP Field */}
+                    <div className="auth-form-group">
+                      <div className="auth-label-row">
+                        <label htmlFor="citizen-otp" className="auth-field-label">
+                          <span>6-Digit Verification OTP</span>
+                          <span className="required-star">*</span>
+                        </label>
+                        {otpSent && (
+                          <span className="otp-hint-badge">
+                            <CheckIcon size={12} color="#16a34a" />
+                            <span>OTP Active</span>
+                          </span>
+                        )}
+                      </div>
+                      <div className={`auth-input-wrapper ${errors.otpCode ? 'has-error' : ''}`}>
+                        <span className="auth-input-icon">
+                          <KeyRoundIcon size={17} color="#64748b" />
+                        </span>
+                        <input
+                          id="citizen-otp"
+                          type="text"
+                          className="auth-text-input otp-input"
+                          placeholder="Enter 6-digit OTP (e.g. 849201)"
+                          maxLength={6}
+                          value={citizenForm.otpCode}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, '');
+                            setCitizenForm((prev) => ({ ...prev, otpCode: val }));
+                            if (errors.otpCode) setErrors((prev) => ({ ...prev, otpCode: null }));
+                          }}
+                          autoComplete="one-time-code"
+                        />
+                      </div>
+                      {errors.otpCode && (
+                        <span className="auth-field-error-msg">{errors.otpCode}</span>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  /* Password Mode Fields */
+                  <>
+                    <div className="auth-form-group">
+                      <label htmlFor="citizen-email" className="auth-field-label">
+                        <span>Email Address</span>
+                        <span className="required-star">*</span>
+                      </label>
+                      <div className={`auth-input-wrapper ${errors.email ? 'has-error' : ''}`}>
+                        <span className="auth-input-icon">
+                          <MailIcon size={17} color="#64748b" />
+                        </span>
+                        <input
+                          id="citizen-email"
+                          type="email"
+                          className="auth-text-input"
+                          placeholder="citizen@example.com"
+                          value={citizenForm.email}
+                          onChange={(e) => {
+                            setCitizenForm((prev) => ({ ...prev, email: e.target.value }));
+                            if (errors.email) setErrors((prev) => ({ ...prev, email: null }));
+                          }}
+                          autoComplete="email"
+                        />
+                      </div>
+                      {errors.email && (
+                        <span className="auth-field-error-msg">{errors.email}</span>
+                      )}
+                    </div>
+
+                    <div className="auth-form-group">
+                      <label htmlFor="citizen-password" className="auth-field-label">
+                        <span>Password</span>
+                        <span className="required-star">*</span>
+                      </label>
+                      <div className={`auth-input-wrapper ${errors.password ? 'has-error' : ''}`}>
+                        <span className="auth-input-icon">
+                          <LockIcon size={17} color="#64748b" />
+                        </span>
+                        <input
+                          id="citizen-password"
+                          type={citizenForm.showPassword ? 'text' : 'password'}
+                          className="auth-text-input"
+                          placeholder="Enter password"
+                          value={citizenForm.password}
+                          onChange={(e) => {
+                            setCitizenForm((prev) => ({ ...prev, password: e.target.value }));
+                            if (errors.password) setErrors((prev) => ({ ...prev, password: null }));
+                          }}
+                          autoComplete="current-password"
+                        />
+                        <button
+                          type="button"
+                          className="auth-pw-toggle-btn"
+                          onClick={() =>
+                            setCitizenForm((prev) => ({ ...prev, showPassword: !prev.showPassword }))
+                          }
+                          title={citizenForm.showPassword ? 'Hide password' : 'Show password'}
+                          aria-label="Toggle password visibility"
+                        >
+                          {citizenForm.showPassword ? (
+                            <EyeOffIcon size={17} color="#64748b" />
+                          ) : (
+                            <EyeIcon size={17} color="#64748b" />
+                          )}
+                        </button>
+                      </div>
+                      {errors.password && (
+                        <span className="auth-field-error-msg">{errors.password}</span>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {/* Primary Alert City / Zone Selector */}
+                <div className="auth-form-group">
+                  <label htmlFor="citizen-location" className="auth-field-label">
+                    <span>Primary Heat Alert Zone</span>
+                  </label>
+                  <div className="auth-input-wrapper select-wrapper">
+                    <span className="auth-input-icon">
+                      <MapPinIcon size={17} color="#64748b" />
+                    </span>
+                    <select
+                      id="citizen-location"
+                      className="auth-select-input"
+                      value={citizenForm.alertLocation}
+                      onChange={(e) =>
+                        setCitizenForm((prev) => ({ ...prev, alertLocation: e.target.value }))
+                      }
+                    >
+                      {CITIZEN_LOCATIONS.map((loc) => (
+                        <option key={loc} value={loc}>
+                          {loc}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* WhatsApp / SMS Heatwave Alert Opt-In */}
+                <div className="auth-checkbox-group">
+                  <label className="auth-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={citizenForm.alertsOptIn}
+                      onChange={(e) =>
+                        setCitizenForm((prev) => ({ ...prev, alertsOptIn: e.target.checked }))
+                      }
+                    />
+                    <span className="checkbox-custom citizen" />
+                    <span className="checkbox-text">
+                      Send extreme heat warnings to my WhatsApp &amp; SMS alerts
+                    </span>
+                  </label>
+                </div>
+
+                {/* Citizen Submit Button */}
+                <button
+                  type="submit"
+                  className={`auth-primary-submit-btn citizen-accent ${isLoading ? 'loading' : ''}`}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <span className="btn-loading-state">
+                      <span className="btn-spinner" />
+                      <span>Entering Citizen Portal...</span>
+                    </span>
+                  ) : (
+                    <span className="btn-label-state">
+                      <span>Enter Citizen Portal</span>
+                      <ArrowRightIcon size={18} />
+                    </span>
+                  )}
+                </button>
+
+              </form>
             )}
           </div>
 
-          {/* Primary Action Button with Dynamic Label & Animated Accent */}
-          <button
-            type="button"
-            className={`auth-primary-submit-btn ${role === 'citizen' ? 'citizen-accent' : 'authority-accent'} ${isLoading ? 'loading' : ''}`}
-            onClick={() => handleLogin(role)}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <span className="btn-loading-state">
-                <span className="btn-spinner" />
-                <span>Entering Portal...</span>
-              </span>
-            ) : (
-              <span className="btn-label-state">
-                <span>{role === 'authority' ? 'Enter Authority Portal' : 'Enter Citizen Portal'}</span>
-                <ArrowRightIcon size={18} />
-              </span>
-            )}
-          </button>
-
-          {/* Sign Up Link */}
+          {/* Quick Switch / Sign Up Footer */}
           <div className="auth-signup-footer">
-            <span>Don't have an account? </span>
+            <span>
+              {role === 'authority'
+                ? 'Need official department authorization? '
+                : 'Need community heatwave assistance? '}
+            </span>
             <button
               type="button"
               className="signup-link-btn"
-              onClick={() => handleLogin(role)}
+              onClick={() => {
+                setStatusMessage({
+                  type: 'info',
+                  text: role === 'authority'
+                    ? 'Contact National Disaster Management Authority (NDMA) support cell at support@ndma.gov.in'
+                    : 'Call Toll-Free Civic Heatline 1070 or visit your nearest Emergency Cooling Shelter'
+                });
+                setTimeout(() => setStatusMessage(null), 6000);
+              }}
             >
-              Sign up
+              {role === 'authority' ? 'Contact SDMA Desk' : 'Emergency Help Directory'}
             </button>
           </div>
         </div>
