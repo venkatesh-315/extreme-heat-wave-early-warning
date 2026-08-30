@@ -258,6 +258,61 @@ async function runTests() {
       }
     });
 
+    await test('POST /api/ml/predict duplicate prevention - Idempotent upsert on identical location + date', async () => {
+      const payload = {
+        location_id: 'ahmedabad',
+        date: '2026-05-22',
+        temperature: 46.5,
+        humidity: 32.0,
+        wind_speed: 3.0,
+        solar_radiation: 950.0,
+        consecutive_hot_days: 4,
+        is_urban: true,
+      };
+      const res1 = await request('POST', '/api/ml/predict', payload);
+      const res2 = await request('POST', '/api/ml/predict', payload);
+
+      if (res1.status !== 200 || res2.status !== 200) {
+        throw new Error(`Idempotent upsert failed: ${res1.status}, ${res2.status}`);
+      }
+    });
+
+    await test('GET /api/ml/predictions - Query stored ML predictions with filters', async () => {
+      const res = await request('GET', '/api/ml/predictions?location_id=ahmedabad');
+      if (res.status !== 200 || !res.body.success || !Array.isArray(res.body.data.records)) {
+        throw new Error(`GET /api/ml/predictions failed: ${JSON.stringify(res.body)}`);
+      }
+    });
+
+    await test('GET /api/ml/latest/:location_id - Retrieve latest ML prediction record', async () => {
+      const res = await request('GET', '/api/ml/latest/ahmedabad');
+      if (res.status !== 200 || !res.body.success) {
+        throw new Error(`GET /api/ml/latest/ahmedabad failed: ${JSON.stringify(res.body)}`);
+      }
+    });
+
+    await test('POST /api/ml/forecast - 3-Day biometeorological ML forecasting workflow', async () => {
+      const res = await request('POST', '/api/ml/forecast', {
+        location_id: 'delhi',
+        days: 3,
+        is_urban: true,
+      });
+      if (res.status !== 200 || !res.body.success || res.body.data.horizon_days !== 3 || res.body.data.forecasts.length !== 3) {
+        throw new Error(`POST /api/ml/forecast failed: ${JSON.stringify(res.body)}`);
+      }
+      const day1 = res.body.data.forecasts[0];
+      if (!day1.target_date || typeof day1.predictions.thermal_stress !== 'number' || typeof day1.predictions.mortality_risk !== 'number') {
+        throw new Error(`Invalid forecast day item: ${JSON.stringify(day1)}`);
+      }
+    });
+
+    await test('GET /api/ml/forecast - 5-Day biometeorological ML forecasting workflow', async () => {
+      const res = await request('GET', '/api/ml/forecast?location_id=nagpur&days=5');
+      if (res.status !== 200 || !res.body.success || res.body.data.horizon_days !== 5 || res.body.data.forecasts.length !== 5) {
+        throw new Error(`GET /api/ml/forecast failed: ${JSON.stringify(res.body)}`);
+      }
+    });
+
     // 6. Risk & Mortality Endpoints
     await test('GET /api/risk/mortality - Mortality risk & vulnerable exposure', async () => {
       const res = await request('GET', '/api/risk/mortality?lat=28.61&lon=77.20&population=2000000');
