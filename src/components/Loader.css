@@ -1,0 +1,83 @@
+/* Loader.css — Custom Geometric Pulse Loader with Black Line Colors */
+
+.custom-loader-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  min-height: 90px;
+}
+
+.custom-loader {
+  position: relative;
+  width: 2.5em;
+  height: 2.5em;
+  transform: rotate(165deg);
+  margin: 0 auto;
+}
+
+.custom-loader:before,
+.custom-loader:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 0.25em;
+  transform: translate(-50%, -50%);
+}
+
+.custom-loader:before {
+  animation: beforeBlackLines 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.custom-loader:after {
+  animation: afterBlackLines 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Black Lines Animation */
+@keyframes beforeBlackLines {
+  0% {
+    width: 0.5em;
+    box-shadow: 1em -0.5em rgba(15, 23, 42, 0.95), -1em 0.5em rgba(30, 41, 59, 0.85);
+  }
+
+  35% {
+    width: 2.5em;
+    box-shadow: 0 -0.5em rgba(15, 23, 42, 0.95), 0 0.5em rgba(30, 41, 59, 0.85);
+  }
+
+  70% {
+    width: 0.5em;
+    box-shadow: -1em -0.5em rgba(15, 23, 42, 0.95), 1em 0.5em rgba(30, 41, 59, 0.85);
+  }
+
+  100% {
+    box-shadow: 1em -0.5em rgba(15, 23, 42, 0.95), -1em 0.5em rgba(30, 41, 59, 0.85);
+  }
+}
+
+@keyframes afterBlackLines {
+  0% {
+    height: 0.5em;
+    box-shadow: 0.5em 1em rgba(0, 0, 0, 0.95), -0.5em -1em rgba(51, 65, 85, 0.85);
+  }
+
+  35% {
+    height: 2.5em;
+    box-shadow: 0.5em 0 rgba(0, 0, 0, 0.95), -0.5em 0 rgba(51, 65, 85, 0.85);
+  }
+
+  70% {
+    height: 0.5em;
+    box-shadow: 0.5em -1em rgba(0, 0, 0, 0.95), -0.5em 1em rgba(51, 65, 85, 0.85);
+  }
+
+  100% {
+    box-shadow: 0.5em 1em rgba(0, 0, 0, 0.95), -0.5em -1em rgba(51, 65, 85, 0.85);
+  }
+}

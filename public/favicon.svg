@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff1f2" />
+      <stop offset="100%" stop-color="#fee2e2" />
+    </linearGradient>
+    <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Shield Outline -->
+  <path
+    d="M50 8L15 23V46C15 69.5 29.8 89.2 50 95C70.2 89.2 85 69.5 85 46V23L50 8Z"
+    fill="url(#shieldGrad)"
+    stroke="url(#borderGrad)"
+    stroke-width="5.5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Central Radiant Sun with Thermal Beams -->
+  <circle cx="50" cy="50" r="15" fill="url(#sunGrad)" />
+
+  <!-- Sun Rays -->
+  <path
+    d="M50 24V29M50 71V76M24 50H29M71 50H76M31.6 31.6L35.2 35.2M64.8 64.8L68.4 68.4M31.6 68.4L35.2 64.8M64.8 35.2L68.4 31.6"
+    stroke="#ea580c"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+
+  <!-- Inner Sparkle Core -->
+  <circle cx="50" cy="50" r="6" fill="#ffffff" />
+</svg>

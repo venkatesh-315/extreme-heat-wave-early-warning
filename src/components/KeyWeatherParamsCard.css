@@ -1,0 +1,58 @@
+/* Key Weather Parameters Card Styles */
+.weather-params-card {
+  padding: 20px 24px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.weather-params-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: 12px;
+}
+
+.weather-param-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.weather-param-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.param-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.param-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.param-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.param-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}

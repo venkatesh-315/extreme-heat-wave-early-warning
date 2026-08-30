@@ -1,0 +1,375 @@
+/* Recommendations.css — Light Theme Heat Action Plan Styling */
+
+.recommendations-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hap-executive-card {
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.hap-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.725rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.hap-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hap-stat-pill {
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hap-stat-pill.critical {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.hap-stat-pill.critical .hsp-val {
+  color: #dc2626;
+}
+
+.hsp-val {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.hsp-lbl {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Action Items */
+.action-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-card {
+  padding: 18px 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.action-icon-col {
+  width: 42px;
+  height: 42px;
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.action-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.action-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.action-category {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.action-priority-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.action-title-text {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.action-desc-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.action-authority {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.action-authority strong {
+  color: var(--text-primary);
+}
+
+/* Multi-Lingual SMS Broadcast Card */
+.sms-broadcast-card {
+  padding: 24px;
+}
+
+.sms-card-header {
+  margin-bottom: 16px;
+}
+
+.sms-language-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
+.sms-lang-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #f8fafc;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.sms-lang-tab:hover {
+  background: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.sms-lang-tab.active {
+  background: var(--primary-blue);
+  color: #ffffff;
+  border-color: var(--primary-blue);
+}
+
+.sms-tab-name {
+  opacity: 0.9;
+  font-size: 0.75rem;
+}
+
+.sms-preview-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 20px;
+}
+
+.phone-screen-mock {
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.phone-top-bar {
+  background: #0f172a;
+  color: #ffffff;
+  padding: 6px 12px;
+  font-size: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.phone-bubble-box {
+  padding: 16px;
+  background: #f1f5f9;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sms-bubble {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-size: 0.85rem;
+  color: #0f172a;
+  line-height: 1.45;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sms-timestamp {
+  font-size: 0.675rem;
+  color: #64748b;
+  text-align: right;
+  margin-top: 8px;
+}
+
+.sms-controls-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.target-audience-box {
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.825rem;
+}
+
+.aud-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.aud-lbl {
+  color: var(--text-muted);
+}
+
+.aud-green {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.dispatch-buttons-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.whatsapp-btn {
+  background: #25d366;
+  color: #ffffff;
+  border-color: #25d366;
+}
+
+.whatsapp-btn:hover {
+  background: #1eb854;
+}
+
+.dispatch-alert-success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Sector Checklist Card */
+.sector-checklist-card {
+  padding: 24px;
+}
+
+.sector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.sector-item {
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sector-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.sector-texts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sector-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sector-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sector-status-pill {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+}
+
+.sector-desc {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .sms-preview-layout { grid-template-columns: 1fr; }
+  .sector-grid { grid-template-columns: 1fr; }
+}

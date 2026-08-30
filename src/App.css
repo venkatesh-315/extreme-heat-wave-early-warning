@@ -1,0 +1,163 @@
+/* ================================================================
+   ThermoGuard Heatwave Early Warning System — Main App Styles
+   Clean, modern, high-precision light theme dashboard
+   ================================================================ */
+
+.thermoguard-app {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: #f8fafc;
+  color: #334155;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  align-items: flex-start;
+  position: relative;
+}
+
+.app-main-layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.dashboard-scroll-body {
+  padding: 24px 28px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1540px;
+  width: 100%;
+  margin: 0 auto;
+  flex: 1;
+}
+
+/* Dashboard Grid Container */
+.dashboard-grid-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.dashboard-row {
+  display: grid;
+  gap: 20px;
+  align-items: stretch;
+}
+
+/* ROW 1: Human Thermal Stress (wide), Key Weather Params, Active Alert */
+.row-1 {
+  grid-template-columns: 1.4fr 1fr 1fr;
+}
+
+/* ROW 2: Ward Level Risk Map, 5-Day Health Impact Forecast, Recommended Actions */
+.row-2 {
+  grid-template-columns: 1.1fr 1.35fr 1fr;
+}
+
+/* ROW 3: At-Risk Population Overview (spans wide), Model Confidence */
+.row-3 {
+  grid-template-columns: 2.35fr 1fr;
+}
+
+.grid-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.grid-col > * {
+  height: 100%;
+}
+
+/* Bottom Footer Note */
+.dashboard-bottom-footer {
+  text-align: center;
+  padding: 16px 0 10px;
+}
+
+.dashboard-bottom-footer p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Tab Views Container */
+.tab-view-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ================================================================
+   RESPONSIVE MEDIA QUERIES & MOBILE OPTIMIZATIONS
+   ================================================================ */
+
+@media (max-width: 1360px) {
+  .row-1 {
+    grid-template-columns: 1.2fr 1fr 1fr;
+  }
+  .row-2 {
+    grid-template-columns: 1fr 1.2fr 1fr;
+  }
+}
+
+@media (max-width: 1180px) {
+  .row-1 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .row-1 .col-stress {
+    grid-column: span 2;
+  }
+
+  .row-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .row-2 .col-map {
+    grid-column: span 2;
+  }
+
+  .row-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-scroll-body {
+    padding: 14px 14px 84px; /* Extra bottom padding for MobileNav bar */
+    gap: 14px;
+  }
+
+  .dashboard-row {
+    grid-template-columns: 1fr !important;
+    gap: 14px;
+  }
+
+  .row-1 .col-stress,
+  .row-2 .col-map {
+    grid-column: span 1 !important;
+  }
+
+  .dashboard-bottom-footer {
+    padding: 8px 0 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-scroll-body {
+    padding: 10px 10px 84px;
+    gap: 12px;
+  }
+  .dashboard-row {
+    gap: 12px;
+  }
+}

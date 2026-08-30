@@ -1,0 +1,76 @@
+/* At-Risk Population Card Styles */
+.at-risk-card {
+  padding: 20px 24px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.at-risk-top {
+  margin-bottom: 14px;
+}
+
+.at-risk-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  flex: 1;
+}
+
+.at-risk-pill-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.at-risk-pill-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.at-risk-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.at-risk-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.at-risk-count {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.at-risk-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+  .at-risk-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .at-risk-grid {
+    grid-template-columns: 1fr;
+  }
+}
