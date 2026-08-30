@@ -221,6 +221,43 @@ async function runTests() {
       }
     });
 
+    // 6. Dedicated ML Endpoint Suite (/api/ml/predict)
+    await test('POST /api/ml/predict - Dedicated XGBoost ML inference endpoint', async () => {
+      const res = await request('POST', '/api/ml/predict', {
+        location_id: 'delhi',
+        date: '2026-05-20',
+        temperature: 46.0,
+        humidity: 35.0,
+        wind_speed: 3.2,
+        solar_radiation: 950.0,
+        surface_pressure: 998.0,
+        consecutive_hot_days: 4,
+        is_urban: true,
+        population_density: 16000.0,
+      });
+      if (res.status !== 200 || !res.body.success) {
+        throw new Error(`POST /api/ml/predict failed with status ${res.status}: ${JSON.stringify(res.body)}`);
+      }
+      const d = res.body.data;
+      if (typeof d.thermal_stress !== 'number' || typeof d.mortality_risk !== 'number' || !d.risk_level) {
+        throw new Error(`Invalid response schema from /api/ml/predict: ${JSON.stringify(d)}`);
+      }
+    });
+
+    await test('GET /api/ml/predict - Query parameter based inference endpoint', async () => {
+      const res = await request('GET', '/api/ml/predict?temperature=44.0&humidity=38.0&wind_speed=2.5&solar_radiation=900&consecutive_hot_days=3&is_urban=true');
+      if (res.status !== 200 || !res.body.success || typeof res.body.data.thermal_stress !== 'number') {
+        throw new Error(`GET /api/ml/predict failed: ${JSON.stringify(res.body)}`);
+      }
+    });
+
+    await test('POST /api/ml/predict validation guard - Reject missing temperature (HTTP 400)', async () => {
+      const res = await request('POST', '/api/ml/predict', { humidity: 35.0 });
+      if (res.status !== 400 || res.body.success !== false) {
+        throw new Error(`Expected HTTP 400 Bad Request, got ${res.status}: ${JSON.stringify(res.body)}`);
+      }
+    });
+
     // 6. Risk & Mortality Endpoints
     await test('GET /api/risk/mortality - Mortality risk & vulnerable exposure', async () => {
       const res = await request('GET', '/api/risk/mortality?lat=28.61&lon=77.20&population=2000000');
