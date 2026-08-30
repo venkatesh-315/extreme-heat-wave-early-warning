@@ -1,0 +1,4 @@
+location_id,location_name,population_density,elderly_percentage,outdoor_worker_percentage,children_percentage
+delhi,National Capital Region,14500.0,8.2,19.4,10.8
+nagpur,Nagpur Urban,4800.0,9.1,17.2,11.5
+ahmedabad,Ahmedabad Urban,11200.0,8.8,21.0,10.4

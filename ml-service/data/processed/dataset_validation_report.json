@@ -1,0 +1,216 @@
+{
+  "schema_version": "v1.0.0",
+  "feature_count": 25,
+  "demo_mode": true,
+  "raw_row_count": 19,
+  "duplicates_removed_count": 1,
+  "deduplicated_row_count": 18,
+  "missing_percentages_before": {
+    "location_id": 0.0,
+    "date": 0.0,
+    "temperature": 0.0,
+    "humidity": 0.0,
+    "wind_speed": 0.0,
+    "solar_radiation": 0.0,
+    "surface_pressure": 0.0,
+    "rainfall_mm": 0.0,
+    "relative_humidity": 0.0
+  },
+  "missing_percentages_after": {
+    "location_id": 0.0,
+    "date": 0.0,
+    "temperature": 0.0,
+    "humidity": 0.0,
+    "wind_speed": 0.0,
+    "solar_radiation": 0.0,
+    "surface_pressure": 0.0,
+    "rainfall_mm": 0.0,
+    "relative_humidity": 0.0
+  },
+  "target_data_source": "DEMO_SYNTHETIC_TARGETS (UI/Testing Only)",
+  "demo_mode_warning": "WARNING: Health outcome targets are synthetic demonstrations ONLY for UI/testing. DO NOT use for epidemiological or clinical claims.",
+  "processed_row_count": 18,
+  "unique_locations_count": 3,
+  "unique_locations": [
+    "ahmedabad",
+    "delhi",
+    "nagpur"
+  ],
+  "date_range": {
+    "start_date": "2026-05-15",
+    "end_date": "2026-05-20",
+    "span_days": 6
+  },
+  "feature_statistics": {
+    "temperature": {
+      "min": 39.5,
+      "max": 47.0,
+      "mean": 43.92,
+      "std": 2.1
+    },
+    "relative_humidity": {
+      "min": 24.0,
+      "max": 42.0,
+      "mean": 31.44,
+      "std": 5.14
+    },
+    "wind_speed": {
+      "min": 2.0,
+      "max": 4.0,
+      "mean": 3.08,
+      "std": 0.55
+    },
+    "solar_radiation": {
+      "min": 790.0,
+      "max": 960.0,
+      "mean": 885.0,
+      "std": 49.73
+    },
+    "surface_pressure": {
+      "min": 995.0,
+      "max": 1002.0,
+      "mean": 999.11,
+      "std": 2.17
+    },
+    "rainfall_mm": {
+      "min": 0.0,
+      "max": 2.5,
+      "mean": 0.14,
+      "std": 0.59
+    },
+    "heat_index": {
+      "min": 48.1,
+      "max": 54.5,
+      "mean": 52.26,
+      "std": 1.73
+    },
+    "wbgt": {
+      "min": 35.6,
+      "max": 39.0,
+      "mean": 37.76,
+      "std": 0.95
+    },
+    "utci": {
+      "min": 48.3,
+      "max": 51.3,
+      "mean": 49.84,
+      "std": 0.79
+    },
+    "hour": {
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "day": {
+      "min": 15.0,
+      "max": 20.0,
+      "mean": 17.5,
+      "std": 1.76
+    },
+    "month": {
+      "min": 5.0,
+      "max": 5.0,
+      "mean": 5.0,
+      "std": 0.0
+    },
+    "day_of_year": {
+      "min": 135.0,
+      "max": 140.0,
+      "mean": 137.5,
+      "std": 1.76
+    },
+    "consecutive_hot_days": {
+      "min": 0.0,
+      "max": 6.0,
+      "mean": 3.17,
+      "std": 1.82
+    },
+    "temp_lag_1d": {
+      "min": 39.8,
+      "max": 47.0,
+      "mean": 43.94,
+      "std": 2.05
+    },
+    "temp_lag_2d": {
+      "min": 39.0,
+      "max": 47.0,
+      "mean": 43.34,
+      "std": 2.31
+    },
+    "temp_lag_3d": {
+      "min": 38.0,
+      "max": 46.2,
+      "mean": 42.39,
+      "std": 2.22
+    },
+    "wbgt_lag_1d": {
+      "min": 35.5,
+      "max": 39.0,
+      "mean": 37.69,
+      "std": 1.04
+    },
+    "wbgt_lag_2d": {
+      "min": 34.7,
+      "max": 39.0,
+      "mean": 37.21,
+      "std": 1.35
+    },
+    "wbgt_lag_3d": {
+      "min": 34.0,
+      "max": 38.8,
+      "mean": 36.54,
+      "std": 1.48
+    },
+    "cumulative_heat_exposure": {
+      "min": 0.0,
+      "max": 52.5,
+      "mean": 29.41,
+      "std": 16.97
+    },
+    "population_density": {
+      "min": 4800.0,
+      "max": 14500.0,
+      "mean": 10166.67,
+      "std": 4143.6
+    },
+    "elderly_percentage": {
+      "min": 8.2,
+      "max": 9.1,
+      "mean": 8.7,
+      "std": 0.39
+    },
+    "outdoor_worker_percentage": {
+      "min": 17.2,
+      "max": 21.0,
+      "mean": 19.2,
+      "std": 1.6
+    },
+    "children_percentage": {
+      "min": 10.4,
+      "max": 11.5,
+      "mean": 10.9,
+      "std": 0.47
+    }
+  },
+  "target_statistics": {
+    "mortality_target": {
+      "min": 63.6,
+      "p25": 100.0,
+      "median": 100.0,
+      "p75": 100.0,
+      "max": 100.0,
+      "mean": 96.33,
+      "std": 9.42
+    },
+    "hospitalization_target": {
+      "min": 285.1,
+      "p25": 461.55,
+      "median": 495.0,
+      "p75": 500.0,
+      "max": 500.0,
+      "mean": 469.82,
+      "std": 55.78
+    }
+  }
+}
