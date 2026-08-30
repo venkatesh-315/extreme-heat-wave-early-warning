@@ -18,6 +18,7 @@ import {
   CheckIcon
 } from './icons';
 import { loginWithCredentials } from '../services/authService';
+import DepartmentDropdown from './DepartmentDropdown';
 import './LoginPage.css';
 
 const AUTHORITY_DEPARTMENTS = [
@@ -418,29 +419,20 @@ function LoginPage({ onLoginSuccess }) {
                 </div>
 
                 {/* Field 2: Department / Jurisdiction Selector */}
-                <div className="auth-form-group">
+                <div className="auth-form-group dept-select-group">
                   <label htmlFor="auth-department" className="auth-field-label">
                     <span>Jurisdiction / Department</span>
                   </label>
-                  <div className="auth-input-wrapper select-wrapper">
-                    <span className="auth-input-icon">
-                      <Building2Icon size={17} color="#64748b" />
-                    </span>
-                    <select
-                      id="auth-department"
-                      className="auth-select-input"
-                      value={authorityForm.department}
-                      onChange={(e) =>
-                        setAuthorityForm((prev) => ({ ...prev, department: e.target.value }))
-                      }
-                    >
-                      {AUTHORITY_DEPARTMENTS.map((dept) => (
-                        <option key={dept} value={dept}>
-                          {dept}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <DepartmentDropdown
+                    id="auth-department"
+                    options={AUTHORITY_DEPARTMENTS}
+                    value={authorityForm.department}
+                    icon={<Building2Icon size={17} color="#64748b" />}
+                    accentColor="authority"
+                    onChange={(deptName) =>
+                      setAuthorityForm((prev) => ({ ...prev, department: deptName }))
+                    }
+                  />
                 </div>
 
                 {/* Field 3: Official Passcode */}
@@ -717,29 +709,20 @@ function LoginPage({ onLoginSuccess }) {
                 )}
 
                 {/* Primary Alert City / Zone Selector */}
-                <div className="auth-form-group">
+                <div className="auth-form-group loc-select-group">
                   <label htmlFor="citizen-location" className="auth-field-label">
                     <span>Primary Heat Alert Zone</span>
                   </label>
-                  <div className="auth-input-wrapper select-wrapper">
-                    <span className="auth-input-icon">
-                      <MapPinIcon size={17} color="#64748b" />
-                    </span>
-                    <select
-                      id="citizen-location"
-                      className="auth-select-input"
-                      value={citizenForm.alertLocation}
-                      onChange={(e) =>
-                        setCitizenForm((prev) => ({ ...prev, alertLocation: e.target.value }))
-                      }
-                    >
-                      {CITIZEN_LOCATIONS.map((loc) => (
-                        <option key={loc} value={loc}>
-                          {loc}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <DepartmentDropdown
+                    id="citizen-location"
+                    options={CITIZEN_LOCATIONS}
+                    value={citizenForm.alertLocation}
+                    icon={<MapPinIcon size={17} color="#64748b" />}
+                    accentColor="citizen"
+                    onChange={(locName) =>
+                      setCitizenForm((prev) => ({ ...prev, alertLocation: locName }))
+                    }
+                  />
                 </div>
 
                 {/* WhatsApp / SMS Heatwave Alert Opt-In */}
