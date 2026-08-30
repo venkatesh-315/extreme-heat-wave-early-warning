@@ -167,6 +167,10 @@ class EngineeredFeaturesOutput(BaseModel):
     compound_stress_multiplier: float
     cumulative_hotspell_severity: float
     uhi_offset_c: float
+    wbgt_shade_c: Optional[float] = None
+    wet_bulb_temp_c: Optional[float] = None
+    cumulative_heat_exposure_deg_days: Optional[float] = None
+    thermal_recovery_penalty: Optional[float] = None
 
 
 class PredictionResponse(BaseModel):
