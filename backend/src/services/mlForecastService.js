@@ -63,6 +63,9 @@ async function generateMultiDayMLForecast({
   location_id = 'delhi',
   latitude,
   longitude,
+  lat: paramLat,
+  lon: paramLon,
+  days,
   horizonDays = 3,
   is_urban,
   population_density,
@@ -71,7 +74,8 @@ async function generateMultiDayMLForecast({
   const cleanLocId = sanitizeLocationId(location_id);
 
   // 2. Validate and clamp forecast horizon (strictly between 3 and 5 days)
-  let totalDays = parseInt(horizonDays, 10);
+  const requestedDays = days !== undefined ? days : horizonDays;
+  let totalDays = parseInt(requestedDays, 10);
   if (isNaN(totalDays) || totalDays < 3) totalDays = 3;
   if (totalDays > 5) totalDays = 5;
 
@@ -90,8 +94,8 @@ async function generateMultiDayMLForecast({
   try {
     // Resolve coordinates from params or default registry
     const defaultMeta = LOCATION_COORDINATE_MAP[cleanLocId] || LOCATION_COORDINATE_MAP.delhi;
-    const lat = latitude !== undefined ? Number(latitude) : defaultMeta.lat;
-    const lon = longitude !== undefined ? Number(longitude) : defaultMeta.lon;
+    const lat = latitude !== undefined ? Number(latitude) : paramLat !== undefined ? Number(paramLat) : defaultMeta.lat;
+    const lon = longitude !== undefined ? Number(longitude) : paramLon !== undefined ? Number(paramLon) : defaultMeta.lon;
     const urbanFlag = is_urban !== undefined ? Boolean(is_urban) : defaultMeta.is_urban;
     const popDensity = population_density !== undefined ? Number(population_density) : defaultMeta.pop_density;
 

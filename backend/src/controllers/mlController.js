@@ -21,8 +21,38 @@ const predictML = async (req, res, next) => {
   try {
     const payload = req.body || {};
 
-    if (payload.temperature === undefined && payload.temp === undefined) {
+    const rawTemp = payload.temperature !== undefined ? payload.temperature : payload.temp;
+    if (rawTemp === undefined || rawTemp === null || rawTemp === '') {
       return errorResponse(res, 'Missing required parameter: temperature is required', 400);
+    }
+
+    const tempNum = Number(rawTemp);
+    if (isNaN(tempNum) || !isFinite(tempNum) || tempNum < -20 || tempNum > 65) {
+      return errorResponse(res, 'Invalid temperature: must be a finite number between -20°C and 65°C', 400);
+    }
+
+    const rawHum = payload.humidity !== undefined ? payload.humidity : payload.rh;
+    if (rawHum !== undefined && rawHum !== null && rawHum !== '') {
+      const humNum = Number(rawHum);
+      if (isNaN(humNum) || !isFinite(humNum) || humNum < 0 || humNum > 100) {
+        return errorResponse(res, 'Invalid humidity: must be a finite number between 0% and 100%', 400);
+      }
+    }
+
+    const rawWind = payload.wind_speed !== undefined ? payload.wind_speed : payload.windSpeed;
+    if (rawWind !== undefined && rawWind !== null && rawWind !== '') {
+      const windNum = Number(rawWind);
+      if (isNaN(windNum) || !isFinite(windNum) || windNum < 0) {
+        return errorResponse(res, 'Invalid wind speed: must be a non-negative finite number', 400);
+      }
+    }
+
+    const rawSolar = payload.solar_radiation !== undefined ? payload.solar_radiation : payload.solarRadiation;
+    if (rawSolar !== undefined && rawSolar !== null && rawSolar !== '') {
+      const solNum = Number(rawSolar);
+      if (isNaN(solNum) || !isFinite(solNum) || solNum < 0) {
+        return errorResponse(res, 'Invalid solar radiation: must be a non-negative finite number', 400);
+      }
     }
 
     const prediction = await predictHeatwaveRisk(payload);
