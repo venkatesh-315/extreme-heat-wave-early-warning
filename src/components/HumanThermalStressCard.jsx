@@ -40,9 +40,14 @@ function HumanThermalStressCard({ thermalMetrics, mlPrediction, weather, lastUpd
             <InfoIcon size={14} />
           </span>
         </h3>
-        <span style={{ fontSize: '0.72rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>
-          ML Model {modelVersion}
-        </span>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.68rem', background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0', padding: '2px 6px', borderRadius: '8px', fontWeight: 700 }}>
+            Weather: LIVE
+          </span>
+          <span style={{ fontSize: '0.68rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '2px 6px', borderRadius: '8px', fontWeight: 600 }}>
+            Model {modelVersion}
+          </span>
+        </div>
       </div>
 
       <div className="stress-card-body">
@@ -80,16 +85,16 @@ function HumanThermalStressCard({ thermalMetrics, mlPrediction, weather, lastUpd
             <span className="severity-title-red">
               {riskLevel || stressCategory.label}
             </span>
-            <span className="severity-level-pill" style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}>
-              Mortality: {mortalityRisk}%
+            <span className="severity-level-pill" title="Model-estimated statistical risk probability" style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}>
+              Est. Mortality Risk: {mortalityRisk}%
             </span>
-            <span className="severity-level-pill" style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #ddd6fe' }}>
-              Hospitalization: {hospitalizationRisk}%
+            <span className="severity-level-pill" title="Model-estimated hospital admission surge probability" style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #ddd6fe' }}>
+              Est. Hospitalization: {hospitalizationRisk}%
             </span>
           </div>
 
           <p className="stress-description">
-            Dual-target XGBoost model predictions indicate elevated biometeorological stress and public health burden.
+            Dual-target XGBoost biometeorological model estimates physiological heat load and public health risk. (Official real-time death records are unavailable).
           </p>
 
           {/* Sub-Metrics Table Row */}
@@ -118,7 +123,7 @@ function HumanThermalStressCard({ thermalMetrics, mlPrediction, weather, lastUpd
               <span>Inference Time: {timestamp}</span>
             </div>
             <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
-              Schema v1.0.0
+              Health Data: UNAVAILABLE (Model-estimated risk)
             </span>
           </div>
         </div>

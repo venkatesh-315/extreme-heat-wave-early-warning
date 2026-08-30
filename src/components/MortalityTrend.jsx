@@ -41,7 +41,7 @@ function MortalityTrend({ mortalityRisk = 45 }) {
             <Tooltip
               contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
               labelStyle={{ color: '#0f172a', fontWeight: 700 }}
-              formatter={(v, _name, props) => [`${v.toLocaleString()} casualties`, props.payload.projected ? '2026 Projection' : 'Recorded Excess Casualties']}
+              formatter={(v, _name, props) => [`${v.toLocaleString()} casualties`, props.payload.projected ? '2026 Model-Estimated Projection' : 'Historical Observed Data (Official Archives)']}
             />
             <ReferenceLine y={2000} stroke="#dc2626" strokeDasharray="4 3" label={{ value: 'National Severe Threshold (2,000)', fill: '#dc2626', fontSize: 10, position: 'top' }} />
             <Bar dataKey="deaths" radius={[4, 4, 0, 0]} maxBarSize={48}>

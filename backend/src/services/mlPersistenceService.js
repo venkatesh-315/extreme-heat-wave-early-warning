@@ -67,6 +67,11 @@ async function savePredictionRecord(data = {}) {
   const combinedScore = data.combined_risk_score !== undefined ? Number(data.combined_risk_score) : undefined;
   const actions = Array.isArray(data.recommended_actions) ? data.recommended_actions : [];
 
+  const weatherSource = data.weather_source || 'Open-Meteo High-Resolution WMO Grid';
+  const healthDataSource = data.health_data_source || 'Integrated Disease Surveillance Programme (IDSP) / NDMA HAP Reports';
+  const healthDataStatus = data.health_data_status || 'UNAVAILABLE';
+  const predGenAt = data.prediction_generated_at ? new Date(data.prediction_generated_at) : new Date();
+
   const recordPayload = {
     location_id: locId,
     prediction_date: predDate,
@@ -79,6 +84,10 @@ async function savePredictionRecord(data = {}) {
     recommended_actions: actions,
     model_version: modelVer,
     feature_schema_version: schemaVer,
+    weather_source: weatherSource,
+    health_data_source: healthDataSource,
+    health_data_status: healthDataStatus,
+    prediction_generated_at: predGenAt,
     created_at: new Date(),
     updated_at: new Date(),
   };
@@ -102,6 +111,10 @@ async function savePredictionRecord(data = {}) {
           feature_schema_version: schemaVer,
           combined_risk_score: combinedScore,
           recommended_actions: actions,
+          weather_source: weatherSource,
+          health_data_source: healthDataSource,
+          health_data_status: healthDataStatus,
+          prediction_generated_at: predGenAt,
           updated_at: new Date(),
         },
         $setOnInsert: {

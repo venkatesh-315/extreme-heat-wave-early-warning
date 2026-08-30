@@ -82,6 +82,38 @@ const MLPredictionSchema = new mongoose.Schema(
       trim: true,
       maxlength: 32,
     },
+    // Optional Data Provenance Annotations (Non-Breaking)
+    weather_source: {
+      type: String,
+      default: 'Open-Meteo High-Resolution WMO Grid',
+      trim: true,
+    },
+    weather_timestamp: {
+      type: Date,
+      default: Date.now,
+    },
+    forecast_run_timestamp: {
+      type: Date,
+      default: Date.now,
+    },
+    health_data_source: {
+      type: String,
+      default: 'Integrated Disease Surveillance Programme (IDSP) / NDMA HAP Reports',
+      trim: true,
+    },
+    health_data_status: {
+      type: String,
+      enum: ['UNAVAILABLE', 'HISTORICAL', 'VALIDATED_TRAINING_DATA'],
+      default: 'UNAVAILABLE',
+    },
+    health_data_date_range: {
+      start: { type: String, default: null },
+      end: { type: String, default: null },
+    },
+    prediction_generated_at: {
+      type: Date,
+      default: Date.now,
+    },
     created_at: {
       type: Date,
       default: Date.now,
