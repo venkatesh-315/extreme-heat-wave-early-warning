@@ -88,6 +88,11 @@ class PredictionRequest(BaseModel):
     )
 
     # Location & Urban Parameters
+    location_id: Optional[str] = Field(
+        default=None,
+        description="Location identifier, e.g. city code or district name",
+        examples=["delhi"],
+    )
     latitude: float = Field(
         default=28.61,
         description="Latitude of location (-90 to 90)",
@@ -108,7 +113,32 @@ class PredictionRequest(BaseModel):
         examples=[True],
     )
 
+    # Optional Client-Supplied Thermal Variables (re-verified & recalculated by server)
+    heat_index: Optional[float] = Field(
+        default=None,
+        description="Optional client-estimated heat index (°C)",
+        ge=-10.0,
+        le=100.0,
+    )
+    wbgt: Optional[float] = Field(
+        default=None,
+        description="Optional client-estimated WBGT (°C)",
+        ge=-10.0,
+        le=60.0,
+    )
+    utci: Optional[float] = Field(
+        default=None,
+        description="Optional client-estimated UTCI (°C)",
+        ge=-50.0,
+        le=80.0,
+    )
+
     # Temporal Parameters
+    date: Optional[str] = Field(
+        default=None,
+        description="Observation date string (YYYY-MM-DD)",
+        examples=["2026-05-15"],
+    )
     observation_time: Optional[str] = Field(
         default=None,
         description="ISO 8601 observation timestamp (e.g. '2026-05-15T14:30:00Z')",
@@ -308,59 +338,105 @@ class EngineeredFeaturesOutput(BaseModel):
 
 class PredictionResponse(BaseModel):
     """
-    Validated deterministic prediction response schema.
+    Validated deterministic prediction response schema matching strict production API specification.
     """
-    mortality_risk_score: float = Field(
+    # Required core response fields
+    model_version: str = Field(
+        default="v1.0.0",
+        description="Active ML model version tag",
+        examples=["v1.0.0"],
+    )
+    thermal_stress: float = Field(
         ...,
-        description="Heat mortality risk score percentage (0 - 100%)",
+        description="Compound human thermal stress index (0 - 100)",
         ge=0.0,
         le=100.0,
+        examples=[72.5],
     )
-    risk_category: str = Field(
+    mortality_risk: float = Field(
         ...,
+        description="Heatwave-induced excess mortality risk score (0 - 100)",
+        ge=0.0,
+        le=100.0,
+        examples=[45.2],
+    )
+    hospitalization_risk: float = Field(
+        ...,
+        description="Heat-related emergency room and hospitalization admission risk index (0 - 100)",
+        ge=0.0,
+        le=100.0,
+        examples=[58.0],
+    )
+    risk_level: str = Field(
+        ...,
+        description="Categorical risk tier: VERY_LOW, LOW, MODERATE, HIGH, EXTREME",
+        examples=["HIGH"],
+    )
+    prediction_timestamp: str = Field(
+        ...,
+        description="ISO 8601 UTC prediction timestamp",
+    )
+    feature_schema_version: str = Field(
+        default="v1.0.0",
+        description="Version tag of the 25-feature input schema",
+    )
+
+    # Backward-compatible & Extended Explanatory fields
+    mortality_risk_score: Optional[float] = Field(
+        default=None,
+        description="Alias for mortality_risk percentage (0 - 100%)",
+    )
+    risk_category: Optional[str] = Field(
+        default=None,
         description="Risk category classification: Low, Moderate, High, Extreme, Catastrophic",
     )
-    predicted_wbgt: float = Field(
-        ...,
+    predicted_wbgt: Optional[float] = Field(
+        default=None,
         description="Estimated Wet-Bulb Globe Temperature (°C)",
     )
-    predicted_utci: float = Field(
-        ...,
+    predicted_utci: Optional[float] = Field(
+        default=None,
         description="Estimated Universal Thermal Climate Index (°C)",
     )
-    heat_index: float = Field(
-        ...,
+    heat_index: Optional[float] = Field(
+        default=None,
         description="NOAA Heat Index (°C)",
     )
-    alert_level: str = Field(
-        ...,
+    alert_level: Optional[str] = Field(
+        default=None,
         description="IMD 4-tier alert level: GREEN, YELLOW, ORANGE, RED",
     )
-    alert_code: str = Field(
-        ...,
+    alert_code: Optional[str] = Field(
+        default=None,
         description="System code: GREEN_NORMAL, YELLOW_WATCH, ORANGE_ALERT, RED_WARNING",
     )
-    confidence_score: float = Field(
-        ...,
+    confidence_score: Optional[float] = Field(
+        default=0.98,
         description="Prediction confidence (0.0 - 1.0)",
-        ge=0.0,
-        le=1.0,
     )
-    model_status: str = Field(
-        ...,
+    model_status: Optional[str] = Field(
+        default="xgboost_model",
         description="Model execution mode ('baseline_engine' or 'xgboost_model')",
+    )
+    combined_risk_score: Optional[float] = Field(
+        default=None,
+        description="Unified deterministic combined risk score (0 - 100)",
+    )
+    recommended_actions: List[str] = Field(
+        default_factory=list,
+        description="Prioritized administrative decision-support action recommendations",
     )
     top_risk_factors: List[RiskFactor] = Field(
         default_factory=list,
         description="Explainable AI risk drivers",
     )
-    engineered_features: EngineeredFeaturesOutput = Field(
-        ...,
+    engineered_features: Optional[EngineeredFeaturesOutput] = Field(
+        default=None,
         description="Thermodynamic engineered feature vector summary",
     )
-    timestamp: str = Field(
-        ...,
-        description="ISO 8601 UTC timestamp",
+    timestamp: Optional[str] = Field(
+        default=None,
+        description="Alias for prediction_timestamp",
     )
 
 
