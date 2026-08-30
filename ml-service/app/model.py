@@ -88,7 +88,7 @@ class ModelManager:
             import numpy as np
             vector = np.array([[feature_dict[col] for col in FEATURE_COLUMNS]], dtype=np.float32)
             pred = float(self.hospitalization_model.predict(vector)[0])
-            return round(max(0.0, pred), 1)
+            return round(max(0.0, min(100.0, pred)), 1)
         except Exception:
             return None
 

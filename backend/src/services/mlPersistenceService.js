@@ -133,8 +133,15 @@ async function savePredictionRecord(data = {}) {
     }
   }
 
-  // 2. Resilient fallback in-memory store (duplicate prevention key)
+  // 2. Resilient fallback in-memory store (bounded capacity with LRU eviction)
+  const MAX_IN_MEMORY_PREDICTIONS = 1000;
   const key = `${locId}:${predDate.toISOString().split('T')[0]}:${horizon}:${modelVer}`;
+
+  if (inMemoryPredictionStore.size >= MAX_IN_MEMORY_PREDICTIONS && !inMemoryPredictionStore.has(key)) {
+    const firstKey = inMemoryPredictionStore.keys().next().value;
+    if (firstKey) inMemoryPredictionStore.delete(firstKey);
+  }
+
   inMemoryPredictionStore.set(key, recordPayload);
   logger.info(`Recorded ML prediction in resilient persistence store for location='${locId}', key='${key}'`);
   return recordPayload;

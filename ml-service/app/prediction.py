@@ -168,8 +168,7 @@ def predict_heatwave(req: PredictionRequest) -> PredictionResponse:
 
     if ml_mortality_pred is not None and ml_hosp_pred is not None:
         mortality_risk = round(float(np.clip(ml_mortality_pred, 0.0, 100.0)), 1)
-        # Hospitalization normalized percentage (0 - 100)
-        hosp_risk = round(float(np.clip(ml_hosp_pred / 4.0, 0.0, 100.0)), 1)
+        hosp_risk = round(float(np.clip(ml_hosp_pred, 0.0, 100.0)), 1)
         model_status = "xgboost_model"
         confidence = 0.98
     else:

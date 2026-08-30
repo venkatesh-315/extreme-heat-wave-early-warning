@@ -85,11 +85,11 @@ async def security_and_logging_middleware(request: Request, call_next):
         except ValueError:
             pass
 
-    # 2. Rate Limiting Guard
+    # 2. Rate Limiting Guard (Bounded memory window)
     now = time.time()
     req_times = _ip_request_history[client_ip]
-    _ip_request_history[client_ip] = [t for t in req_times if now - t < RATE_LIMIT_WINDOW_SEC]
-    if len(_ip_request_history[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
+    valid_times = [t for t in req_times if now - t < RATE_LIMIT_WINDOW_SEC]
+    if len(valid_times) >= RATE_LIMIT_MAX_REQUESTS:
         return JSONResponse(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             content={
@@ -99,7 +99,14 @@ async def security_and_logging_middleware(request: Request, call_next):
             },
             headers={"Retry-After": "60", "X-Request-ID": req_id},
         )
-    _ip_request_history[client_ip].append(now)
+    valid_times.append(now)
+    _ip_request_history[client_ip] = valid_times
+
+    # Evict stale IP keys if cache exceeds 5,000 entries to prevent memory exhaustion
+    if len(_ip_request_history) > 5000:
+        stale_keys = [k for k, v in _ip_request_history.items() if not v or (now - v[-1] > RATE_LIMIT_WINDOW_SEC)]
+        for k in stale_keys:
+            _ip_request_history.pop(k, None)
 
     # 3. Timeout & Latency Execution
     start_time = time.time()
