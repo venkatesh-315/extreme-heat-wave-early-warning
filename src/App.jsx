@@ -26,8 +26,6 @@ import {
   fetchLiveWeatherData,
   getUserSettings,
   saveUserSettings,
-  getUserApiKey,
-  saveUserApiKey,
 } from './services/weatherService';
 import { fetchEmergencyResources } from './services/emergencyService';
 import { getCurrentUser, logoutUser } from './services/authService';
@@ -38,7 +36,6 @@ import {
   SatelliteIcon,
   ThermometerIcon,
   RefreshCwIcon,
-  KeyRoundIcon,
 } from './components/icons';
 
 import './App.css';
@@ -55,7 +52,6 @@ function App() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
   const [userSettings, setUserSettings] = useState(() => getUserSettings());
-  const [userApiKey, setUserApiKey] = useState(() => getUserApiKey());
   const [selectedLocation, setSelectedLocation] = useState(CURATED_INDIAN_LOCATIONS[0]);
   const [weatherData, setWeatherData] = useState(null);
   const [thermalMetrics, setThermalMetrics] = useState(null);
@@ -74,7 +70,6 @@ function App() {
 
   // Settings State Form
   const [settingsForm, setSettingsForm] = useState(() => getUserSettings());
-  const [apiKeyInput, setApiKeyInput] = useState(() => getUserApiKey());
   const [settingsSaveAlert, setSettingsSaveAlert] = useState(false);
 
   // Load weather & biometeorological data for selected location
@@ -217,9 +212,7 @@ function App() {
   const handleSaveSettings = (e) => {
     e.preventDefault();
     saveUserSettings(settingsForm);
-    saveUserApiKey(apiKeyInput);
     setUserSettings({ ...settingsForm });
-    setUserApiKey(apiKeyInput);
     setSettingsSaveAlert(true);
     if (selectedLocation) {
       handleLocationSelect(selectedLocation, true);
@@ -566,44 +559,6 @@ function App() {
                       <option value="5m">Every 5 Minutes</option>
                       <option value="15m">Every 15 Minutes</option>
                     </select>
-                  </div>
-                  {/* Free API Key & Live Data Provider Setting */}
-                  <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <KeyRoundIcon size={18} color="#16a34a" />
-                        <strong style={{ fontSize: '0.88rem', color: '#0f172a' }}>Meteorological Data Feed &amp; API Key</strong>
-                      </div>
-                      <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '12px', fontWeight: 700, border: '1px solid #86efac' }}>
-                        100% Free &amp; Active
-                      </span>
-                    </div>
-                    <p style={{ fontSize: '0.75rem', color: '#64748b', margin: '0 0 10px' }}>
-                      The system uses <strong>Open-Meteo High-Resolution (0.1&deg; Indian Grid)</strong> by default &mdash; fully free, open, and calibrated with present-date live telemetry.
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#334155' }}>
-                        Optional Custom Free API Key (OpenWeatherMap / Free Weather API):
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. owm_your_free_api_key (Leave empty for Free Open-Meteo Default)"
-                        value={apiKeyInput}
-                        onChange={(e) => setApiKeyInput(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '9px 12px',
-                          borderRadius: '8px',
-                          border: '1px solid #cbd5e1',
-                          fontSize: '0.82rem',
-                          fontFamily: 'monospace',
-                          background: '#ffffff'
-                        }}
-                      />
-                      <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
-                        Tip: Open-Meteo works without any key out-of-the-box with real-time present date solar radiation &amp; thermal stress.
-                      </span>
-                    </div>
                   </div>
 
                   {/* Meteorological Engine Info Box */}
