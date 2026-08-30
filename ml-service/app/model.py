@@ -7,30 +7,7 @@ import os
 from pathlib import Path
 from typing import Optional, Dict, Any
 from .config import settings
-
-FEATURE_COLUMNS = [
-    "temperature",
-    "humidity",
-    "wind_speed",
-    "solar_radiation",
-    "surface_pressure",
-    "dew_point",
-    "uv_index",
-    "consecutive_hot_days",
-    "is_urban",
-    "population_density",
-    "vapor_pressure",
-    "vapor_pressure_deficit",
-    "dew_point_depression",
-    "enthalpy",
-    "effective_solar",
-    "compound_stress",
-    "uhi_offset",
-    "hotspell_severity",
-    "heat_index",
-    "wbgt",
-    "utci",
-]
+from .features import FEATURE_COLUMNS
 
 
 class ModelManager:

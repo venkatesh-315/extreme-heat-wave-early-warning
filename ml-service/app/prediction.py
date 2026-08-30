@@ -63,12 +63,13 @@ def generate_risk_factors(req: PredictionRequest, wbgt: float, utci: float) -> L
             )
         )
 
-    if req.humidity >= 50.0 and req.temperature >= 35.0:
+    rh = float(req.humidity if req.humidity is not None else req.relative_humidity)
+    if rh >= 50.0 and req.temperature >= 35.0:
         factors.append(
             RiskFactor(
                 feature="Compound Humidity Stress",
                 weight=0.25,
-                description=f"Relative humidity at {req.humidity}% creates oppressive compound heat burden.",
+                description=f"Relative humidity at {rh}% creates oppressive compound heat burden.",
             )
         )
 

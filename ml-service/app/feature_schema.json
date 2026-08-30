@@ -1,0 +1,73 @@
+{
+  "version": "v1.0.0",
+  "feature_count": 25,
+  "columns": [
+    "temperature",
+    "relative_humidity",
+    "wind_speed",
+    "solar_radiation",
+    "surface_pressure",
+    "rainfall_mm",
+    "heat_index",
+    "wbgt",
+    "utci",
+    "hour",
+    "day",
+    "month",
+    "day_of_year",
+    "consecutive_hot_days",
+    "temp_lag_1d",
+    "temp_lag_2d",
+    "temp_lag_3d",
+    "wbgt_lag_1d",
+    "wbgt_lag_2d",
+    "wbgt_lag_3d",
+    "cumulative_heat_exposure",
+    "population_density",
+    "elderly_percentage",
+    "outdoor_worker_percentage",
+    "children_percentage"
+  ],
+  "categories": {
+    "weather": [
+      "temperature",
+      "relative_humidity",
+      "wind_speed",
+      "solar_radiation",
+      "surface_pressure",
+      "rainfall_mm"
+    ],
+    "thermal": [
+      "heat_index",
+      "wbgt",
+      "utci"
+    ],
+    "temporal": [
+      "hour",
+      "day",
+      "month",
+      "day_of_year",
+      "consecutive_hot_days"
+    ],
+    "lag_exposure": [
+      "temp_lag_1d",
+      "temp_lag_2d",
+      "temp_lag_3d",
+      "wbgt_lag_1d",
+      "wbgt_lag_2d",
+      "wbgt_lag_3d",
+      "cumulative_heat_exposure"
+    ],
+    "vulnerability": [
+      "population_density",
+      "elderly_percentage",
+      "outdoor_worker_percentage",
+      "children_percentage"
+    ]
+  },
+  "demographic_baselines": {
+    "elderly_percentage": 8.6,
+    "outdoor_worker_percentage": 18.5,
+    "children_percentage": 11.2
+  }
+}
