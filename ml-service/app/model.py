@@ -1,11 +1,13 @@
 """
 Secure ML Model Loader & Lifecycle Manager
 Enforces strict fixed-directory path isolation, preventing path traversal or execution of untrusted artifacts.
+Loads mortality and hospitalization models saved in joblib or XGBoost JSON format.
 """
 
 import os
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
+import joblib
 from .config import settings
 from .features import FEATURE_COLUMNS
 
@@ -16,10 +18,11 @@ class ModelManager:
     """
 
     def __init__(self):
-        self.model = None
+        self.mortality_model = None
+        self.hospitalization_model = None
         self.is_loaded = False
-        self.model_path: Optional[Path] = None
-        self._load_model_from_secure_path()
+        self.metadata: Optional[Dict[str, Any]] = None
+        self._load_models_from_secure_path()
 
     def _is_path_safe(self, target_path: Path) -> bool:
         """Verifies that target_path is strictly within the allowed model directory."""
@@ -30,46 +33,68 @@ class ModelManager:
         except Exception:
             return False
 
-    def _load_model_from_secure_path(self):
+    def _load_models_from_secure_path(self):
         """
-        Attempts to load a trained model only if it exists in the fixed, application-controlled directory.
+        Attempts to load trained models only if they exist in the fixed, application-controlled directory.
         Never loads or evaluates client-supplied file paths.
         """
-        target_path = settings.secure_model_path
+        model_dir = Path(settings.model_dir).resolve()
 
-        if not self._is_path_safe(target_path):
-            self.is_loaded = False
-            return
+        # Target model candidates
+        mort_joblib = model_dir / "mortality_model.joblib"
+        hosp_joblib = model_dir / "hospitalization_model.joblib"
+        metadata_file = model_dir / "model_metadata.json"
 
-        if target_path.exists() and target_path.is_file():
+        if mort_joblib.exists() and self._is_path_safe(mort_joblib):
             try:
-                import xgboost as xgb
-                self.model = xgb.XGBRegressor()
-                self.model.load_model(str(target_path))
+                self.mortality_model = joblib.load(mort_joblib)
                 self.is_loaded = True
-                self.model_path = target_path
             except Exception:
-                self.model = None
-                self.is_loaded = False
-        else:
-            # Model artifact not present yet (clean initial state)
-            self.model = None
-            self.is_loaded = False
+                self.mortality_model = None
 
-    def predict(self, feature_dict: Dict[str, float]) -> Optional[float]:
-        """
-        Runs inference if model artifact is securely loaded; returns None otherwise.
-        """
-        if not self.is_loaded or self.model is None:
+        if hosp_joblib.exists() and self._is_path_safe(hosp_joblib):
+            try:
+                self.hospitalization_model = joblib.load(hosp_joblib)
+            except Exception:
+                self.hospitalization_model = None
+
+        if metadata_file.exists() and self._is_path_safe(metadata_file):
+            try:
+                import json
+                with open(metadata_file, "r", encoding="utf-8") as f:
+                    self.metadata = json.load(f)
+            except Exception:
+                self.metadata = None
+
+    def predict_mortality(self, feature_dict: Dict[str, float]) -> Optional[float]:
+        """Runs inference for mortality risk if model is securely loaded."""
+        if not self.is_loaded or self.mortality_model is None:
             return None
 
         try:
             import numpy as np
             vector = np.array([[feature_dict[col] for col in FEATURE_COLUMNS]], dtype=np.float32)
-            raw_prediction = float(self.model.predict(vector)[0])
-            return raw_prediction
+            pred = float(self.mortality_model.predict(vector)[0])
+            return round(max(0.0, min(100.0, pred)), 1)
         except Exception:
             return None
+
+    def predict_hospitalization(self, feature_dict: Dict[str, float]) -> Optional[float]:
+        """Runs inference for hospitalization risk if model is securely loaded."""
+        if not self.is_loaded or self.hospitalization_model is None:
+            return None
+
+        try:
+            import numpy as np
+            vector = np.array([[feature_dict[col] for col in FEATURE_COLUMNS]], dtype=np.float32)
+            pred = float(self.hospitalization_model.predict(vector)[0])
+            return round(max(0.0, pred), 1)
+        except Exception:
+            return None
+
+    def predict(self, feature_dict: Dict[str, float]) -> Optional[float]:
+        """Backward-compatible alias for mortality prediction."""
+        return self.predict_mortality(feature_dict)
 
 
 model_manager = ModelManager()

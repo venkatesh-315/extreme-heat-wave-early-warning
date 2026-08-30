@@ -1,0 +1,186 @@
+{
+  "model_version": "v1.0.0",
+  "training_date": "2026-08-30T17:30:53.039760+00:00",
+  "feature_schema_version": "v1.0.0",
+  "feature_count": 25,
+  "feature_columns": [
+    "temperature",
+    "relative_humidity",
+    "wind_speed",
+    "solar_radiation",
+    "surface_pressure",
+    "rainfall_mm",
+    "heat_index",
+    "wbgt",
+    "utci",
+    "hour",
+    "day",
+    "month",
+    "day_of_year",
+    "consecutive_hot_days",
+    "temp_lag_1d",
+    "temp_lag_2d",
+    "temp_lag_3d",
+    "wbgt_lag_1d",
+    "wbgt_lag_2d",
+    "wbgt_lag_3d",
+    "cumulative_heat_exposure",
+    "population_density",
+    "elderly_percentage",
+    "outdoor_worker_percentage",
+    "children_percentage"
+  ],
+  "training_date_range": {
+    "start": "2022-03-01",
+    "end": "2026-06-28"
+  },
+  "dataset_size": {
+    "total_rows": 3600,
+    "train_rows": 2520,
+    "val_rows": 540,
+    "test_rows": 540
+  },
+  "evaluation_metrics": {
+    "mortality_model": {
+      "target_name": "mortality_risk",
+      "high_risk_threshold": 45.0,
+      "regression_metrics": {
+        "mae": 1.2975,
+        "rmse": 1.6504,
+        "r2_score": 0.9955
+      },
+      "classification_alert_metrics": {
+        "precision": 0.9463,
+        "recall": 0.9592,
+        "f1_score": 0.9527,
+        "roc_auc": 0.9977
+      },
+      "top_features": [
+        [
+          "wbgt",
+          0.28110000491142273
+        ],
+        [
+          "cumulative_heat_exposure",
+          0.2533000111579895
+        ],
+        [
+          "heat_index",
+          0.19660000503063202
+        ],
+        [
+          "temperature",
+          0.1234000027179718
+        ],
+        [
+          "day_of_year",
+          0.07029999792575836
+        ]
+      ],
+      "all_feature_importances": {
+        "wbgt": 0.28110000491142273,
+        "cumulative_heat_exposure": 0.2533000111579895,
+        "heat_index": 0.19660000503063202,
+        "temperature": 0.1234000027179718,
+        "day_of_year": 0.07029999792575836,
+        "consecutive_hot_days": 0.05420000106096268,
+        "utci": 0.010999999940395355,
+        "temp_lag_1d": 0.004999999888241291,
+        "rainfall_mm": 0.001500000013038516,
+        "wbgt_lag_1d": 0.0005000000237487257,
+        "day": 0.00039999998989515007,
+        "solar_radiation": 0.0003000000142492354,
+        "population_density": 0.0003000000142492354,
+        "temp_lag_2d": 0.00019999999494757503,
+        "relative_humidity": 0.00019999999494757503,
+        "children_percentage": 0.00019999999494757503,
+        "wind_speed": 0.00019999999494757503,
+        "wbgt_lag_2d": 0.00019999999494757503,
+        "outdoor_worker_percentage": 0.00019999999494757503,
+        "wbgt_lag_3d": 0.00019999999494757503,
+        "temp_lag_3d": 0.00019999999494757503,
+        "surface_pressure": 0.00019999999494757503,
+        "elderly_percentage": 0.00019999999494757503,
+        "month": 9.999999747378752e-05,
+        "hour": 0.0
+      }
+    },
+    "hospitalization_model": {
+      "target_name": "hospitalization_risk",
+      "high_risk_threshold": 180.0,
+      "regression_metrics": {
+        "mae": 6.1915,
+        "rmse": 9.0188,
+        "r2_score": 0.9961
+      },
+      "classification_alert_metrics": {
+        "precision": 1.0,
+        "recall": 0.9714,
+        "f1_score": 0.9855,
+        "roc_auc": 0.9995
+      },
+      "top_features": [
+        [
+          "wbgt",
+          0.3093999922275543
+        ],
+        [
+          "consecutive_hot_days",
+          0.2597000002861023
+        ],
+        [
+          "heat_index",
+          0.1995999962091446
+        ],
+        [
+          "temperature",
+          0.11749999970197678
+        ],
+        [
+          "day_of_year",
+          0.07259999960660934
+        ]
+      ],
+      "all_feature_importances": {
+        "wbgt": 0.3093999922275543,
+        "consecutive_hot_days": 0.2597000002861023,
+        "heat_index": 0.1995999962091446,
+        "temperature": 0.11749999970197678,
+        "day_of_year": 0.07259999960660934,
+        "utci": 0.023000000044703484,
+        "cumulative_heat_exposure": 0.009499999694526196,
+        "temp_lag_1d": 0.003800000064074993,
+        "rainfall_mm": 0.002099999925121665,
+        "wbgt_lag_1d": 0.00039999998989515007,
+        "solar_radiation": 0.0003000000142492354,
+        "day": 0.0003000000142492354,
+        "outdoor_worker_percentage": 0.00019999999494757503,
+        "wind_speed": 0.00019999999494757503,
+        "population_density": 0.00019999999494757503,
+        "temp_lag_2d": 9.999999747378752e-05,
+        "children_percentage": 9.999999747378752e-05,
+        "relative_humidity": 9.999999747378752e-05,
+        "wbgt_lag_2d": 9.999999747378752e-05,
+        "temp_lag_3d": 9.999999747378752e-05,
+        "wbgt_lag_3d": 9.999999747378752e-05,
+        "surface_pressure": 9.999999747378752e-05,
+        "elderly_percentage": 9.999999747378752e-05,
+        "month": 9.999999747378752e-05,
+        "hour": 0.0
+      }
+    }
+  },
+  "target_definition": {
+    "mortality_target": "Heat-related excess mortality risk percentage (0.0 to 100.0 %)",
+    "hospitalization_target": "Heat-related emergency room admissions / day"
+  },
+  "model_configuration": {
+    "framework": "XGBoost",
+    "max_depth": 4,
+    "learning_rate": 0.05,
+    "reg_alpha": 0.8,
+    "reg_lambda": 2.0,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8
+  }
+}

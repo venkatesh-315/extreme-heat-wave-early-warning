@@ -386,10 +386,15 @@ class DatasetPreparationPipeline:
 
         # 11. Save Processed Artifacts
         self.config.output_processed_path.parent.mkdir(parents=True, exist_ok=True)
-        if self.config.output_processed_path.suffix == ".csv":
-            df_final.to_csv(self.config.output_processed_path, index=False)
+        if self.config.output_processed_path.suffix == ".parquet":
+            try:
+                df_final.to_parquet(self.config.output_processed_path, index=False)
+            except Exception:
+                csv_fallback_path = self.config.output_processed_path.with_suffix(".csv")
+                df_final.to_csv(csv_fallback_path, index=False)
+                self.config.output_processed_path = csv_fallback_path
         else:
-            df_final.to_parquet(self.config.output_processed_path, index=False)
+            df_final.to_csv(self.config.output_processed_path, index=False)
         print(f">> Processed dataset saved to: {self.config.output_processed_path}")
 
         # Save JSON Report
@@ -407,7 +412,7 @@ def main():
     parser.add_argument("--weather", type=str, default=str(SERVICE_DIR / "data" / "raw" / "sample_weather.csv"))
     parser.add_argument("--demographics", type=str, default=str(SERVICE_DIR / "data" / "raw" / "sample_demographics.csv"))
     parser.add_argument("--health", type=str, default=None)
-    parser.add_argument("--output", type=str, default=str(SERVICE_DIR / "data" / "processed" / "processed_training_dataset.parquet"))
+    parser.add_argument("--output", type=str, default=str(SERVICE_DIR / "data" / "processed" / "processed_training_dataset.csv"))
     parser.add_argument("--report", type=str, default=str(SERVICE_DIR / "data" / "processed" / "dataset_validation_report.json"))
     parser.add_argument("--demo", action="store_true", help="Enable demo mode with marked synthetic targets for UI/testing")
 

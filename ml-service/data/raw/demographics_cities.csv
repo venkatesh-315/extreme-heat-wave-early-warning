@@ -1,0 +1,7 @@
+location_id,location_name,population_density,elderly_percentage,outdoor_worker_percentage,children_percentage
+delhi,Delhi NCR,14500.0,8.2,19.4,10.8
+ahmedabad,Ahmedabad,11200.0,8.8,21.0,10.4
+nagpur,Nagpur,4800.0,9.1,17.2,11.5
+jaipur,Jaipur,7200.0,8.0,20.5,11.0
+hyderabad,Hyderabad,9800.0,8.4,18.0,10.2
+lucknow,Lucknow,6500.0,8.6,19.0,11.8
