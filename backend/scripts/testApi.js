@@ -206,6 +206,21 @@ async function runTests() {
       }
     });
 
+    await test('POST /api/thermal-stress/ml-predict - Python ML XGBoost inference with fallback', async () => {
+      const res = await request('POST', '/api/thermal-stress/ml-predict', {
+        temperature: 45.2,
+        humidity: 34,
+        windSpeed: 3.0,
+        solarRadiation: 920,
+        consecutiveHotDays: 3,
+        isUrban: true,
+        populationDensity: 15000,
+      });
+      if (res.status !== 200 || typeof res.body.data.mortality_risk_score !== 'number' || !res.body.data.source) {
+        throw new Error(`ML predict failed: ${JSON.stringify(res.body)}`);
+      }
+    });
+
     // 6. Risk & Mortality Endpoints
     await test('GET /api/risk/mortality - Mortality risk & vulnerable exposure', async () => {
       const res = await request('GET', '/api/risk/mortality?lat=28.61&lon=77.20&population=2000000');

@@ -15,6 +15,8 @@ const config = {
     .map(origin => origin.trim()),
   openMeteoApiUrl: process.env.OPEN_METEO_API_URL || 'https://api.open-meteo.com/v1/forecast',
   meteoTimeoutMs: parseInt(process.env.METEO_TIMEOUT_MS, 10) || 5000,
+  mlServiceUrl: process.env.ML_SERVICE_URL || 'http://127.0.0.1:8000',
+  mlServiceTimeoutMs: parseInt(process.env.ML_SERVICE_TIMEOUT_MS, 10) || 3000,
 };
 
 module.exports = config;

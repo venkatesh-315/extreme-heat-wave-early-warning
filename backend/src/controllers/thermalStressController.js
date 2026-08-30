@@ -1,5 +1,6 @@
 const { computeFullThermalProfile } = require('../services/thermalCalculationService');
 const { fetchWeatherData } = require('../services/weatherSyncService');
+const { predictHeatwaveRisk } = require('../services/mlClientService');
 const { successResponse } = require('../utils/responseFormatter');
 
 /**
@@ -67,7 +68,25 @@ const calculateMetrics = async (req, res, next) => {
   }
 };
 
+/**
+ * Machine Learning Heatwave Inference
+ * POST /api/thermal-stress/ml-predict
+ */
+const predictMLStress = async (req, res, next) => {
+  try {
+    const predictionResult = await predictHeatwaveRisk(req.body);
+    return successResponse(
+      res,
+      predictionResult,
+      'Machine Learning heatwave risk prediction computed successfully'
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getCurrentThermalStress,
   calculateMetrics,
+  predictMLStress,
 };
