@@ -257,7 +257,6 @@ export function logoutUser() {
     localStorage.removeItem(AUTH_STORAGE_KEY);
     sessionStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem('thermoguard_auth_user_v1');
-    localStorage.removeItem('thermoguard_fcm_token');
   } catch (err) {
     console.error('Error logging out user:', err);
   }
