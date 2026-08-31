@@ -1,0 +1,37 @@
+{
+  "name": "thermoguard-backend",
+  "version": "1.0.0",
+  "description": "Production-ready REST API backend for ThermoGuard — Extreme Heatwave Early Warning and Human Thermal Stress Index",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node scripts/seed.js",
+    "test": "node scripts/testApi.js"
+  },
+  "keywords": [
+    "heatwave",
+    "thermal-stress",
+    "wbgt",
+    "utci",
+    "imd",
+    "ndma",
+    "express",
+    "mongodb",
+    "mongoose"
+  ],
+  "author": "ThermoGuard Team",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "firebase-admin": "^14.3.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "morgan": "^1.10.0"
+  }
+}
