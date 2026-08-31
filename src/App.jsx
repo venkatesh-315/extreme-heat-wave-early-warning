@@ -29,6 +29,7 @@ import {
 } from './services/weatherService';
 import { fetchEmergencyResources } from './services/emergencyService';
 import { getCurrentUser, logoutUser } from './services/authService';
+import { generateWardData, generateRecommendations } from './data/mockData';
 import {
   SettingsIcon,
   CheckCircleIcon,
