@@ -25,7 +25,12 @@ function TopHeader({
   alertCount = 0,
   activeAlerts = [],
   onRefresh,
-  isRefreshing = false
+  isRefreshing = false,
+  hasFcmToken = false,
+  notificationPermission = 'default',
+  onEnablePushNotifications,
+  isEnablingPush = false,
+  onOpenSettings,
 }) {
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   // Keep the previous location name in the input field
@@ -324,6 +329,42 @@ function TopHeader({
                 <span className={`notif-count ${alertCount > 0 ? 'active' : 'safe'}`}>
                   {alertCount > 0 ? `${alertCount} Active` : '0 Active'}
                 </span>
+              </div>
+
+              {/* FCM Device Push Status Quick Bar */}
+              <div style={{ padding: '8px 14px', background: hasFcmToken && notificationPermission === 'granted' ? '#f0fdf4' : '#f8fafc', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.74rem' }}>
+                <span style={{ color: hasFcmToken && notificationPermission === 'granted' ? '#15803d' : '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <BellIcon size={13} color={hasFcmToken && notificationPermission === 'granted' ? '#16a34a' : '#94a3b8'} />
+                  {hasFcmToken && notificationPermission === 'granted'
+                    ? 'Push Alerts: Connected'
+                    : notificationPermission === 'denied'
+                    ? 'Push: Blocked in Browser'
+                    : 'Push Alerts: Disabled'}
+                </span>
+                {(!hasFcmToken || notificationPermission !== 'granted') && notificationPermission !== 'denied' && onEnablePushNotifications && (
+                  <button
+                    type="button"
+                    style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: '4px', padding: '2px 8px', fontSize: '0.7rem', cursor: 'pointer' }}
+                    onClick={() => {
+                      onEnablePushNotifications();
+                    }}
+                    disabled={isEnablingPush}
+                  >
+                    {isEnablingPush ? 'Enabling...' : 'Enable'}
+                  </button>
+                )}
+                {hasFcmToken && onOpenSettings && (
+                  <button
+                    type="button"
+                    style={{ background: 'transparent', color: '#2563eb', border: 'none', fontSize: '0.7rem', cursor: 'pointer', padding: 0 }}
+                    onClick={() => {
+                      setIsNotificationsOpen(false);
+                      onOpenSettings();
+                    }}
+                  >
+                    Settings &rarr;
+                  </button>
+                )}
               </div>
               <div className="notif-list">
                 {activeAlerts.length > 0 ? (

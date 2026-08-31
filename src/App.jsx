@@ -31,11 +31,22 @@ import { fetchEmergencyResources } from './services/emergencyService';
 import { getCurrentUser, logoutUser } from './services/authService';
 import { generateWardData, generateRecommendations } from './data/mockData';
 import {
+  requestAndRegisterNotification,
+  disableNotifications,
+  setupForegroundMessageListener,
+  getNotificationPermissionState,
+  getCachedFcmToken,
+  sendTestNotification,
+} from './services/notificationService';
+import {
   SettingsIcon,
   CheckCircleIcon,
   SatelliteIcon,
   ThermometerIcon,
   RefreshCwIcon,
+  BellIcon,
+  InfoIcon,
+  XIcon,
 } from './components/icons';
 
 import './App.css';
@@ -72,6 +83,100 @@ function App() {
   const [settingsForm, setSettingsForm] = useState(() => getUserSettings());
   const [settingsSaveAlert, setSettingsSaveAlert] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Push Notification & FCM State
+  const [notificationPermission, setNotificationPermission] = useState(() => getNotificationPermissionState());
+  const [hasFcmToken, setHasFcmToken] = useState(() => Boolean(getCachedFcmToken()));
+  const [isEnablingPush, setIsEnablingPush] = useState(false);
+  const [isSendingTest, setIsSendingTest] = useState(false);
+  const [pushStatusMessage, setPushStatusMessage] = useState(null);
+  const [foregroundAlertToast, setForegroundAlertToast] = useState({
+    show: false,
+    title: '',
+    body: '',
+    level: 'RED',
+    timestamp: '',
+    url: '/alerts',
+  });
+
+  // Foreground FCM Notification Listener
+  useEffect(() => {
+    if (!currentUser) return;
+    const unsubscribe = setupForegroundMessageListener((payload) => {
+      const title = payload.notification?.title || payload.data?.title || 'ThermoGuard Heatwave Alert 🚨';
+      const body = payload.notification?.body || payload.data?.body || 'Elevated thermal stress detected.';
+      const level = payload.data?.level || payload.data?.severity || 'RED';
+      const url = payload.data?.url || (payload.fcmOptions && payload.fcmOptions.link) || '/alerts';
+      setForegroundAlertToast({
+        show: true,
+        title,
+        body,
+        level,
+        url,
+        timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
+      });
+    });
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  // Handler: Enable Push Notifications via Firebase FCM
+  const handleEnablePushNotifications = async () => {
+    setIsEnablingPush(true);
+    setPushStatusMessage(null);
+    try {
+      await requestAndRegisterNotification(currentUser);
+      setNotificationPermission('granted');
+      setHasFcmToken(true);
+      setPushStatusMessage({
+        type: 'success',
+        text: '✓ Push notifications enabled! This device will now receive real-time ThermoGuard emergency alerts.',
+      });
+    } catch (err) {
+      console.error('Error enabling push notifications:', err);
+      setNotificationPermission(getNotificationPermissionState());
+      setPushStatusMessage({
+        type: 'error',
+        text: err.message || 'Failed to enable notifications. Please check your browser site permissions.',
+      });
+    } finally {
+      setIsEnablingPush(false);
+    }
+  };
+
+  // Handler: Disable Push Notifications
+  const handleDisablePushNotifications = async () => {
+    try {
+      await disableNotifications(currentUser);
+      setHasFcmToken(false);
+      setPushStatusMessage({
+        type: 'info',
+        text: 'Push notifications disabled on this browser device.',
+      });
+    } catch (err) {
+      console.error('Error disabling notifications:', err);
+    }
+  };
+
+  // Handler: Send Live Test Push Alert via Backend & Firebase FCM
+  const handleTriggerTestPushAlert = async () => {
+    setIsSendingTest(true);
+    setPushStatusMessage(null);
+    try {
+      const res = await sendTestNotification();
+      setPushStatusMessage({
+        type: 'success',
+        text: res?.message || 'Test notification dispatched successfully through Firebase Cloud Messaging!',
+      });
+    } catch (err) {
+      console.error('Error sending test notification:', err);
+      setPushStatusMessage({
+        type: 'error',
+        text: err.message || 'Failed to send test push alert. Ensure notifications are enabled first.',
+      });
+    } finally {
+      setIsSendingTest(false);
+    }
+  };
 
   // Load weather & biometeorological data for selected location
   const handleLocationSelect = useCallback(async (location, silent = false) => {
@@ -330,6 +435,56 @@ function App() {
 
   return (
     <div className="thermoguard-app">
+      {/* Real-time Foreground Push Alert Toast Banner */}
+      {foregroundAlertToast.show && (
+        <div
+          className={`foreground-alert-toast ${
+            foregroundAlertToast.level?.toLowerCase() === 'orange'
+              ? 'orange'
+              : foregroundAlertToast.level?.toLowerCase() === 'info'
+              ? 'info'
+              : 'red'
+          }`}
+          role="alert"
+        >
+          <div className="toast-header-row">
+            <span
+              className={`toast-tag ${
+                foregroundAlertToast.level?.toLowerCase() === 'orange'
+                  ? 'orange'
+                  : foregroundAlertToast.level?.toLowerCase() === 'info'
+                  ? 'info'
+                  : 'red'
+              }`}
+            >
+              {foregroundAlertToast.level || 'EMERGENCY'} ALERT
+            </span>
+            <button
+              className="toast-close-btn"
+              onClick={() => setForegroundAlertToast({ ...foregroundAlertToast, show: false })}
+              aria-label="Close notification"
+            >
+              <XIcon size={16} />
+            </button>
+          </div>
+          <h4 className="toast-title">{foregroundAlertToast.title}</h4>
+          <p className="toast-body">{foregroundAlertToast.body}</p>
+          <div className="toast-footer-row">
+            <span className="toast-time">{foregroundAlertToast.timestamp || 'Just now'}</span>
+            <button
+              type="button"
+              className="toast-action-link"
+              onClick={() => {
+                setForegroundAlertToast({ ...foregroundAlertToast, show: false });
+                handleTabSelect('alerts');
+              }}
+            >
+              View Directives &rarr;
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Full-Screen Animated Loader during computation */}
       {isCalculating && !isInitialLoading && <Loader fullScreen={true} />}
 
@@ -360,6 +515,11 @@ function App() {
           activeAlerts={activeAlerts}
           onRefresh={handleManualRefresh}
           isRefreshing={isRefreshing}
+          hasFcmToken={hasFcmToken}
+          notificationPermission={notificationPermission}
+          onEnablePushNotifications={handleEnablePushNotifications}
+          isEnablingPush={isEnablingPush}
+          onOpenSettings={() => handleTabSelect('settings')}
         />
 
         <main className="dashboard-scroll-body">
@@ -533,6 +693,95 @@ function App() {
                 </div>
 
                 <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {/* Firebase Cloud Messaging & Emergency Push Alerts Setting */}
+                  <div className="fcm-settings-card">
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <BellIcon size={18} color="#e11d48" />
+                        <strong style={{ fontSize: '0.88rem', color: '#0f172a' }}>Firebase Cloud Messaging (FCM) Emergency Alerts</strong>
+                      </div>
+                      <div className={`fcm-status-badge ${hasFcmToken && notificationPermission === 'granted' ? 'active' : notificationPermission === 'denied' ? 'blocked' : 'inactive'}`}>
+                        <span className="fcm-status-dot" />
+                        <span>
+                          {hasFcmToken && notificationPermission === 'granted'
+                            ? 'Push Alerts Active'
+                            : notificationPermission === 'denied'
+                            ? 'Permission Blocked'
+                            : 'Disabled'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <p style={{ fontSize: '0.76rem', color: '#64748b', margin: '0 0 14px', lineHeight: 1.5 }}>
+                      Receive instant critical heatwave warnings, NDMA emergency directives, and thermal breach alerts on this device even when ThermoGuard is closed or in the background.
+                    </p>
+
+                    {notificationPermission === 'denied' && (
+                      <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '10px 14px', borderRadius: '8px', fontSize: '0.78rem', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <InfoIcon size={16} color="#dc2626" />
+                        <span>
+                          Notifications are blocked in your browser. Click the lock/settings icon in the browser URL bar to change Notifications to <strong>Allow</strong>.
+                        </span>
+                      </div>
+                    )}
+
+                    {pushStatusMessage && (
+                      <div
+                        style={{
+                          background: pushStatusMessage.type === 'success' ? '#f0fdf4' : pushStatusMessage.type === 'error' ? '#fef2f2' : '#eff6ff',
+                          border: `1px solid ${pushStatusMessage.type === 'success' ? '#bbf7d0' : pushStatusMessage.type === 'error' ? '#fecaca' : '#bfdbfe'}`,
+                          color: pushStatusMessage.type === 'success' ? '#15803d' : pushStatusMessage.type === 'error' ? '#b91c1c' : '#1d4ed8',
+                          padding: '10px 14px',
+                          borderRadius: '8px',
+                          fontSize: '0.78rem',
+                          marginBottom: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <CheckCircleIcon size={16} color={pushStatusMessage.type === 'success' ? '#15803d' : pushStatusMessage.type === 'error' ? '#dc2626' : '#2563eb'} />
+                        <span>{pushStatusMessage.text}</span>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                      {(!hasFcmToken || notificationPermission !== 'granted') ? (
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          style={{ padding: '9px 18px', fontSize: '0.84rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                          onClick={handleEnablePushNotifications}
+                          disabled={isEnablingPush || notificationPermission === 'denied'}
+                        >
+                          <BellIcon size={16} color="#ffffff" />
+                          <span>{isEnablingPush ? 'Registering Device Token...' : 'Enable Push Notifications'}</span>
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            className="btn btn-primary"
+                            style={{ padding: '9px 16px', fontSize: '0.84rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                            onClick={handleTriggerTestPushAlert}
+                            disabled={isSendingTest}
+                          >
+                            <BellIcon size={16} color="#ffffff" />
+                            <span>{isSendingTest ? 'Sending FCM Test...' : 'Send Live Test Alert 🔔'}</span>
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            style={{ padding: '9px 14px', fontSize: '0.84rem', color: '#64748b' }}
+                            onClick={handleDisablePushNotifications}
+                          >
+                            Disable on this Device
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Temperature Format Setting */}
                   <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
