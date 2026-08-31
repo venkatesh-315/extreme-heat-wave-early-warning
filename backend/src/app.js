@@ -17,6 +17,7 @@ const alertRoutes = require('./routes/alertRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const mlRoutes = require('./routes/mlRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
@@ -82,6 +83,7 @@ app.use('/api/alerts', alertRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/ml', mlRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Error Handling Pipeline
 app.use(notFoundHandler);

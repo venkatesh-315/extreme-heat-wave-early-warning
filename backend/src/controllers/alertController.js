@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Alert = require('../models/Alert');
 const Location = require('../models/Location');
 const { MULTILINGUAL_SMS_TEMPLATES } = require('../services/alertEngineService');
+const { sendNotificationToAllUsers } = require('../services/notificationService');
 const { successResponse, errorResponse } = require('../utils/responseFormatter');
 
 const DEFAULT_ALERTS = [
@@ -140,13 +141,32 @@ const createAlert = async (req, res, next) => {
       issuedAt: new Date().toISOString(),
     };
 
+    let createdAlert;
     if (mongoose.connection.readyState === 1) {
-      const alert = await Alert.create(alertData);
-      return successResponse(res, alert, 'Heatwave alert successfully issued and registered', 201);
+      createdAlert = await Alert.create(alertData);
     } else {
-      const alert = { _id: `alt_${Date.now()}`, ...alertData };
-      return successResponse(res, alert, 'Heatwave alert successfully issued and registered', 201);
+      createdAlert = { _id: `alt_${Date.now()}`, ...alertData };
     }
+
+    // Trigger asynchronous FCM push notification without blocking HTTP response
+    sendNotificationToAllUsers({
+      title: createdAlert.title,
+      body: createdAlert.message,
+      data: {
+        type: 'heatwave_alert',
+        alertId: String(createdAlert._id),
+        level: createdAlert.level,
+        severity: createdAlert.severity,
+      },
+      priority: createdAlert.level === 'RED' ? 'high' : 'normal',
+      requireInteraction: createdAlert.level === 'RED',
+      url: '/alerts',
+    }).catch((err) => {
+      // Non-blocking log
+      console.error('FCM alert dispatch notice:', err.message);
+    });
+
+    return successResponse(res, createdAlert, 'Heatwave alert successfully issued and registered', 201);
   } catch (err) {
     next(err);
   }
@@ -170,7 +190,7 @@ const getSmsTemplates = async (req, res) => {
  */
 const broadcastAlert = async (req, res, next) => {
   try {
-    const { templateId, channels = ['sms', 'whatsapp'], targetDistrict } = req.body;
+    const { templateId, channels = ['sms', 'whatsapp', 'push'], targetDistrict } = req.body;
 
     const template = MULTILINGUAL_SMS_TEMPLATES.find((t) => t.id === templateId) || MULTILINGUAL_SMS_TEMPLATES[0];
 
@@ -184,6 +204,24 @@ const broadcastAlert = async (req, res, next) => {
       timestamp: new Date().toISOString(),
       dispatchedBy: req.user?.name || 'Duty Disaster Officer',
     };
+
+    // Dispatch FCM broadcast if push channel requested
+    if (channels.includes('push') || channels.includes('fcm')) {
+      sendNotificationToAllUsers({
+        title: `NDMA Directive: ${template.label}`,
+        body: template.content,
+        data: {
+          type: 'emergency_broadcast',
+          templateId: template.id,
+          targetDistrict: broadcastResult.targetDistrict,
+        },
+        priority: 'high',
+        requireInteraction: true,
+        url: '/action',
+      }).catch((err) => {
+        console.error('FCM broadcast notice:', err.message);
+      });
+    }
 
     return successResponse(res, broadcastResult, 'Emergency alert broadcast simulation dispatched');
   } catch (err) {

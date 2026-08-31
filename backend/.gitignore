@@ -8,3 +8,7 @@ yarn-error.log*
 coverage/
 dist/
 build/
+*firebase-adminsdk*.json
+*service-account*.json
+*.serviceaccount.json
+

@@ -17,6 +17,12 @@ const config = {
   meteoTimeoutMs: parseInt(process.env.METEO_TIMEOUT_MS, 10) || 5000,
   mlServiceUrl: process.env.ML_SERVICE_URL || 'http://127.0.0.1:8000',
   mlServiceTimeoutMs: parseInt(process.env.ML_SERVICE_TIMEOUT_MS, 10) || 3000,
+  firebase: {
+    projectId: process.env.FIREBASE_PROJECT_ID || 'thermo-guard',
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL || '',
+    privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : '',
+    serviceAccountPath: process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH || process.env.GOOGLE_APPLICATION_CREDENTIALS || '',
+  },
 };
 
 module.exports = config;

@@ -85,6 +85,31 @@ const UserSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    fcmTokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        deviceType: {
+          type: String,
+          default: 'web',
+        },
+        userAgent: {
+          type: String,
+          default: '',
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+        lastUsedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
@@ -140,6 +165,8 @@ UserSchema.methods.toPublicJSON = function () {
     preferredLocation: this.preferredLocation,
     preferredLocationName: this.preferredLocationName,
     alertSettings: this.alertSettings,
+    fcmTokensCount: Array.isArray(this.fcmTokens) ? this.fcmTokens.length : 0,
+    hasFcmToken: Array.isArray(this.fcmTokens) && this.fcmTokens.length > 0,
     lastLoginAt: this.lastLoginAt,
     createdAt: this.createdAt,
   };
