@@ -23,7 +23,9 @@ function TopHeader({
   currentUser,
   onLogout,
   alertCount = 0,
-  activeAlerts = []
+  activeAlerts = [],
+  onRefresh,
+  isRefreshing = false
 }) {
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   // Keep the previous location name in the input field
@@ -278,10 +280,23 @@ function TopHeader({
 
         {/* Live Sync Status with Auto Refresh Setting */}
         <div className="header-status-strip">
-          <span className="refresh-label">
-            <RefreshCwIcon size={12} color="#64748b" />
-            <span>{refreshLabel}</span>
-          </span>
+          <button
+            type="button"
+            className={`refresh-btn-pill ${isRefreshing ? 'refreshing' : ''}`}
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            title={isRefreshing ? 'Syncing live telemetry data...' : `Click to refresh live telemetry now (${refreshLabel})`}
+            aria-label={`Refresh live telemetry (${refreshLabel})`}
+          >
+            <RefreshCwIcon
+              size={12}
+              color={isRefreshing ? '#2563eb' : '#475569'}
+              className={`refresh-icon ${isRefreshing ? 'spin-icon' : ''}`}
+            />
+            <span className="refresh-btn-label">
+              {isRefreshing ? 'Refreshing...' : refreshLabel}
+            </span>
+          </button>
           <span className="live-status-pill">
             <span className="live-dot" />
             <span>Live</span>

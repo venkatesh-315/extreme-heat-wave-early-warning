@@ -320,6 +320,74 @@
   gap: 12px;
 }
 
+.refresh-btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #475569;
+  font-weight: 600;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+  user-select: none;
+  outline: none;
+  line-height: 1.2;
+}
+
+.refresh-btn-pill:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #0f172a;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.refresh-btn-pill:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+  background: #cbd5e1;
+}
+
+.refresh-btn-pill:focus-visible {
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35);
+  border-color: #2563eb;
+}
+
+.refresh-btn-pill.refreshing,
+.refresh-btn-pill:disabled {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+  cursor: wait;
+}
+
+.refresh-btn-pill .refresh-icon {
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.refresh-btn-pill:hover:not(:disabled) .refresh-icon {
+  transform: rotate(45deg);
+}
+
+.refresh-btn-pill.refreshing .refresh-icon,
+.refresh-btn-pill .spin-icon {
+  animation: spinCw 0.8s linear infinite;
+}
+
+@keyframes spinCw {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .refresh-label {
   display: inline-flex;
   align-items: center;

@@ -71,6 +71,7 @@ function App() {
   // Settings State Form
   const [settingsForm, setSettingsForm] = useState(() => getUserSettings());
   const [settingsSaveAlert, setSettingsSaveAlert] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Load weather & biometeorological data for selected location
   const handleLocationSelect = useCallback(async (location, silent = false) => {
@@ -116,6 +117,21 @@ function App() {
       if (!silent) setIsCalculating(false);
     }
   }, []);
+
+  // Manual & Direct Telemetry Refresh Handler (triggered on refresh button click)
+  const handleManualRefresh = useCallback(async () => {
+    if (!selectedLocation || isRefreshing) return;
+    setIsRefreshing(true);
+    try {
+      await handleLocationSelect(selectedLocation, true);
+    } catch (err) {
+      console.error('Data refresh error:', err);
+    } finally {
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 500);
+    }
+  }, [selectedLocation, isRefreshing, handleLocationSelect]);
 
   // Unified Single-Cycle Initial Loading Screen Trigger
   useEffect(() => {
@@ -192,9 +208,18 @@ function App() {
 
     const intervalMs = intervalMap[userSettings.autoRefreshInterval] || 60000;
 
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       if (selectedLocation) {
-        handleLocationSelect(selectedLocation, true);
+        setIsRefreshing(true);
+        try {
+          await handleLocationSelect(selectedLocation, true);
+        } catch (err) {
+          console.error('Auto refresh error:', err);
+        } finally {
+          setTimeout(() => {
+            setIsRefreshing(false);
+          }, 500);
+        }
       }
     }, intervalMs);
 
@@ -333,6 +358,8 @@ function App() {
           onLogout={handleLogout}
           alertCount={alertCount}
           activeAlerts={activeAlerts}
+          onRefresh={handleManualRefresh}
+          isRefreshing={isRefreshing}
         />
 
         <main className="dashboard-scroll-body">
@@ -400,10 +427,7 @@ function App() {
                 </div>
               </div>
 
-              {/* Bottom Footer Text Note */}
-              <footer className="dashboard-bottom-footer">
-                <p>ThermoGuard uses advanced AI models and real-time weather data to predict human thermal stress and health impacts.</p>
-              </footer>
+
             </div>
           )}
 
