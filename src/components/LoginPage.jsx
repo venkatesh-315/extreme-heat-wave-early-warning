@@ -57,15 +57,11 @@ function LoginPage({ onLoginSuccess }) {
   });
 
   // Citizen Form State
-  const [citizenMode, setCitizenMode] = useState('otp'); // 'otp' | 'password'
   const [citizenForm, setCitizenForm] = useState({
     phone: '',
-    email: '',
     otpCode: '',
-    password: '',
     alertLocation: CITIZEN_LOCATIONS[0],
-    alertsOptIn: true,
-    showPassword: false
+    alertsOptIn: true
   });
 
   // OTP Simulation State
@@ -183,25 +179,14 @@ function LoginPage({ onLoginSuccess }) {
     if (e) e.preventDefault();
     const newErrors = {};
 
-    if (citizenMode === 'otp') {
-      const phoneClean = citizenForm.phone.replace(/[^0-9]/g, '');
-      if (!phoneClean || phoneClean.length < 10) {
-        newErrors.phone = 'Please enter a valid 10-digit mobile number';
-      }
-      if (!citizenForm.otpCode.trim()) {
-        newErrors.otpCode = 'Please enter the 6-digit OTP received';
-      } else if (citizenForm.otpCode.trim().length < 4) {
-        newErrors.otpCode = 'Enter a valid verification OTP';
-      }
-    } else {
-      if (!citizenForm.email.trim() || !citizenForm.email.includes('@')) {
-        newErrors.email = 'Please enter a valid email address';
-      }
-      if (!citizenForm.password.trim()) {
-        newErrors.password = 'Please enter your password';
-      } else if (citizenForm.password.length < 4) {
-        newErrors.password = 'Password must be at least 4 characters';
-      }
+    const phoneClean = citizenForm.phone.replace(/[^0-9]/g, '');
+    if (!phoneClean || phoneClean.length < 10) {
+      newErrors.phone = 'Please enter a valid 10-digit mobile number';
+    }
+    if (!citizenForm.otpCode.trim()) {
+      newErrors.otpCode = 'Please enter the 6-digit OTP received';
+    } else if (citizenForm.otpCode.trim().length < 4) {
+      newErrors.otpCode = 'Enter a valid verification OTP';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -216,7 +201,7 @@ function LoginPage({ onLoginSuccess }) {
       await new Promise((resolve) => setTimeout(resolve, 450));
       const user = await loginWithCredentials({
         role: 'citizen',
-        phoneOrEmail: citizenMode === 'otp' ? citizenForm.phone : citizenForm.email,
+        phoneOrEmail: citizenForm.phone,
         alertLocation: citizenForm.alertLocation,
         alertsOptIn: citizenForm.alertsOptIn
       });
@@ -529,184 +514,81 @@ function LoginPage({ onLoginSuccess }) {
             ) : (
               /* CITIZEN LOGIN FORM */
               <form className="auth-inputs-form" onSubmit={handleCitizenSubmit} noValidate>
-                {/* Citizen Auth Mode Toggle (Mobile OTP vs Email/Password) */}
-                <div className="citizen-mode-switch">
-                  <button
-                    type="button"
-                    className={`mode-pill-btn ${citizenMode === 'otp' ? 'active' : ''}`}
-                    onClick={() => {
-                      setCitizenMode('otp');
-                      setErrors({});
-                    }}
-                  >
-                    <SmartphoneIcon size={15} />
-                    <span>Mobile Number &amp; OTP</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`mode-pill-btn ${citizenMode === 'password' ? 'active' : ''}`}
-                    onClick={() => {
-                      setCitizenMode('password');
-                      setErrors({});
-                    }}
-                  >
-                    <MailIcon size={15} />
-                    <span>Email &amp; Password</span>
-                  </button>
+                {/* Mobile Number Input with Country Code & Get OTP Button */}
+                <div className="auth-form-group">
+                  <label htmlFor="citizen-phone" className="auth-field-label">
+                    <span>Mobile Phone Number</span>
+                    <span className="required-star">*</span>
+                  </label>
+                  <div className={`auth-input-wrapper phone-wrapper ${errors.phone ? 'has-error' : ''}`}>
+                    <div className="phone-country-tag">
+                      <span>🇮🇳 +91</span>
+                    </div>
+                    <input
+                      id="citizen-phone"
+                      type="tel"
+                      className="auth-text-input phone-input"
+                      placeholder="98765 43210"
+                      maxLength={10}
+                      value={citizenForm.phone}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, '');
+                        setCitizenForm((prev) => ({ ...prev, phone: val }));
+                        if (errors.phone) setErrors((prev) => ({ ...prev, phone: null }));
+                      }}
+                      autoComplete="tel"
+                    />
+                    <button
+                      type="button"
+                      className={`send-otp-action-btn ${otpTimer > 0 ? 'disabled' : ''}`}
+                      onClick={handleSendOtp}
+                      disabled={otpTimer > 0}
+                    >
+                      {otpTimer > 0 ? `Resend in ${otpTimer}s` : otpSent ? 'Resend OTP' : 'Get OTP'}
+                    </button>
+                  </div>
+                  {errors.phone && (
+                    <span className="auth-field-error-msg">{errors.phone}</span>
+                  )}
                 </div>
 
-                {/* OTP Mode Fields */}
-                {citizenMode === 'otp' ? (
-                  <>
-                    {/* Mobile Number Input with Country Code & Get OTP Button */}
-                    <div className="auth-form-group">
-                      <label htmlFor="citizen-phone" className="auth-field-label">
-                        <span>Mobile Phone Number</span>
-                        <span className="required-star">*</span>
-                      </label>
-                      <div className={`auth-input-wrapper phone-wrapper ${errors.phone ? 'has-error' : ''}`}>
-                        <div className="phone-country-tag">
-                          <span>🇮🇳 +91</span>
-                        </div>
-                        <input
-                          id="citizen-phone"
-                          type="tel"
-                          className="auth-text-input phone-input"
-                          placeholder="98765 43210"
-                          maxLength={10}
-                          value={citizenForm.phone}
-                          onChange={(e) => {
-                            const val = e.target.value.replace(/[^0-9]/g, '');
-                            setCitizenForm((prev) => ({ ...prev, phone: val }));
-                            if (errors.phone) setErrors((prev) => ({ ...prev, phone: null }));
-                          }}
-                          autoComplete="tel"
-                        />
-                        <button
-                          type="button"
-                          className={`send-otp-action-btn ${otpTimer > 0 ? 'disabled' : ''}`}
-                          onClick={handleSendOtp}
-                          disabled={otpTimer > 0}
-                        >
-                          {otpTimer > 0 ? `Resend in ${otpTimer}s` : otpSent ? 'Resend OTP' : 'Get OTP'}
-                        </button>
-                      </div>
-                      {errors.phone && (
-                        <span className="auth-field-error-msg">{errors.phone}</span>
-                      )}
-                    </div>
-
-                    {/* 6-Digit OTP Field */}
-                    <div className="auth-form-group">
-                      <div className="auth-label-row">
-                        <label htmlFor="citizen-otp" className="auth-field-label">
-                          <span>6-Digit Verification OTP</span>
-                          <span className="required-star">*</span>
-                        </label>
-                        {otpSent && (
-                          <span className="otp-hint-badge">
-                            <CheckIcon size={12} color="#16a34a" />
-                            <span>OTP Active</span>
-                          </span>
-                        )}
-                      </div>
-                      <div className={`auth-input-wrapper ${errors.otpCode ? 'has-error' : ''}`}>
-                        <span className="auth-input-icon">
-                          <KeyRoundIcon size={17} color="#64748b" />
-                        </span>
-                        <input
-                          id="citizen-otp"
-                          type="text"
-                          className="auth-text-input otp-input"
-                          placeholder="Enter 6-digit OTP (e.g. 849201)"
-                          maxLength={6}
-                          value={citizenForm.otpCode}
-                          onChange={(e) => {
-                            const val = e.target.value.replace(/[^0-9]/g, '');
-                            setCitizenForm((prev) => ({ ...prev, otpCode: val }));
-                            if (errors.otpCode) setErrors((prev) => ({ ...prev, otpCode: null }));
-                          }}
-                          autoComplete="one-time-code"
-                        />
-                      </div>
-                      {errors.otpCode && (
-                        <span className="auth-field-error-msg">{errors.otpCode}</span>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  /* Password Mode Fields */
-                  <>
-                    <div className="auth-form-group">
-                      <label htmlFor="citizen-email" className="auth-field-label">
-                        <span>Email Address</span>
-                        <span className="required-star">*</span>
-                      </label>
-                      <div className={`auth-input-wrapper ${errors.email ? 'has-error' : ''}`}>
-                        <span className="auth-input-icon">
-                          <MailIcon size={17} color="#64748b" />
-                        </span>
-                        <input
-                          id="citizen-email"
-                          type="email"
-                          className="auth-text-input"
-                          placeholder="citizen@example.com"
-                          value={citizenForm.email}
-                          onChange={(e) => {
-                            setCitizenForm((prev) => ({ ...prev, email: e.target.value }));
-                            if (errors.email) setErrors((prev) => ({ ...prev, email: null }));
-                          }}
-                          autoComplete="email"
-                        />
-                      </div>
-                      {errors.email && (
-                        <span className="auth-field-error-msg">{errors.email}</span>
-                      )}
-                    </div>
-
-                    <div className="auth-form-group">
-                      <label htmlFor="citizen-password" className="auth-field-label">
-                        <span>Password</span>
-                        <span className="required-star">*</span>
-                      </label>
-                      <div className={`auth-input-wrapper ${errors.password ? 'has-error' : ''}`}>
-                        <span className="auth-input-icon">
-                          <LockIcon size={17} color="#64748b" />
-                        </span>
-                        <input
-                          id="citizen-password"
-                          type={citizenForm.showPassword ? 'text' : 'password'}
-                          className="auth-text-input"
-                          placeholder="Enter password"
-                          value={citizenForm.password}
-                          onChange={(e) => {
-                            setCitizenForm((prev) => ({ ...prev, password: e.target.value }));
-                            if (errors.password) setErrors((prev) => ({ ...prev, password: null }));
-                          }}
-                          autoComplete="current-password"
-                        />
-                        <button
-                          type="button"
-                          className="auth-pw-toggle-btn"
-                          onClick={() =>
-                            setCitizenForm((prev) => ({ ...prev, showPassword: !prev.showPassword }))
-                          }
-                          title={citizenForm.showPassword ? 'Hide password' : 'Show password'}
-                          aria-label="Toggle password visibility"
-                        >
-                          {citizenForm.showPassword ? (
-                            <EyeOffIcon size={17} color="#64748b" />
-                          ) : (
-                            <EyeIcon size={17} color="#64748b" />
-                          )}
-                        </button>
-                      </div>
-                      {errors.password && (
-                        <span className="auth-field-error-msg">{errors.password}</span>
-                      )}
-                    </div>
-                  </>
-                )}
+                {/* 6-Digit OTP Field */}
+                <div className="auth-form-group">
+                  <div className="auth-label-row">
+                    <label htmlFor="citizen-otp" className="auth-field-label">
+                      <span>6-Digit Verification OTP</span>
+                      <span className="required-star">*</span>
+                    </label>
+                    {otpSent && (
+                      <span className="otp-hint-badge">
+                        <CheckIcon size={12} color="#16a34a" />
+                        <span>OTP Active</span>
+                      </span>
+                    )}
+                  </div>
+                  <div className={`auth-input-wrapper ${errors.otpCode ? 'has-error' : ''}`}>
+                    <span className="auth-input-icon">
+                      <KeyRoundIcon size={17} color="#64748b" />
+                    </span>
+                    <input
+                      id="citizen-otp"
+                      type="text"
+                      className="auth-text-input otp-input"
+                      placeholder="Enter 6-digit OTP (e.g. 849201)"
+                      maxLength={6}
+                      value={citizenForm.otpCode}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, '');
+                        setCitizenForm((prev) => ({ ...prev, otpCode: val }));
+                        if (errors.otpCode) setErrors((prev) => ({ ...prev, otpCode: null }));
+                      }}
+                      autoComplete="one-time-code"
+                    />
+                  </div>
+                  {errors.otpCode && (
+                    <span className="auth-field-error-msg">{errors.otpCode}</span>
+                  )}
+                </div>
 
                 {/* Primary Alert City / Zone Selector */}
                 <div className="auth-form-group loc-select-group">
