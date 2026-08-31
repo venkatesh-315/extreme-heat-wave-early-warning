@@ -73,7 +73,6 @@ const UserSchema = new mongoose.Schema(
         sms: { type: Boolean, default: true },
         whatsapp: { type: Boolean, default: true },
         email: { type: Boolean, default: true },
-        push: { type: Boolean, default: true },
       },
       minThresholdLevel: {
         type: String,
