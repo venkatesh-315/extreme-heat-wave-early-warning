@@ -13,25 +13,42 @@ import {
   PlusIcon,
   MinusIcon,
   SearchIcon,
+  ShieldCheckIcon,
+  AlertTriangleIcon,
+  ShieldAlertIcon,
 } from './icons';
 import './GISMap.css';
 
 const getRiskColor = (risk) => {
-  if (risk >= 70) return '#991b1b';
-  if (risk >= 55) return '#dc2626';
-  if (risk >= 40) return '#ea580c';
-  if (risk >= 25) return '#f97316';
-  if (risk >= 15) return '#ca8a04';
-  return '#16a34a';
+  if (risk >= 55) return '#ef4444'; // Level 4: Danger (Bright Coral Red)
+  if (risk >= 40) return '#f97316'; // Level 3: Alert (Electric Saffron Orange)
+  if (risk >= 20) return '#eab308'; // Level 2: Caution (Bright Sun Gold)
+  return '#10b981';                 // Level 1: Safe (Vivid Emerald Green)
 };
 
 const getRiskLabel = (risk) => {
-  if (risk >= 70) return 'CATASTROPHIC';
-  if (risk >= 55) return 'EXTREME';
-  if (risk >= 40) return 'VERY HIGH';
-  if (risk >= 25) return 'HIGH';
-  if (risk >= 15) return 'MODERATE';
-  return 'LOW';
+  if (risk >= 55) return 'DANGER';
+  if (risk >= 40) return 'ALERT';
+  if (risk >= 20) return 'CAUTION';
+  return 'SAFE';
+};
+
+// Pure SVG vector markup for Leaflet map HTML pins and popups
+const getRiskSvgIcon = (risk, color = '#ffffff', size = 14) => {
+  if (risk >= 55) {
+    // Danger: Shield Alert
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+  }
+  if (risk >= 40) {
+    // Alert: Flame
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`;
+  }
+  if (risk >= 20) {
+    // Caution: Alert Triangle
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+  }
+  // Safe: Shield Check
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>`;
 };
 
 function GISMap({ location, wards = [], emergencyResources = [], focusedResource = null }) {
@@ -329,6 +346,8 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
         // 1. Plot Heat Zones / Wards / State Districts
         wards.forEach((ward) => {
           const color = getRiskColor(ward.mortalityRisk);
+          const riskLabel = getRiskLabel(ward.mortalityRisk);
+          const riskSvg = getRiskSvgIcon(ward.mortalityRisk, color, 14);
           const isStateMode = Boolean(location?.isState || ward.isStateDistrict);
           const circleRadius = (35 + ward.mortalityRisk * 0.7) * (isStateMode ? 350 : 60);
 
@@ -336,19 +355,27 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             radius: circleRadius,
             color: color,
             fillColor: color,
-            fillOpacity: isStateMode ? 0.25 : 0.2,
-            weight: isStateMode ? 2 : 1.5,
-            opacity: 0.85,
+            fillOpacity: isStateMode ? 0.20 : 0.16, // Luminous, avoids muddy dark basemap overlap
+            weight: 2.5,                            // Bold, distinct glowing boundary
+            opacity: 0.95,
           }).addTo(heatGroup);
 
           const wardIcon = L.divIcon({
-            html: `<div class="ward-light-pin" style="--pin-color: ${color}">
-              <span class="ward-pin-temp">${ward.wbgt}&deg;</span>
-              <span class="ward-pin-sub">WBGT</span>
-            </div>`,
+            html: `
+              <div class="ward-accessible-pin" style="--pin-ring-color: ${color};">
+                <div class="ward-pin-card-top">
+                  <span class="ward-card-icon-svg">${riskSvg}</span>
+                  <span class="ward-card-temp">${ward.wbgt}&deg;</span>
+                </div>
+                <div class="ward-pin-card-bot">
+                  <span class="ward-card-label">${riskLabel}</span>
+                </div>
+              </div>
+            `,
             className: '',
-            iconSize: [40, 40],
-            iconAnchor: [20, 20],
+            iconSize: [68, 44],
+            iconAnchor: [34, 22],
+            popupAnchor: [0, -24],
           });
 
           const wardMarker = L.marker([ward.lat, ward.lon], { icon: wardIcon })
@@ -360,17 +387,17 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             .bindPopup(`
               <div class="map-light-popup">
                 <div class="popup-header-row">
-                  <span class="popup-badge" style="background: ${color}18; color: ${color}; border: 1px solid ${color}44">
-                    ${getRiskLabel(ward.mortalityRisk)}
+                  <span class="popup-badge" style="background: ${color}20; color: ${color}; border: 1.5px solid ${color}; display: inline-flex; align-items: center; gap: 4px;">
+                    ${riskSvg} <span>${riskLabel}</span>
                   </span>
                   <span class="popup-pop">Pop: ${ward.population || 'N/A'}</span>
                 </div>
                 <div class="popup-title">${ward.name}</div>
-                <div class="popup-type">${ward.microclimateType || 'Urban Zone'}</div>
+                <div class="popup-type">${ward.microclimateType || 'Thermal Stress Zone'}</div>
                 <div class="popup-grid">
                   <div class="pg-item"><span>WBGT</span><strong style="color:${color}">${ward.wbgt}&deg;C</strong></div>
                   <div class="pg-item"><span>Air Temp</span><strong>${ward.temperature}&deg;C</strong></div>
-                  <div class="pg-item"><span>Heat Index</span><strong style="color:#ea580c">${ward.heatIndex}&deg;C</strong></div>
+                  <div class="pg-item"><span>Heat Index</span><strong style="color:#f97316">${ward.heatIndex}&deg;C</strong></div>
                   <div class="pg-item"><span>Mortality Risk</span><strong style="color:${color}">${ward.mortalityRisk}%</strong></div>
                 </div>
               </div>
@@ -388,48 +415,49 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
           if (res.type === 'hospital') {
             targetGroup = hospitalGroup;
             pinClass = 'hospital';
-            svgInner = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5"><path d="M12 6v12M6 12h12"/></svg>`;
+            svgInner = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v12"/><path d="M6 12h12"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>';
           } else if (res.type === 'shelter') {
             targetGroup = shelterGroup;
             pinClass = 'shelter';
-            svgInner = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>`;
+            svgInner = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/></svg>';
           } else {
             targetGroup = waterGroup;
             pinClass = 'water';
-            svgInner = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`;
+            svgInner = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>';
           }
 
-          const markerIcon = L.divIcon({
+          const resIcon = L.divIcon({
             html: `<div class="res-svg-pin ${pinClass}">${svgInner}</div>`,
             className: '',
             iconSize: [32, 32],
             iconAnchor: [16, 16],
           });
 
-          const resMarker = L.marker([res.lat, res.lon], { icon: markerIcon })
+          const resMarker = L.marker([res.lat, res.lon], { icon: resIcon })
             .addTo(targetGroup)
             .on('click', () => {
               setSelectedResource(res);
               setSelectedWard(null);
             })
             .bindPopup(`
-              <div class="map-light-popup res-popup">
-                <div class="popup-badge-row">
-                  <span class="popup-res-tag ${res.type}">${res.categoryLabel}</span>
-                  <span class="popup-dist">${res.distanceKm} km away</span>
+              <div class="map-light-popup">
+                <div class="popup-header-row">
+                  <span class="popup-badge res-badge ${pinClass}">${res.categoryLabel || res.type}</span>
+                  <span class="popup-pop">${res.distanceKm} km away</span>
                 </div>
                 <div class="popup-title">${res.name}</div>
-                <div class="popup-address">${res.address}</div>
-                <div class="popup-feature">${res.coolingAmenity}</div>
-                <div class="popup-capacity">Capacity: <strong>${res.capacity}</strong></div>
-                ${res.phone ? `<div class="popup-phone">Tel: <strong>${res.phone}</strong></div>` : ''}
+                <div class="popup-address">${res.address || 'Address available on map'}</div>
+                ${res.phone && res.phone !== 'N/A' ? `<div class="popup-phone"><strong>Helpline:</strong> ${res.phone}</div>` : ''}
+                ${res.coolingAmenity ? `<div class="popup-amenity"><strong>Amenity:</strong> ${res.coolingAmenity}</div>` : ''}
                 <div class="popup-actions">
                   <a href="${res.mapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn popup-gps-btn">
-                    Get GPS Directions
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                    <span>Get Directions</span>
                   </a>
                   ${res.searchMapsUrl ? `
-                    <a href="${res.searchMapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn popup-search-link popup-verify-btn">
-                      Verify on Maps
+                    <a href="${res.searchMapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn popup-verify-btn popup-search-link" title="Verify location details on Google Maps">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                      <span>Verify on Maps</span>
                     </a>
                   ` : ''}
                 </div>
@@ -439,10 +467,11 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
           markersMapRef.current[res.id] = resMarker;
         });
 
-        heatGroup.addTo(map);
-        hospitalGroup.addTo(map);
-        shelterGroup.addTo(map);
-        waterGroup.addTo(map);
+        // Add Active Layer Groups to Map
+        if (activeLayers.heatZones) heatGroup.addTo(map);
+        if (activeLayers.hospitals) hospitalGroup.addTo(map);
+        if (activeLayers.shelters) shelterGroup.addTo(map);
+        if (activeLayers.water) waterGroup.addTo(map);
 
         layerGroupsRef.current = {
           heatZones: heatGroup,
@@ -452,7 +481,9 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
         };
 
         mapInstanceRef.current = map;
-      } catch {
+        setMapError(false);
+      } catch (err) {
+        console.error('Leaflet Map initialization failed:', err);
         setMapError(true);
       }
     };
@@ -466,7 +497,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
         mapInstanceRef.current = null;
       }
     };
-  }, [location, wards, emergencyResources]);
+  }, [location, wards, emergencyResources, focusOnItem, activeLayers.heatZones, activeLayers.hospitals, activeLayers.shelters, activeLayers.water]);
 
   const hospitalsCount = emergencyResources.filter((r) => r.type === 'hospital').length;
   const sheltersCount = emergencyResources.filter((r) => r.type === 'shelter').length;
@@ -606,12 +637,24 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
 
           {/* Map Legend */}
           <div ref={legendRef} className="gis-floating-legend">
-            <span className="legend-head">Risk Scale (WBGT):</span>
+            <span className="legend-head">Risk Scale:</span>
             <div className="legend-items">
-              <span className="leg-dot" style={{ background: '#16a34a' }}>&lt;26&deg; Safe</span>
-              <span className="leg-dot" style={{ background: '#ca8a04' }}>26-28&deg; Caution</span>
-              <span className="leg-dot" style={{ background: '#ea580c' }}>28-32&deg; Alert</span>
-              <span className="leg-dot" style={{ background: '#dc2626' }}>&gt;32&deg; Danger</span>
+              <span className="leg-dot safe" style={{ background: '#10b981', color: '#ffffff' }}>
+                <ShieldCheckIcon size={12} color="#ffffff" />
+                <span>&lt;26&deg; Safe</span>
+              </span>
+              <span className="leg-dot caution" style={{ background: '#eab308', color: '#0f172a' }}>
+                <AlertTriangleIcon size={12} color="#0f172a" />
+                <span>26-28&deg; Caution</span>
+              </span>
+              <span className="leg-dot alert" style={{ background: '#f97316', color: '#ffffff' }}>
+                <FlameIcon size={12} color="#ffffff" />
+                <span>28-32&deg; Alert</span>
+              </span>
+              <span className="leg-dot danger" style={{ background: '#ef4444', color: '#ffffff' }}>
+                <ShieldAlertIcon size={12} color="#ffffff" />
+                <span>&gt;32&deg; Danger</span>
+              </span>
             </div>
           </div>
         </div>
@@ -641,7 +684,8 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
                     <span className="item-meta">WBGT: {ward.wbgt}&deg;C &middot; Temp: {ward.temperature}&deg;C</span>
                   </div>
                   <span className="item-badge" style={{ background: `${color}18`, color }}>
-                    {ward.mortalityRisk}% Risk
+                    {ward.mortalityRisk >= 55 ? <ShieldAlertIcon size={12} color={color} /> : ward.mortalityRisk >= 40 ? <FlameIcon size={12} color={color} /> : ward.mortalityRisk >= 20 ? <AlertTriangleIcon size={12} color={color} /> : <ShieldCheckIcon size={12} color={color} />}
+                    <span>{ward.mortalityRisk}% Risk</span>
                   </span>
                 </button>
               );
@@ -681,8 +725,9 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
         >
           <div className="detail-banner-header">
             <div className="detail-title-group">
-              <span className="detail-badge" style={{ background: getRiskColor(selectedWard.mortalityRisk), color: '#ffffff' }}>
-                {getRiskLabel(selectedWard.mortalityRisk)} RISK
+              <span className="detail-badge" style={{ background: getRiskColor(selectedWard.mortalityRisk), color: '#ffffff', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                {selectedWard.mortalityRisk >= 55 ? <ShieldAlertIcon size={14} color="#ffffff" /> : selectedWard.mortalityRisk >= 40 ? <FlameIcon size={14} color="#ffffff" /> : selectedWard.mortalityRisk >= 20 ? <AlertTriangleIcon size={14} color="#ffffff" /> : <ShieldCheckIcon size={14} color="#ffffff" />}
+                <span>{getRiskLabel(selectedWard.mortalityRisk)} RISK</span>
               </span>
               <h4>{selectedWard.name}</h4>
               <span className="detail-pop">Pop: {selectedWard.population}</span>

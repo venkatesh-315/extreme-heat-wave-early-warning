@@ -324,36 +324,37 @@
 }
 
 .ward-pin-circle {
-  width: 38px;
-  height: 38px;
+  min-width: 42px;
+  height: 42px;
+  padding: 2px 4px;
   border-radius: 50%;
   background: #ffffff;
-  border: 2.5px solid #ea580c;
+  border: 2.5px solid #f97316;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-  transition: transform 0.15s ease;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.22), 0 0 0 2px rgba(255, 255, 255, 0.85);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ward-spot-marker-container:hover .ward-pin-circle {
-  transform: scale(1.1);
+  transform: scale(1.12);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.3), 0 0 0 3px rgba(255, 255, 255, 1);
+}
+
+.ward-pin-icon-svg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .ward-pin-temp {
   font-family: 'Outfit', sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: #0f172a;
-  line-height: 1;
-}
-
-.ward-pin-unit {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.52rem;
-  font-weight: 700;
-  color: #64748b;
   line-height: 1;
   margin-top: 1px;
 }
@@ -361,17 +362,16 @@
 /* Location Name Displayed Directly Below the Spot */
 .ward-spot-name-below {
   margin-top: 4px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(4px);
-  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
   border-radius: 6px;
-  padding: 2px 6px;
+  padding: 2px 7px;
   font-family: 'Inter', sans-serif;
   font-size: 0.65rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #0f172a;
   white-space: nowrap;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.15);
   pointer-events: none;
 }
 

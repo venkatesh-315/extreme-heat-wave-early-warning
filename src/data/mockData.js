@@ -308,25 +308,21 @@ export function generateWardData(lat, lon, baseTemp = 36.0, baseHumidity = 50, s
     const stressCat = getStressCategory(wbgt, t);
     const imdAlert = getImdWarningLevel(t, wbgt, centerLat);
 
-    let tagColor = '#16a34a';
-    let tagBg = '#f0fdf4';
-    let categoryTag = 'LOW';
+    let tagColor = '#10b981';
+    let tagBg = '#ecfdf5';
+    let categoryTag = 'SAFE';
 
-    if (risk >= 70 || wbgt >= 35) {
-      categoryTag = 'CRITICAL';
-      tagColor = '#991b1b';
-      tagBg = '#fff1f2';
-    } else if (risk >= 55 || wbgt >= 32) {
-      categoryTag = 'VERY HIGH';
-      tagColor = '#dc2626';
+    if (risk >= 55 || wbgt >= 32) {
+      categoryTag = 'DANGER';
+      tagColor = '#ef4444';
       tagBg = '#fef2f2';
-    } else if (risk >= 40 || wbgt >= 29) {
-      categoryTag = 'HIGH';
-      tagColor = '#ea580c';
+    } else if (risk >= 40 || wbgt >= 28) {
+      categoryTag = 'HIGH ALERT';
+      tagColor = '#f97316';
       tagBg = '#fff7ed';
     } else if (risk >= 20 || wbgt >= 26) {
-      categoryTag = 'MODERATE';
-      tagColor = '#ca8a04';
+      categoryTag = 'CAUTION';
+      tagColor = '#eab308';
       tagBg = '#fefce8';
     }
 

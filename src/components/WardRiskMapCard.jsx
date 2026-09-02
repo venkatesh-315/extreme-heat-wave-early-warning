@@ -6,18 +6,33 @@ import {
   MinusIcon,
   MaximizeIcon,
   XIcon,
-  ShieldAlertIcon
+  ShieldCheckIcon,
+  AlertTriangleIcon,
+  FlameIcon,
+  ShieldAlertIcon,
 } from './icons';
 import { formatTemp } from '../services/weatherService';
 import './WardRiskMapCard.css';
 
 const RISK_CATEGORIES = [
-  { id: 'low', label: 'Low (0-20)', shortLabel: '0-20 Low', range: '0–20', color: '#22c55e', title: 'Normal Summer', significance: 'Tolerable heat load. Routine hydration advised.', action: 'Standard advisory' },
-  { id: 'moderate', label: 'Moderate (20-40)', shortLabel: '20-40 Mod', range: '20–40', color: '#eab308', title: 'Elevated Caution', significance: 'Increased hydration required; caution for infants & seniors.', action: 'Shaded rest spots' },
-  { id: 'high', label: 'High (40-60)', shortLabel: '40-60 High', range: '40–60', color: '#f97316', title: 'Severe Burden', significance: 'High risk of heat illness. 45m work / 15m rest cycles.', action: 'Enforce rest cycles' },
-  { id: 'very-high', label: 'Very High (60-80)', shortLabel: '60-80 V.High', range: '60–80', color: '#ea580c', title: 'Dangerous Heatwave', significance: 'Halt outdoor manual labor 12:00 PM - 4:00 PM.', action: 'Cooling shelters open' },
-  { id: 'extreme', label: 'Extreme (80-100)', shortLabel: '80-100 Ext', range: '80–100', color: '#991b1b', title: 'Critical Threat', significance: 'Life-threatening biometeorology. Emergency ICUs & water tankers.', action: 'Disaster protocol' },
+  { id: 'low', label: 'Safe (0-20)', shortLabel: '0-20 Safe', range: '0–20', color: '#10b981', iconName: 'safe', title: 'Normal Summer', significance: 'Tolerable heat load. Routine hydration advised.', action: 'Standard advisory' },
+  { id: 'moderate', label: 'Caution (20-40)', shortLabel: '20-40 Caution', range: '20–40', color: '#eab308', iconName: 'caution', title: 'Elevated Caution', significance: 'Increased hydration required; caution for infants & seniors.', action: 'Shaded rest spots' },
+  { id: 'high', label: 'High Alert (40-60)', shortLabel: '40-60 Alert', range: '40–60', color: '#f97316', iconName: 'alert', title: 'Severe Heat Burden', significance: 'High risk of heat illness. 45m work / 15m rest cycles.', action: 'Enforce rest cycles' },
+  { id: 'danger', label: 'Danger (60-100)', shortLabel: '60-100 Danger', range: '60–100', color: '#ef4444', iconName: 'danger', title: 'Dangerous Heatwave', significance: 'Halt outdoor manual labor 12:00 PM - 4:00 PM.', action: 'Cooling shelters open' },
 ];
+
+const getWardRiskSvg = (risk, color = '#ffffff', size = 12) => {
+  if (risk >= 55) {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+  }
+  if (risk >= 40) {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`;
+  }
+  if (risk >= 20) {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>`;
+};
 
 function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
   const mapContainerRef = useRef(null);
@@ -186,30 +201,31 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
 
         // Add circle heat zones + Pin with Location Name directly below it
         wardSpots.forEach((spot) => {
-          const spotColor = spot.color || spot.tagColor || '#ea580c';
+          const spotColor = spot.color || spot.tagColor || '#f97316';
           const radiusVal = isStateView || spot.isStateDistrict ? 22000 : 800;
+          const riskSvg = getWardRiskSvg(spot.mortalityRisk, spotColor, 13);
+          
           // Heat zone background glow
           L.circle([spot.lat, spot.lon], {
             radius: radiusVal,
             color: spotColor,
-            weight: isStateView ? 2 : 1,
+            weight: 2.5,
             fillColor: spotColor,
-            fillOpacity: isStateView ? 0.25 : 0.22,
+            fillOpacity: isStateView ? 0.20 : 0.16,
           }).addTo(map);
 
           const formattedWbgt = formatTemp(spot.wbgt, tempUnit);
           const formattedAirTemp = formatTemp(spot.airTemp || spot.temperature, tempUnit);
           const formattedHeatIndex = formatTemp(spot.heatIndex, tempUnit);
 
-          // Custom DivIcon matching exact reference design:
-          // Pin circle with WBGT + Location Name directly below the marked spot
+          // Custom DivIcon: Floating White Pin Card with bold glowing ring & universal SVG icon
           const customMarkerHtml = `
             <div class="ward-spot-marker-container">
               <div class="ward-pin-circle" style="border-color: ${spotColor};">
+                <span class="ward-pin-icon-svg">${riskSvg}</span>
                 <span class="ward-pin-temp">${formattedWbgt}&deg;</span>
-                <span class="ward-pin-unit">WBGT</span>
               </div>
-              <div class="ward-spot-name-below" style="border-color: ${spotColor}44;">
+              <div class="ward-spot-name-below" style="border-color: ${spotColor};">
                 ${spot.shortName || spot.name}
               </div>
             </div>
@@ -227,8 +243,8 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
           const popupHtml = `
             <div class="uploaded-style-popup">
               <div class="popup-top-tag-row">
-                <span class="popup-cat-badge" style="background: ${spot.tagBg || '#fff7ed'}; color: ${spotColor}; border: 1px solid ${spotColor}44;">
-                  ${spot.categoryTag || 'LIVE'}
+                <span class="popup-cat-badge" style="background: ${spot.tagBg || '#fff7ed'}; color: ${spotColor}; border: 1.5px solid ${spotColor}; display: inline-flex; align-items: center; gap: 4px;">
+                  ${riskSvg} <span>${spot.categoryTag || 'LIVE'}</span>
                 </span>
                 <span class="popup-pop-info">Pop: ${spot.population}</span>
               </div>
@@ -417,11 +433,15 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
 
           {/* Sleek, Compact Mini Risk Scale Legend along bottom edge */}
           <div ref={legendRef} className="ward-floating-mini-legend">
-            <span className="mini-legend-title">Risk:</span>
+            <span className="mini-legend-title">Risk Scale:</span>
             <div className="mini-legend-rows">
               {RISK_CATEGORIES.map((item) => (
                 <div key={item.id} className="mini-legend-item">
                   <span className="mini-color-dot" style={{ background: item.color }} />
+                  {item.iconName === 'safe' && <ShieldCheckIcon size={12} color={item.color} />}
+                  {item.iconName === 'caution' && <AlertTriangleIcon size={12} color={item.color} />}
+                  {item.iconName === 'alert' && <FlameIcon size={12} color={item.color} />}
+                  {item.iconName === 'danger' && <ShieldAlertIcon size={12} color={item.color} />}
                   <span className="mini-label">{item.shortLabel}</span>
                 </div>
               ))}
