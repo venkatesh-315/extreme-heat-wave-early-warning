@@ -157,10 +157,13 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
           mapInstanceRef.current = null;
         }
 
+        const isStateView = Boolean(location?.isState);
+        const initialZoom = isStateView ? 6.5 : 13;
+
         // Initialize map with OpenStreetMap tiles
         const map = L.map(mapContainerRef.current, {
           center: [location.lat, location.lon],
-          zoom: 13,
+          zoom: initialZoom,
           zoomControl: false,
           attributionControl: false,
           scrollWheelZoom: true, // Smooth mouse wheel zoom enabled!
@@ -184,13 +187,14 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
         // Add circle heat zones + Pin with Location Name directly below it
         wardSpots.forEach((spot) => {
           const spotColor = spot.color || spot.tagColor || '#ea580c';
+          const radiusVal = isStateView || spot.isStateDistrict ? 22000 : 800;
           // Heat zone background glow
           L.circle([spot.lat, spot.lon], {
-            radius: 800,
+            radius: radiusVal,
             color: spotColor,
-            weight: 1,
+            weight: isStateView ? 2 : 1,
             fillColor: spotColor,
-            fillOpacity: 0.22,
+            fillOpacity: isStateView ? 0.25 : 0.22,
           }).addTo(map);
 
           const formattedWbgt = formatTemp(spot.wbgt, tempUnit);

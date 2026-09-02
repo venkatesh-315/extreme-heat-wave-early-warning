@@ -135,6 +135,11 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
 
       const preventBackgroundScroll = (e) => {
         const modal = document.querySelector('.gis-wrapper.fullscreen-mode');
+        const detailBanner = document.querySelector('.gis-detail-banner');
+        if (detailBanner && detailBanner.contains(e.target)) {
+          // Allow internal scrolling inside the detail information section
+          return;
+        }
         if (modal && !modal.contains(e.target)) {
           e.preventDefault();
         }
@@ -230,7 +235,8 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
     }
 
     if (item.lat && item.lon) {
-      mapInstanceRef.current.flyTo([item.lat, item.lon], 16, {
+      const flyZoom = item.isStateDistrict ? 10 : (location?.isState ? 9 : 16);
+      mapInstanceRef.current.flyTo([item.lat, item.lon], flyZoom, {
         animate: true,
         duration: 0.8,
       });
@@ -243,7 +249,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
         }
       }, 350);
     }
-  }, [ensureLayerVisible]);
+  }, [ensureLayerVisible, location]);
 
   // Handle external focusedResource prop (e.g. from Emergency Directory tab)
   useEffect(() => {
@@ -274,10 +280,12 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
           mapInstanceRef.current = null;
         }
 
+        const initialZoom = location?.isState ? 6.5 : 13;
+
         // Initialize new map with Light Positron/Voyager Tiles
         const map = L.map(mapRef.current, {
           center: [location.lat, location.lon],
-          zoom: 13,
+          zoom: initialZoom,
           zoomControl: false, // Custom controls placed below
           attributionControl: true,
           scrollWheelZoom: true, // Smooth mouse wheel zoom enabled!
@@ -308,7 +316,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
           .bindPopup(`
             <div class="map-light-popup center-popup">
               <div class="popup-title">${location.name}</div>
-              <div class="popup-sub">${location.state || 'India'} &middot; Your Selected Location</div>
+              <div class="popup-sub">${location.state || 'India'} &middot; ${location?.isState ? 'State Center Point' : 'Your Selected Location'}</div>
             </div>
           `);
 
@@ -318,18 +326,19 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
         const shelterGroup = L.layerGroup();
         const waterGroup = L.layerGroup();
 
-        // 1. Plot Heat Zones / Wards
+        // 1. Plot Heat Zones / Wards / State Districts
         wards.forEach((ward) => {
           const color = getRiskColor(ward.mortalityRisk);
-          const radius = 35 + ward.mortalityRisk * 0.7;
+          const isStateMode = Boolean(location?.isState || ward.isStateDistrict);
+          const circleRadius = (35 + ward.mortalityRisk * 0.7) * (isStateMode ? 350 : 60);
 
           L.circle([ward.lat, ward.lon], {
-            radius: radius * 60,
+            radius: circleRadius,
             color: color,
             fillColor: color,
-            fillOpacity: 0.2,
-            weight: 1.5,
-            opacity: 0.8,
+            fillOpacity: isStateMode ? 0.25 : 0.2,
+            weight: isStateMode ? 2 : 1.5,
+            opacity: 0.85,
           }).addTo(heatGroup);
 
           const wardIcon = L.divIcon({
@@ -480,7 +489,10 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             <span>GIS Heat Vulnerability &amp; Emergency Infrastructure Map</span>
           </h3>
           <p className="section-desc">
-            Displaying microclimates, hospitals, cooling centers, and drinking water stations for {location?.name}. Click any facility or heat zone to view on map.
+            {location?.isState
+              ? `Displaying state-wide district thermal stress zones, apex hospitals, relief shelters, and water stations for ${location?.name}. Click any district or facility to inspect.`
+              : `Displaying microclimates, hospitals, cooling centers, and drinking water stations for ${location?.name}. Click any facility or heat zone to view on map.`
+            }
           </p>
         </div>
 
@@ -493,7 +505,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             title="Toggle Thermal Stress Zones"
           >
             <FlameIcon size={14} />
-            <span>Heat Zones</span>
+            <span>{location?.isState ? 'Districts' : 'Heat Zones'}</span>
           </button>
           <button
             type="button"
@@ -607,12 +619,14 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
         {/* Interactive Facilities & Emergency Points Sidebar */}
         <div className="gis-sidebar">
           <div className="sidebar-header">
-            <h4>Facilities &amp; Heat Zones</h4>
-            <span className="sidebar-count">{emergencyResources.length} facilities</span>
+            <h4>{location?.isState ? 'Districts & Facilities' : 'Facilities & Heat Zones'}</h4>
+            <span className="sidebar-count">{emergencyResources.length} facilities &middot; {wards.length} {location?.isState ? 'districts' : 'wards'}</span>
           </div>
 
           <div className="sidebar-items-list scroll-area">
-            <div className="sidebar-group-label">Microclimate Wards</div>
+            <div className="sidebar-group-label">
+              {location?.isState ? 'State District Heat Zones' : 'Microclimate Wards'}
+            </div>
             {wards.map((ward) => {
               const color = getRiskColor(ward.mortalityRisk);
               return (
@@ -660,7 +674,11 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
 
       {/* Selected Item Drawer / Detail Panel */}
       {selectedWard && (
-        <div className="gis-detail-banner ward animate-fade-in">
+        <div
+          className="gis-detail-banner ward animate-fade-in"
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+        >
           <div className="detail-banner-header">
             <div className="detail-title-group">
               <span className="detail-badge" style={{ background: getRiskColor(selectedWard.mortalityRisk), color: '#ffffff' }}>
@@ -685,7 +703,11 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
       )}
 
       {selectedResource && (
-        <div className="gis-detail-banner resource animate-fade-in">
+        <div
+          className="gis-detail-banner resource animate-fade-in"
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+        >
           <div className="detail-banner-header">
             <div className="detail-title-group">
               <span className="res-icon-lg-svg">

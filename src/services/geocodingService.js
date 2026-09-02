@@ -98,8 +98,51 @@ export const CURATED_INDIAN_LOCATIONS = [
   { id: 'har-his', name: 'Hisar', district: 'Hisar', state: 'Haryana', lat: 29.1492, lon: 75.7217, population: 301249, region: 'North', isHotspot: true },
 ];
 
+// All 28 Indian States & 8 Union Territories for State-Wide Heatwave & WBGT Monitoring
+export const CURATED_INDIAN_STATES = [
+  { id: 'state-ap', name: 'Andhra Pradesh', district: 'State Headquarters (Amaravati)', state: 'Andhra Pradesh', lat: 15.9129, lon: 79.7400, population: 53903393, region: 'South', isState: true, isHotspot: true },
+  { id: 'state-ar', name: 'Arunachal Pradesh', district: 'State Headquarters (Itanagar)', state: 'Arunachal Pradesh', lat: 27.0844, lon: 93.6053, population: 1570458, region: 'North-East', isState: true, isHotspot: false },
+  { id: 'state-as', name: 'Assam', district: 'State Headquarters (Dispur / Guwahati)', state: 'Assam', lat: 26.1445, lon: 91.7362, population: 35607039, region: 'East', isState: true, isHotspot: false },
+  { id: 'state-br', name: 'Bihar', district: 'State Headquarters (Patna)', state: 'Bihar', lat: 25.0961, lon: 85.3131, population: 124799926, region: 'East', isState: true, isHotspot: true },
+  { id: 'state-cg', name: 'Chhattisgarh', district: 'State Headquarters (Raipur)', state: 'Chhattisgarh', lat: 21.2787, lon: 81.8661, population: 29436231, region: 'Central', isState: true, isHotspot: true },
+  { id: 'state-ga', name: 'Goa', district: 'State Headquarters (Panaji)', state: 'Goa', lat: 15.2993, lon: 74.1240, population: 1586250, region: 'West', isState: true, isHotspot: false },
+  { id: 'state-gj', name: 'Gujarat', district: 'State Headquarters (Gandhinagar / Ahmedabad)', state: 'Gujarat', lat: 22.2587, lon: 71.1924, population: 70400153, region: 'West', isState: true, isHotspot: true },
+  { id: 'state-hr', name: 'Haryana', district: 'State Headquarters (Chandigarh)', state: 'Haryana', lat: 29.0588, lon: 76.0856, population: 28205575, region: 'North', isState: true, isHotspot: true },
+  { id: 'state-hp', name: 'Himachal Pradesh', district: 'State Headquarters (Shimla)', state: 'Himachal Pradesh', lat: 31.1048, lon: 77.1734, population: 7451955, region: 'North', isState: true, isHotspot: false },
+  { id: 'state-jh', name: 'Jharkhand', district: 'State Headquarters (Ranchi)', state: 'Jharkhand', lat: 23.6102, lon: 85.2799, population: 38593948, region: 'East', isState: true, isHotspot: true },
+  { id: 'state-ka', name: 'Karnataka', district: 'State Headquarters (Bengaluru)', state: 'Karnataka', lat: 15.3173, lon: 75.7139, population: 67562686, region: 'South', isState: true, isHotspot: true },
+  { id: 'state-kl', name: 'Kerala', district: 'State Headquarters (Thiruvananthapuram)', state: 'Kerala', lat: 10.8505, lon: 76.2711, population: 35699443, region: 'South', isState: true, isHotspot: false },
+  { id: 'state-mp', name: 'Madhya Pradesh', district: 'State Headquarters (Bhopal)', state: 'Madhya Pradesh', lat: 22.9734, lon: 78.6569, population: 85358965, region: 'Central', isState: true, isHotspot: true },
+  { id: 'state-mh', name: 'Maharashtra', district: 'State Headquarters (Mumbai / Nagpur)', state: 'Maharashtra', lat: 19.7515, lon: 75.7139, population: 123144223, region: 'Central', isState: true, isHotspot: true },
+  { id: 'state-mn', name: 'Manipur', district: 'State Headquarters (Imphal)', state: 'Manipur', lat: 24.6637, lon: 93.9063, population: 3091545, region: 'North-East', isState: true, isHotspot: false },
+  { id: 'state-ml', name: 'Meghalaya', district: 'State Headquarters (Shillong)', state: 'Meghalaya', lat: 25.4670, lon: 91.3662, population: 3366710, region: 'North-East', isState: true, isHotspot: false },
+  { id: 'state-mz', name: 'Mizoram', district: 'State Headquarters (Aizawl)', state: 'Mizoram', lat: 23.1645, lon: 92.9376, population: 1239244, region: 'North-East', isState: true, isHotspot: false },
+  { id: 'state-nl', name: 'Nagaland', district: 'State Headquarters (Kohima)', state: 'Nagaland', lat: 26.1584, lon: 94.5624, population: 2249694, region: 'North-East', isState: true, isHotspot: false },
+  { id: 'state-od', name: 'Odisha', district: 'State Headquarters (Bhubaneswar)', state: 'Odisha', lat: 20.9517, lon: 85.0985, population: 46356334, region: 'East', isState: true, isHotspot: true },
+  { id: 'state-pb', name: 'Punjab', district: 'State Headquarters (Chandigarh)', state: 'Punjab', lat: 31.1471, lon: 75.3412, population: 30141373, region: 'North', isState: true, isHotspot: true },
+  { id: 'state-rj', name: 'Rajasthan', district: 'State Headquarters (Jaipur / Phalodi)', state: 'Rajasthan', lat: 27.0238, lon: 74.2179, population: 81032689, region: 'North-West', isState: true, isHotspot: true },
+  { id: 'state-sk', name: 'Sikkim', district: 'State Headquarters (Gangtok)', state: 'Sikkim', lat: 27.5330, lon: 88.5122, population: 690251, region: 'North-East', isState: true, isHotspot: false },
+  { id: 'state-tn', name: 'Tamil Nadu', district: 'State Headquarters (Chennai)', state: 'Tamil Nadu', lat: 11.1271, lon: 78.6569, population: 76402830, region: 'South', isState: true, isHotspot: true },
+  { id: 'state-tg', name: 'Telangana', district: 'State Headquarters (Hyderabad)', state: 'Telangana', lat: 18.1124, lon: 79.0193, population: 38090000, region: 'South', isState: true, isHotspot: true },
+  { id: 'state-tr', name: 'Tripura', district: 'State Headquarters (Agartala)', state: 'Tripura', lat: 23.9408, lon: 91.9882, population: 4169794, region: 'North-East', isState: true, isHotspot: false },
+  { id: 'state-up', name: 'Uttar Pradesh', district: 'State Headquarters (Lucknow)', state: 'Uttar Pradesh', lat: 26.8467, lon: 80.9462, population: 237882725, region: 'North', isState: true, isHotspot: true },
+  { id: 'state-uk', name: 'Uttarakhand', district: 'State Headquarters (Dehradun)', state: 'Uttarakhand', lat: 30.0668, lon: 79.0193, population: 11250858, region: 'North', isState: true, isHotspot: false },
+  { id: 'state-wb', name: 'West Bengal', district: 'State Headquarters (Kolkata)', state: 'West Bengal', lat: 22.9868, lon: 87.8550, population: 99609303, region: 'East', isState: true, isHotspot: true },
+  
+  // Union Territories
+  { id: 'ut-dl', name: 'Delhi (NCT)', district: 'National Capital Territory', state: 'Delhi', lat: 28.7041, lon: 77.1025, population: 32941000, region: 'North', isState: true, isHotspot: true },
+  { id: 'ut-jk', name: 'Jammu and Kashmir', district: 'Union Territory (Srinagar / Jammu)', state: 'Jammu and Kashmir', lat: 33.7782, lon: 76.5762, population: 13606320, region: 'North', isState: true, isHotspot: false },
+  { id: 'ut-la', name: 'Ladakh', district: 'Union Territory (Leh / Kargil)', state: 'Ladakh', lat: 34.1526, lon: 77.5771, population: 289023, region: 'North', isState: true, isHotspot: false },
+  { id: 'ut-ch', name: 'Chandigarh (UT)', district: 'Union Territory Capital', state: 'Chandigarh', lat: 30.7333, lon: 76.7794, population: 1158473, region: 'North', isState: true, isHotspot: true },
+  { id: 'ut-py', name: 'Puducherry', district: 'Union Territory', state: 'Puducherry', lat: 11.9416, lon: 79.8083, population: 1413542, region: 'South', isState: true, isHotspot: false },
+  { id: 'ut-an', name: 'Andaman and Nicobar Islands', district: 'Union Territory (Port Blair)', state: 'Andaman and Nicobar Islands', lat: 11.7401, lon: 92.6586, population: 434192, region: 'South', isState: true, isHotspot: false },
+  { id: 'ut-dn', name: 'Dadra and Nagar Haveli and Daman and Diu', district: 'Union Territory', state: 'Dadra and Nagar Haveli and Daman and Diu', lat: 20.4283, lon: 72.8397, population: 615724, region: 'West', isState: true, isHotspot: false },
+  { id: 'ut-lk', name: 'Lakshadweep', district: 'Union Territory (Kavaratti)', state: 'Lakshadweep', lat: 10.5667, lon: 72.6417, population: 68000, region: 'South', isState: true, isHotspot: false },
+];
+
 /**
  * Debounced search using Photon / Nominatim API with fallback to offline curated dataset.
+ * Supports full Indian States, Districts, Metropolitan Cities and Towns.
  * @param {string} query - Searched location string
  * @returns {Promise<Array>} List of location suggestions
  */
@@ -109,7 +152,17 @@ export async function searchLocations(query) {
   const cleanQuery = query.trim();
   const qLower = cleanQuery.toLowerCase();
 
-  // 1. Try real OpenStreetMap Photon API (fast, specialized for geocoding with fuzzy matching)
+  // 1. First priority: Check exact/partial State & UT matches in curated dataset
+  const matchedStates = CURATED_INDIAN_STATES.filter(st => {
+    const sName = st.name.toLowerCase();
+    return sName.includes(qLower) || qLower.includes(sName.replace(/ \(.*\)/, ''));
+  }).map(st => ({
+    ...st,
+    formattedAddress: `${st.name} (Entire State / UT), India`,
+    isState: true,
+  }));
+
+  // 2. Try real OpenStreetMap Photon API (fast, specialized for geocoding with fuzzy matching)
   try {
     const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(cleanQuery)}&limit=7&lat=22.0&lon=79.0`;
     const response = await fetch(photonUrl, {
@@ -132,22 +185,28 @@ export async function searchLocations(query) {
             const state = p.state || p.county || '';
             const district = p.district || p.county || p.city || '';
             const postcode = p.postcode ? ` - ${p.postcode}` : '';
+            const isStateOsm = p.osm_value === 'state' || p.type === 'state';
 
             return {
               id: `osm-${p.osm_id || i}`,
               name: name,
               district: district || state,
               state: state || 'India',
-              formattedAddress: [name, district, state].filter(Boolean).join(', ') + postcode,
+              formattedAddress: isStateOsm 
+                ? `${name} (State), India` 
+                : [name, district, state].filter(Boolean).join(', ') + postcode,
               lat: coords[1],
               lon: coords[0],
               population: p.population || estimatePopulation(name),
               isLiveOsm: true,
+              isState: isStateOsm,
             };
           });
 
         if (results.length > 0) {
-          return results;
+          // Combine state matches at top if user searched a state
+          const combined = [...matchedStates, ...results.filter(r => !matchedStates.some(m => m.name.toLowerCase() === r.name.toLowerCase()))];
+          return combined.slice(0, 8);
         }
       }
     }
@@ -155,7 +214,7 @@ export async function searchLocations(query) {
     // If live API fails (e.g. rate limit, offline), silently fall through to local dataset
   }
 
-  // 2. Fallback: Search in curated 100+ Indian database
+  // 3. Fallback: Search in curated 100+ Indian database + States
   const localMatches = CURATED_INDIAN_LOCATIONS.filter(item => {
     return (
       item.name.toLowerCase().includes(qLower) ||
@@ -167,7 +226,8 @@ export async function searchLocations(query) {
     formattedAddress: `${item.name}, ${item.district ? item.district + ', ' : ''}${item.state}`,
   }));
 
-  return localMatches.slice(0, 7);
+  const allFallback = [...matchedStates, ...localMatches.filter(l => !matchedStates.some(m => m.name.toLowerCase() === l.name.toLowerCase()))];
+  return allFallback.slice(0, 8);
 }
 
 /**

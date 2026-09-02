@@ -85,14 +85,16 @@ function App() {
       // 2. Fetch emergency shelters, hospitals and drinking water kiosks
       const emergencyList = await fetchEmergencyResources(location.lat, location.lon, location.name);
 
-      // 3. Generate microclimate ward zones using live weather parameters
+      // 3. Generate microclimate ward or state district zones using live weather parameters
       const wards = generateWardData(
         location.lat,
         location.lon,
         weatherResult.weather.temperature,
         weatherResult.weather.humidity,
         weatherResult.weather.solarRadiation,
-        weatherResult.weather.windSpeed
+        weatherResult.weather.windSpeed,
+        Boolean(location.isState),
+        location.name
       );
 
       // 4. Generate NDMA Heat Action Plan recommendations

@@ -687,10 +687,12 @@
 }
 
 .gis-wrapper.fullscreen-mode .gis-main-content {
-  display: block !important;
+  display: flex !important;
+  flex-direction: column !important;
   width: 100% !important;
-  height: 100% !important;
-  flex: 1 !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: auto !important;
   margin: 0 !important;
   padding: 0 !important;
 }
@@ -698,6 +700,8 @@
 .gis-wrapper.fullscreen-mode .map-view-box {
   width: 100% !important;
   height: 100% !important;
+  flex: 1 1 0% !important;
+  min-height: 200px !important;
   max-width: none !important;
   max-height: none !important;
   border: 1px solid #cbd5e1 !important;
@@ -709,10 +713,39 @@
 .gis-wrapper.fullscreen-mode .leaflet-map-element {
   width: 100% !important;
   height: 100% !important;
+  min-height: 200px !important;
   max-width: none !important;
   max-height: none !important;
   border: none !important;
   border-radius: 12px !important;
+}
+
+/* Fullscreen Detail Information Section (Scrollable below the map) */
+.gis-wrapper.fullscreen-mode .gis-detail-banner {
+  margin-top: 12px !important;
+  max-height: 34vh !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  flex-shrink: 0 !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 12px !important;
+  padding: 14px 18px !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.15) !important;
+  z-index: 10000 !important;
+}
+
+.gis-wrapper.fullscreen-mode .gis-detail-banner::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.gis-wrapper.fullscreen-mode .gis-detail-banner::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 4px !important;
+}
+
+.gis-wrapper.fullscreen-mode .gis-detail-banner::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8 !important;
 }
 
 /* Fullscreen Mode Controls & Legend Placement */

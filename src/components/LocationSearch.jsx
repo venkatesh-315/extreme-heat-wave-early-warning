@@ -217,7 +217,14 @@ function LocationSearch({ onSelect, isCalculating, selectedLocation }) {
                     )}
                   </div>
                   <div className="suggestion-details">
-                    <span className="suggestion-name">{item.name}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span className="suggestion-name">{item.name}</span>
+                      {item.isState && (
+                        <span style={{ fontSize: '0.65rem', fontWeight: '700', padding: '1px 5px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', borderRadius: '4px' }}>
+                          STATE / UT
+                        </span>
+                      )}
+                    </div>
                     <span className="suggestion-address">{item.formattedAddress || `${item.district}, ${item.state}`}</span>
                   </div>
                   <div className="suggestion-coords">
