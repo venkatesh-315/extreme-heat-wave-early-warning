@@ -482,17 +482,54 @@
 .popup-capacity { font-size: 0.725rem; }
 .popup-phone { font-size: 0.725rem; color: var(--imd-red); }
 
+.popup-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
 .popup-dir-btn {
-  display: inline-block;
-  margin-top: 4px;
-  background: var(--primary-blue);
-  color: #ffffff !important;
-  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 5px 8px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-body);
   font-size: 0.725rem;
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--radius-xs);
+  text-decoration: none;
   text-align: center;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.popup-dir-btn.popup-gps-btn {
+  background: var(--primary-blue);
+  color: #ffffff !important;
+  border: 1px solid var(--primary-blue);
+}
+
+.popup-dir-btn.popup-gps-btn:hover {
+  background: var(--primary-blue-hover);
+  border-color: var(--primary-blue-hover);
+  color: #ffffff !important;
+}
+
+.popup-dir-btn.popup-verify-btn,
+.popup-search-link {
+  background: #f8fafc !important;
+  color: #1e40af !important;
+  border: 1.5px solid #2563eb !important;
+  font-weight: 700 !important;
+}
+
+.popup-dir-btn.popup-verify-btn:hover,
+.popup-search-link:hover {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
 }
 
 /* Detail Banners */

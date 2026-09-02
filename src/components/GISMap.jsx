@@ -415,11 +415,11 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
                 <div class="popup-capacity">Capacity: <strong>${res.capacity}</strong></div>
                 ${res.phone ? `<div class="popup-phone">Tel: <strong>${res.phone}</strong></div>` : ''}
                 <div class="popup-actions">
-                  <a href="${res.mapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn">
+                  <a href="${res.mapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn popup-gps-btn">
                     Get GPS Directions
                   </a>
                   ${res.searchMapsUrl ? `
-                    <a href="${res.searchMapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn popup-search-link" style="background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1;">
+                    <a href="${res.searchMapsUrl}" target="_blank" rel="noopener noreferrer" class="popup-dir-btn popup-search-link popup-verify-btn">
                       Verify on Maps
                     </a>
                   ` : ''}
