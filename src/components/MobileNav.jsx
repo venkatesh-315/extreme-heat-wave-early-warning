@@ -7,16 +7,18 @@ import {
   ActionCenterIcon,
   SettingsIcon
 } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './MobileNav.css';
 
 function MobileNav({ activeTab, onSelectTab }) {
+  const { t } = useLanguage();
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: DashboardIcon },
-    { id: 'heatmap', label: 'Heat Map', icon: MapIcon },
-    { id: 'forecast', label: 'Forecast', icon: CalendarIcon },
-    { id: 'alerts', label: 'Alerts', icon: BellIcon, badge: '3' },
-    { id: 'action', label: 'Actions', icon: ActionCenterIcon },
-    { id: 'settings', label: 'Settings', icon: SettingsIcon },
+    { id: 'dashboard', key: 'tab_dashboard', label: 'Dashboard', icon: DashboardIcon },
+    { id: 'heatmap', key: 'tab_heatmap', label: 'Heat Map', icon: MapIcon },
+    { id: 'forecast', key: 'tab_forecast', label: 'Forecast', icon: CalendarIcon },
+    { id: 'alerts', key: 'tab_alerts', label: 'Alerts', icon: BellIcon, badge: '3' },
+    { id: 'action', key: 'tab_action', label: 'Action Plan', icon: ActionCenterIcon },
+    { id: 'settings', key: 'tab_settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   return (
@@ -37,7 +39,7 @@ function MobileNav({ activeTab, onSelectTab }) {
               <Icon size={19} color={isActive ? '#e11d48' : '#64748b'} />
               {tab.badge && !isActive && <span className="mobile-tab-badge">{tab.badge}</span>}
             </div>
-            <span className="mobile-tab-label">{tab.label}</span>
+            <span className="mobile-tab-label">{t(tab.key, tab.label)}</span>
           </button>
         );
       })}

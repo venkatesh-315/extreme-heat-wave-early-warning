@@ -36,7 +36,9 @@ import {
   SatelliteIcon,
   ThermometerIcon,
   RefreshCwIcon,
+  LanguagesIcon,
 } from './components/icons';
+import { useLanguage } from './context/LanguageContext';
 
 import './App.css';
 
@@ -49,6 +51,7 @@ function getInitialTab() {
 }
 
 function App() {
+  const { currentLang, setLanguage, languages, t } = useLanguage();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
   const [userSettings, setUserSettings] = useState(() => getUserSettings());
@@ -276,19 +279,28 @@ function App() {
       list.push({
         id: 'alert-imd-red',
         severity: 'red',
-        tag: 'RED ALERT',
-        title: imdAlert.title || 'Severe Heatwave Emergency Action',
-        description: `WBGT has reached critical ${wbgt}°C with ${mortalityRisk}% excess mortality vulnerability in ${selectedLocation?.name}. Strict outdoor work suspension active.`,
-        time: 'Live Telemetry',
+        tag: t('status_extreme_danger', 'RED ALERT'),
+        title: t('alert_red_name', 'Severe Heatwave Emergency Action'),
+        description: t('alert_red_desc', `WBGT has reached critical ${wbgt}°C with ${mortalityRisk}% excess mortality vulnerability in ${selectedLocation?.name}. Strict outdoor work suspension active.`),
+        time: t('telemetrySync', 'Live Telemetry'),
       });
     } else if (imdAlert.level === 'Orange Alert' || wbgt >= 28 || temp >= 40 || mortalityRisk >= 40) {
       list.push({
         id: 'alert-imd-orange',
         severity: 'orange',
-        tag: 'ORANGE WARNING',
-        title: imdAlert.title || 'Heatwave Warning & High Thermal Load',
-        description: `High thermal stress detected (WBGT ${wbgt}°C). Vulnerable groups and outdoor workers require active mitigation.`,
-        time: 'Live Telemetry',
+        tag: t('status_danger', 'ORANGE ALERT'),
+        title: t('alert_orange_name', 'High Thermal Stress Warning'),
+        description: t('alert_orange_desc', `Elevated thermal stress (${wbgt}°C WBGT) detected in ${selectedLocation?.name}. Restrict non-essential outdoor travel and stay hydrated.`),
+        time: t('telemetrySync', 'Live Telemetry'),
+      });
+    } else if (imdAlert.level === 'Yellow Watch' || wbgt >= 25 || temp >= 36) {
+      list.push({
+        id: 'alert-imd-yellow',
+        severity: 'yellow',
+        tag: t('status_caution', 'YELLOW ALERT'),
+        title: t('alert_yellow_name', 'Moderate Heat Advisory'),
+        description: t('alert_yellow_desc', `Moderate heat discomfort. Continuous monitoring active for infants, elders, and chronic patients in ${selectedLocation?.name}.`),
+        time: t('telemetrySync', 'Live Telemetry'),
       });
     }
 
@@ -501,17 +513,17 @@ function App() {
             <div className="tab-view-container animate-fade-in">
               <div className="card" style={{ padding: '28px', textAlign: 'center' }}>
                 <h3 className="section-title" style={{ justifyContent: 'center', marginBottom: '8px' }}>
-                  Municipal Heatwave Comprehensive Report
+                  {t('reports_title', 'Municipal Heatwave Comprehensive Report')}
                 </h3>
                 <p style={{ color: '#64748b', fontSize: '0.875rem', maxWidth: '600px', margin: '0 auto 20px' }}>
-                  Biometeorological synthesis and emergency resource deployment report generated for {selectedLocation.name}, {selectedLocation.state}.
+                  {t('reports_desc', 'Biometeorological synthesis and emergency resource deployment report generated for')} {selectedLocation.name}, {selectedLocation.state}.
                 </p>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
                   <button className="btn btn-primary" onClick={() => window.print()}>
-                    Download Official PDF Report
+                    {t('reports_download_btn', 'Download Official PDF Report')}
                   </button>
                   <button className="btn btn-secondary" onClick={() => handleTabSelect('dashboard')}>
-                    Return to Dashboard
+                    {t('reports_return_btn', 'Return to Dashboard')}
                   </button>
                 </div>
               </div>
@@ -528,10 +540,10 @@ function App() {
                   </div>
                   <div>
                     <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                      Display &amp; System Preferences
+                      {t('settings_header_title', 'Display & System Preferences')}
                     </h3>
                     <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '2px 0 0' }}>
-                      Configure Temperature Units &amp; Auto-Refresh Intervals
+                      {t('settings_header_desc', 'Configure Temperature Units & Auto-Refresh Intervals')}
                     </p>
                   </div>
                 </div>
@@ -541,10 +553,10 @@ function App() {
                   <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                       <ThermometerIcon size={18} color="#ea580c" />
-                      <strong style={{ fontSize: '0.88rem', color: '#0f172a' }}>Temperature Display Unit</strong>
+                      <strong style={{ fontSize: '0.88rem', color: '#0f172a' }}>{t('settings_temp_label', 'Temperature Display Unit')}</strong>
                     </div>
                     <p style={{ fontSize: '0.75rem', color: '#64748b', margin: '0 0 12px' }}>
-                      Choose your preferred temperature format across WBGT, UTCI, Air Temp &amp; forecasts.
+                      {t('settings_temp_desc', 'Choose your preferred temperature format across WBGT, UTCI, Air Temp & forecasts.')}
                     </p>
                     <div style={{ display: 'flex', gap: '12px' }}>
                       <button
@@ -553,7 +565,7 @@ function App() {
                         style={{ flex: 1, padding: '10px 16px', fontSize: '0.85rem' }}
                         onClick={() => setSettingsForm({ ...settingsForm, tempUnit: 'C' })}
                       >
-                        Celsius (&deg;C)
+                        {t('settings_celsius', 'Celsius (°C)')}
                       </button>
                       <button
                         type="button"
@@ -561,7 +573,7 @@ function App() {
                         style={{ flex: 1, padding: '10px 16px', fontSize: '0.85rem' }}
                         onClick={() => setSettingsForm({ ...settingsForm, tempUnit: 'F' })}
                       >
-                        Fahrenheit (&deg;F)
+                        {t('settings_fahrenheit', 'Fahrenheit (°F)')}
                       </button>
                     </div>
                   </div>
@@ -570,10 +582,10 @@ function App() {
                   <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                       <RefreshCwIcon size={18} color="#2563eb" />
-                      <strong style={{ fontSize: '0.88rem', color: '#0f172a' }}>Auto-Refresh Sync Timer</strong>
+                      <strong style={{ fontSize: '0.88rem', color: '#0f172a' }}>{t('settings_refresh_label', 'Auto-Refresh Sync Timer')}</strong>
                     </div>
                     <p style={{ fontSize: '0.75rem', color: '#64748b', margin: '0 0 12px' }}>
-                      Set how frequently live weather telemetry and ward heat indices are automatically updated.
+                      {t('settings_refresh_desc', 'Set how frequently live weather telemetry and ward heat indices are automatically updated.')}
                     </p>
                     <select
                       className="form-select"
@@ -581,38 +593,75 @@ function App() {
                       value={settingsForm.autoRefreshInterval}
                       onChange={(e) => setSettingsForm({ ...settingsForm, autoRefreshInterval: e.target.value })}
                     >
-                      <option value="off">Off / Manual Refresh Only</option>
-                      <option value="30s">Every 30 Seconds (Ultra-Fast)</option>
-                      <option value="1m">Every 1 Minute (Recommended)</option>
-                      <option value="5m">Every 5 Minutes</option>
-                      <option value="15m">Every 15 Minutes</option>
+                      <option value="off">{t('settings_refresh_off', 'Off / Manual Refresh Only')}</option>
+                      <option value="30s">{t('settings_refresh_30s', 'Every 30 Seconds (Ultra-Fast)')}</option>
+                      <option value="1m">{t('settings_refresh_1m', 'Every 1 Minute (Recommended)')}</option>
+                      <option value="5m">{t('settings_refresh_5m', 'Every 5 Minutes')}</option>
+                      <option value="15m">{t('settings_refresh_15m', 'Every 15 Minutes')}</option>
                     </select>
+                  </div>
+
+                  {/* 8-Language Portal Selector Setting */}
+                  <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                      <LanguagesIcon size={18} color="#2563eb" />
+                      <strong style={{ fontSize: '0.88rem', color: '#0f172a' }}>{t('settings_lang_label', 'Website Language / वेबसाइट भाषा')}</strong>
+                    </div>
+                    <p style={{ fontSize: '0.75rem', color: '#64748b', margin: '0 0 12px' }}>
+                      {t('settings_lang_desc', 'Select from 8 regional Indian languages to change the entire portal interface.')}
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '8px' }}>
+                      {languages.map((l) => {
+                        const isSelected = currentLang === l.lang;
+                        return (
+                          <button
+                            key={l.lang}
+                            type="button"
+                            className={`btn ${isSelected ? 'btn-primary' : 'btn-secondary'}`}
+                            style={{
+                              padding: '8px 12px',
+                              fontSize: '0.8rem',
+                              justifyContent: 'flex-start',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #e2e8f0',
+                              fontWeight: isSelected ? '700' : '500'
+                            }}
+                            onClick={() => setLanguage(l.lang)}
+                          >
+                            <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>{l.flag}</span>
+                            <span>{l.nativeName}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Meteorological Engine Info Box */}
                   <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                       <SatelliteIcon size={16} color="#16a34a" />
-                      <strong style={{ fontSize: '0.85rem', color: '#15803d' }}>Live Present Date Biometeorology Stream</strong>
+                      <strong style={{ fontSize: '0.85rem', color: '#15803d' }}>{t('settings_stream_title', 'Live Present Date Biometeorology Stream')}</strong>
                     </div>
                     <p style={{ fontSize: '0.78rem', color: '#166534', margin: 0, lineHeight: 1.5 }}>
-                      Real-time live telemetry streaming ISO 7933 Outdoor WBGT, UTCI thermoregulation, NOAA Heat Index, and verified Indian healthcare infrastructure.
+                      {t('settings_stream_desc', 'Real-time live telemetry streaming ISO 7933 Outdoor WBGT, UTCI thermoregulation, NOAA Heat Index, and verified Indian healthcare infrastructure.')}
                     </p>
                   </div>
 
                   {settingsSaveAlert && (
                     <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#15803d', padding: '12px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
                       <CheckCircleIcon size={18} color="#15803d" />
-                      <strong>Preferences saved! Live weather data and settings updated for present date.</strong>
+                      <strong>{t('settings_saved_alert', 'Preferences saved! Live weather data and settings updated for present date.')}</strong>
                     </div>
                   )}
 
                   <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '4px' }}>
                     <button type="button" className="btn btn-secondary" onClick={() => handleTabSelect('dashboard')}>
-                      Return to Dashboard
+                      {t('reports_return_btn', 'Return to Dashboard')}
                     </button>
                     <button type="submit" className="btn btn-primary">
-                      Save Preferences
+                      {t('settings_save_btn', 'Save Preferences')}
                     </button>
                   </div>
                 </form>

@@ -12,20 +12,23 @@ import {
   XIcon,
   LogOutIcon
 } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './Sidebar.css';
 
-const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard', icon: DashboardIcon },
-  { id: 'heatmap', label: 'Heat Map', icon: MapIcon },
-  { id: 'forecast', label: 'Forecast', icon: CalendarIcon },
-  { id: 'health', label: 'Health Impact', icon: HeartPulseIcon },
-  { id: 'alerts', label: 'Alerts', icon: BellIcon },
-  { id: 'action', label: 'Action Center', icon: ActionCenterIcon },
-  { id: 'reports', label: 'Reports', icon: ReportsIcon },
-  { id: 'settings', label: 'Settings', icon: SettingsIcon },
+const NAV_ITEM_DEFS = [
+  { id: 'dashboard', key: 'tab_dashboard', defaultLabel: 'Dashboard', icon: DashboardIcon },
+  { id: 'heatmap', key: 'tab_heatmap', defaultLabel: 'Heat Map', icon: MapIcon },
+  { id: 'forecast', key: 'tab_forecast', defaultLabel: 'Forecast', icon: CalendarIcon },
+  { id: 'health', key: 'tab_health', defaultLabel: 'Health Impact', icon: HeartPulseIcon },
+  { id: 'alerts', key: 'tab_alerts', defaultLabel: 'Alerts', icon: BellIcon },
+  { id: 'action', key: 'tab_action', defaultLabel: 'Action Plan', icon: ActionCenterIcon },
+  { id: 'reports', key: 'tab_reports', defaultLabel: 'Reports', icon: ReportsIcon },
+  { id: 'settings', key: 'tab_settings', defaultLabel: 'Settings', icon: SettingsIcon },
 ];
 
 function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose, _currentUser, onLogout, alertCount = 0 }) {
+  const { t } = useLanguage();
+
   return (
     <>
       {/* Backdrop for Mobile Drawer */}
@@ -39,8 +42,8 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
               <ThermoGuardLogo size={32} />
             </div>
             <div className="sidebar-brand-text">
-              <div className="brand-title">THERMOGUARD</div>
-              <div className="brand-tagline">Heatwave Early Warning System</div>
+              <div className="brand-title">{t('appName', 'THERMOGUARD')}</div>
+              <div className="brand-tagline">{t('appTagline', 'Heatwave Early Warning System')}</div>
             </div>
           </div>
 
@@ -52,10 +55,11 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
 
         {/* Navigation Menu List */}
         <nav className="sidebar-nav">
-          {NAV_ITEMS.map((item) => {
+          {NAV_ITEM_DEFS.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             const badgeValue = item.id === 'alerts' && alertCount > 0 ? String(alertCount) : null;
+            const translatedLabel = t(item.key, item.defaultLabel);
 
             return (
               <button
@@ -70,7 +74,7 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
                 <span className="nav-item-icon">
                   <Icon size={18} color={isActive ? '#e11d48' : '#64748b'} />
                 </span>
-                <span className="nav-item-label">{item.label}</span>
+                <span className="nav-item-label">{translatedLabel}</span>
                 {badgeValue && !isActive && (
                   <span className="nav-badge-pill">{badgeValue}</span>
                 )}
@@ -89,7 +93,7 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
               title="Sign Out / Switch Role Portal"
             >
               <LogOutIcon size={16} />
-              <span>Switch / Sign Out</span>
+              <span>{t('logout', 'Switch / Sign Out')}</span>
             </button>
           )}
 
@@ -97,8 +101,8 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
           <div className="system-status-card">
             <div className="status-dot-pulse" />
             <div className="status-info">
-              <div className="status-title">System Status</div>
-              <div className="status-desc">All Systems Operational</div>
+              <div className="status-title">{t('emergencyOps', 'System Status')}</div>
+              <div className="status-desc">{t('opsLive', 'All Systems Operational')}</div>
             </div>
           </div>
         </div>

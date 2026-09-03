@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ACTION_CENTER_TRANSLATIONS,
   INDIAN_LANGUAGES,
@@ -16,6 +16,7 @@ import {
   BuildingIcon,
   GlobeIcon
 } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './Recommendations.css';
 
 const PRIORITY_CONFIG = {
@@ -26,11 +27,21 @@ const PRIORITY_CONFIG = {
 };
 
 function Recommendations({ recommendations = [], location, thermalMetrics }) {
-  const [selectedLang, setSelectedLang] = useState('hi-IN');
+  const { currentLanguageObj, t } = useLanguage();
+  const initialCode = currentLanguageObj?.code || 'en-IN';
+  const [selectedLang, setSelectedLang] = useState(initialCode);
   const [activeSmsTemplateId, setActiveSmsTemplateId] = useState('sms-general');
-  const [smsLang, setSmsLang] = useState('hi-IN');
+  const [smsLang, setSmsLang] = useState(initialCode);
   const [copiedId, setCopiedId] = useState(null);
   const [dispatchStatus, setDispatchStatus] = useState(null);
+
+  // Synchronize when global website language changes
+  useEffect(() => {
+    if (currentLanguageObj?.code) {
+      setSelectedLang(currentLanguageObj.code);
+      setSmsLang(currentLanguageObj.code);
+    }
+  }, [currentLanguageObj?.code]);
 
   const currentLangConfig = ACTION_CENTER_TRANSLATIONS[selectedLang] || ACTION_CENTER_TRANSLATIONS['en-IN'];
   const activeTemplate = MULTILINGUAL_EXPANDED_SMS.find((t) => t.id === activeSmsTemplateId) || MULTILINGUAL_EXPANDED_SMS[0];
@@ -119,15 +130,15 @@ function Recommendations({ recommendations = [], location, thermalMetrics }) {
         <div className="hap-stats-row">
           <div className="hap-stat-pill critical">
             <span className="hsp-val">{criticalCount}</span>
-            <span className="hsp-lbl">Critical Directives</span>
+            <span className="hsp-lbl">{t('gis_critical_directives', 'Critical Directives')}</span>
           </div>
           <div className="hap-stat-pill">
             <span className="hsp-val">{thermalMetrics?.wbgt}&deg;C</span>
-            <span className="hsp-lbl">Current WBGT</span>
+            <span className="hsp-lbl">WBGT</span>
           </div>
           <div className="hap-stat-pill">
             <span className="hsp-val">{thermalMetrics?.mortalityRisk}%</span>
-            <span className="hsp-lbl">Mortality Risk</span>
+            <span className="hsp-lbl">{t('card_mortality_risk', 'Mortality Risk')}</span>
           </div>
         </div>
       </div>

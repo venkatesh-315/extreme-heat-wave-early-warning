@@ -1,11 +1,18 @@
 import React from 'react';
 import { AlertTriangleIcon, AmbulanceIcon, PhoneIcon } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './AlertBanner.css';
 
 function AlertBanner({ location, stressCategory, mortalityRisk, imdAlert }) {
-  const isExtreme = stressCategory?.level >= 5;
+  const { t } = useLanguage();
+  const isExtreme = stressCategory?.level >= 5 || (mortalityRisk ?? 0) >= 60;
   const alertColor = imdAlert?.color || (isExtreme ? '#dc2626' : '#ea580c');
-  const alertTitle = imdAlert?.title || (isExtreme ? 'RED ALERT — Severe Heatwave Action' : 'ORANGE ALERT — Heatwave Warning');
+  const alertTitle = isExtreme
+    ? t('alert_red_name', 'RED ALERT — Severe Heatwave Action')
+    : t('alert_orange_name', 'ORANGE ALERT — Heatwave Warning');
+  const alertBodyText = isExtreme
+    ? t('alert_banner_red', 'RED EMERGENCY: Wet Bulb Globe Temperature is at critical lethal thresholds. Outdoor work paused.')
+    : t('alert_banner_orange', 'ORANGE WARNING: High thermal stress detected. Vulnerable groups must remain indoors.');
 
   return (
     <div
@@ -30,21 +37,18 @@ function AlertBanner({ location, stressCategory, mortalityRisk, imdAlert }) {
           </div>
 
           <p className="alert-body-text">
-            High thermal burden detected. Mortality Risk: <strong>{mortalityRisk}%</strong>.
-            {mortalityRisk >= 60
-              ? ' Outdoor manual work suspended 11 AM - 4:30 PM. Municipal cooling shelters and heat ICUs on active emergency status.'
-              : ' Maintain scheduled hydration, avoid peak solar exposure, and monitor vulnerable seniors and children.'}
+            {alertBodyText} ({t('card_mortality_risk', 'Mortality Risk')}: <strong>{mortalityRisk}%</strong>)
           </p>
         </div>
 
         <div className="alert-quick-actions">
           <a href="tel:108" className="btn btn-danger btn-sm">
             <AmbulanceIcon size={14} color="#ffffff" />
-            <span>Call 108 Ambulance</span>
+            <span>{t('helplineAmbulance', 'Call 108 Ambulance')}</span>
           </a>
           <a href="tel:1077" className="btn btn-secondary btn-sm">
             <PhoneIcon size={14} />
-            <span>1077 Disaster Desk</span>
+            <span>{t('helplineDisaster', '1077 Disaster Desk')}</span>
           </a>
         </div>
       </div>

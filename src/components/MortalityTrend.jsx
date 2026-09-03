@@ -2,9 +2,11 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { HISTORICAL_MORTALITY } from '../data/mockData';
 import { BarChartIcon, ThermometerIcon, UsersIcon, ShieldAlertIcon } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './MortalityTrend.css';
 
 function MortalityTrend({ mortalityRisk = 45 }) {
+  const { t } = useLanguage();
   const projectedDeaths2026 = Math.round(2800 + (mortalityRisk - 40) * 18);
   const data = [
     ...HISTORICAL_MORTALITY,
@@ -17,18 +19,18 @@ function MortalityTrend({ mortalityRisk = 45 }) {
         <div>
           <div className="trend-badge">
             <BarChartIcon size={13} color="#1e40af" />
-            <span>Climatological Vulnerability Analytics</span>
+            <span>{t('mort_analytics_badge', 'Climatological Vulnerability Analytics')}</span>
           </div>
           <h3 className="section-title">
-            Historical Heat Mortality &amp; Summer 2026 Projections (India)
+            {t('mort_title', 'Historical Heat Mortality & Summer 2026 Projections (India)')}
           </h3>
           <p className="section-desc">
-            National annual excess heat-induced fatalities and severe heatwave spells (2019–2026)
+            {t('mort_desc', 'National annual excess heat-induced fatalities and severe heatwave spells (2019–2026)')}
           </p>
         </div>
         <div className="proj-pill">
           <span className="proj-dot" />
-          <span>Summer 2026 Projected: <strong>{projectedDeaths2026.toLocaleString()}</strong> casualties</span>
+          <span>{t('mort_proj_prefix', 'Summer 2026 Projected:')} <strong>{projectedDeaths2026.toLocaleString()}</strong> {t('mort_casualties', 'casualties')}</span>
         </div>
       </div>
 

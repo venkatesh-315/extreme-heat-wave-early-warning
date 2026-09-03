@@ -10,6 +10,7 @@ import {
   ShieldAlertIcon,
   GaugeIcon
 } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './RiskForecast.css';
 
 const STRESS_COLORS = {
@@ -22,6 +23,7 @@ const STRESS_COLORS = {
 };
 
 function RiskForecast({ forecast = [], location }) {
+  const { t } = useLanguage();
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const selected = forecast[selectedDayIndex] || forecast[0];
 
@@ -33,13 +35,13 @@ function RiskForecast({ forecast = [], location }) {
         <div>
           <div className="forecast-badge">
             <CalendarIcon size={13} color="#1e40af" />
-            <span>7-Day IMD Synoptic Outlook</span>
+            <span>{t('fc_synoptic_title', '7-Day IMD Synoptic Outlook')}</span>
           </div>
           <h3 className="section-title">
-            Summer 2026 Thermal Risk Forecast &mdash; {location?.name}
+            {t('fc_summer_title', 'Summer 2026 Thermal Risk Forecast')} &mdash; {location?.name}
           </h3>
           <p className="section-desc">
-            Day-by-day maximum temperature, humidity, WBGT, and mortality risk projections.
+            {t('fc_summer_desc', 'Day-by-day maximum temperature, humidity, WBGT, and mortality risk projections.')}
           </p>
         </div>
       </div>
@@ -75,7 +77,7 @@ function RiskForecast({ forecast = [], location }) {
               </div>
 
               <div className="fc-bottom">
-                <span className="fc-risk-pct" style={{ color }}>{day.mortalityRisk}% Risk</span>
+                <span className="fc-risk-pct" style={{ color }}>{day.mortalityRisk}% {t('fc_risk', 'Risk')}</span>
                 <span
                   className="fc-tag"
                   style={{ background: `${color}14`, color, border: `1px solid ${color}33` }}
@@ -92,8 +94,8 @@ function RiskForecast({ forecast = [], location }) {
       <div className="selected-day-detail card">
         <div className="day-detail-header">
           <div className="day-detail-titles">
-            <span className="day-detail-date">Detailed Advisory for {selected.day} ({selected.date})</span>
-            <h4>{selected.temperature}&deg;C Max Air Temperature &middot; {selected.wbgt}&deg;C WBGT</h4>
+            <span className="day-detail-date">{t('fc_advisory_for', 'Detailed Advisory for')} {selected.day} ({selected.date})</span>
+            <h4>{selected.temperature}&deg;C {t('fc_max_temp', 'Max Air Temperature')} &middot; {selected.wbgt}&deg;C WBGT</h4>
           </div>
           <span
             className="detail-alert-badge"
@@ -103,7 +105,7 @@ function RiskForecast({ forecast = [], location }) {
               border: `1px solid ${STRESS_COLORS[selected.stressCategory?.label]}44`,
             }}
           >
-            {selected.stressCategory?.label} Thermal Burden ({selected.stressCategory?.text || 'Alert'})
+            {selected.stressCategory?.label} ({selected.stressCategory?.text || 'Alert'})
           </span>
         </div>
 
@@ -113,7 +115,7 @@ function RiskForecast({ forecast = [], location }) {
               <ThermometerIcon size={18} color="#ea580c" />
             </div>
             <div className="dd-texts">
-              <span className="dd-label">Max Temperature</span>
+              <span className="dd-label">{t('param_temperature', 'Max Temperature')}</span>
               <strong className="dd-value" style={{ color: '#ea580c' }}>{selected.temperature}&deg;C</strong>
             </div>
           </div>
@@ -123,7 +125,7 @@ function RiskForecast({ forecast = [], location }) {
               <FlameIcon size={18} color="#dc2626" />
             </div>
             <div className="dd-texts">
-              <span className="dd-label">Wet-Bulb Globe (WBGT)</span>
+              <span className="dd-label">WBGT</span>
               <strong className="dd-value" style={{ color: '#dc2626' }}>{selected.wbgt}&deg;C</strong>
             </div>
           </div>
@@ -133,7 +135,7 @@ function RiskForecast({ forecast = [], location }) {
               <GaugeIcon size={18} color="#b91c1c" />
             </div>
             <div className="dd-texts">
-              <span className="dd-label">Heat Index</span>
+              <span className="dd-label">{t('hourly_heat_index', 'Heat Index')}</span>
               <strong className="dd-value" style={{ color: '#b91c1c' }}>{selected.heatIndex}&deg;C</strong>
             </div>
           </div>
@@ -143,7 +145,7 @@ function RiskForecast({ forecast = [], location }) {
               <ActivityIcon size={18} color="#7c3aed" />
             </div>
             <div className="dd-texts">
-              <span className="dd-label">UTCI Perceived</span>
+              <span className="dd-label">UTCI</span>
               <strong className="dd-value" style={{ color: '#7c3aed' }}>{selected.utci}&deg;C</strong>
             </div>
           </div>
@@ -153,7 +155,7 @@ function RiskForecast({ forecast = [], location }) {
               <WaterIcon size={18} color="#0284c7" />
             </div>
             <div className="dd-texts">
-              <span className="dd-label">Relative Humidity</span>
+              <span className="dd-label">{t('gis_rel_humidity', 'Relative Humidity')}</span>
               <strong className="dd-value" style={{ color: '#0284c7' }}>{selected.humidity}%</strong>
             </div>
           </div>
@@ -163,7 +165,7 @@ function RiskForecast({ forecast = [], location }) {
               <SunIcon size={18} color="#d97706" />
             </div>
             <div className="dd-texts">
-              <span className="dd-label">Solar Irradiance</span>
+              <span className="dd-label">{t('card_solar', 'Solar Irradiance')}</span>
               <strong className="dd-value" style={{ color: '#d97706' }}>{selected.solarRadiation} W/m²</strong>
             </div>
           </div>
@@ -173,7 +175,7 @@ function RiskForecast({ forecast = [], location }) {
               <WindIcon size={18} color="#64748b" />
             </div>
             <div className="dd-texts">
-              <span className="dd-label">Wind Speed</span>
+              <span className="dd-label">{t('param_wind', 'Wind Speed')}</span>
               <strong className="dd-value" style={{ color: '#64748b' }}>{selected.windSpeed} km/h</strong>
             </div>
           </div>
@@ -183,7 +185,7 @@ function RiskForecast({ forecast = [], location }) {
               <ShieldAlertIcon size={18} color={STRESS_COLORS[selected.stressCategory?.label]} />
             </div>
             <div className="dd-texts">
-              <span className="dd-label">Excess Mortality Risk</span>
+              <span className="dd-label">{t('card_mortality_risk', 'Excess Mortality Risk')}</span>
               <strong className="dd-value" style={{ color: STRESS_COLORS[selected.stressCategory?.label] }}>
                 {selected.mortalityRisk}%
               </strong>

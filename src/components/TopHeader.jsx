@@ -8,9 +8,11 @@ import {
   CrosshairIcon,
   XIcon,
   LogOutIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  LanguagesIcon
 } from './icons';
 import { searchLocations, reverseGeocode, CURATED_INDIAN_LOCATIONS } from '../services/geocodingService';
+import { useLanguage } from '../context/LanguageContext';
 import './TopHeader.css';
 
 function TopHeader({
@@ -27,6 +29,7 @@ function TopHeader({
   onRefresh,
   isRefreshing = false,
 }) {
+  const { currentLang, currentLanguageObj, setLanguage, languages, t } = useLanguage();
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   // Keep the previous location name in the input field
   const [searchQuery, setSearchQuery] = useState(selectedLocation?.name || 'Hyderabad');
@@ -35,9 +38,11 @@ function TopHeader({
   const [currentTime, setCurrentTime] = useState('');
   const [currentDate, setCurrentDate] = useState('');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const locationMenuRef = useRef(null);
   const notifMenuRef = useRef(null);
+  const langMenuRef = useRef(null);
   const userMenuRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -105,6 +110,9 @@ function TopHeader({
       }
       if (notifMenuRef.current && !notifMenuRef.current.contains(e.target)) {
         setIsNotificationsOpen(false);
+      }
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target)) {
+        setIsLangOpen(false);
       }
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
         setIsUserMenuOpen(false);
@@ -195,7 +203,7 @@ function TopHeader({
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Search city, district, or PIN..."
+                  placeholder={t('searchPlaceholder', 'Search city, ward, or coordinates...')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label="Search city or district"
@@ -217,18 +225,18 @@ function TopHeader({
               {/* GPS Locate Action */}
               <button className="gps-locate-item" onClick={handleGpsLocate}>
                 <CrosshairIcon size={16} color="#2563eb" />
-                <span>Use Current Live GPS Location</span>
+                <span>{t('gps_locate', 'Use Current Live GPS Location')}</span>
               </button>
 
               <div className="location-list scroll-area">
                 {isSearching && (
-                  <div className="loc-searching-state">Searching meteorology network...</div>
+                  <div className="loc-searching-state">{t('searching_network', 'Searching meteorology network...')}</div>
                 )}
 
                 {/* Show Search Results if user searched */}
                 {searchResults.length > 0 && (
                   <div className="loc-group">
-                    <div className="loc-group-title">Search Results</div>
+                    <div className="loc-group-title">{t('search_results_title', 'Search Results')}</div>
                     {searchResults.map((loc) => (
                       <button
                         key={loc.id}
@@ -252,7 +260,7 @@ function TopHeader({
                 {/* Curated Hotspots */}
                 {searchResults.length === 0 && !isSearching && (
                   <div className="loc-group">
-                    <div className="loc-group-title">Monitored Indian Hotspots</div>
+                    <div className="loc-group-title">{t('card_ward_title', 'Monitored Indian Hotspots')}</div>
                     {CURATED_INDIAN_LOCATIONS.map((loc) => (
                       <button
                         key={loc.id}
@@ -268,7 +276,7 @@ function TopHeader({
                           <span className="loc-item-name">{loc.name}</span>
                           <span className="loc-item-sub">{loc.state}</span>
                         </div>
-                        {loc.isHotspot && <span className="hotspot-badge">Heat Hotspot</span>}
+                        {loc.isHotspot && <span className="hotspot-badge">{t('status_danger', 'Heat Hotspot')}</span>}
                       </button>
                     ))}
                   </div>
@@ -294,17 +302,78 @@ function TopHeader({
               className={`refresh-icon ${isRefreshing ? 'spin-icon' : ''}`}
             />
             <span className="refresh-btn-label">
-              {isRefreshing ? 'Refreshing...' : refreshLabel}
+              {isRefreshing ? t('refreshing', 'Refreshing...') : refreshLabel}
             </span>
           </button>
           <span className="live-status-pill">
             <span className="live-dot" />
-            <span>Live</span>
+            <span>{t('live', 'Live')}</span>
           </span>
         </div>
       </div>
 
       <div className="top-header-right">
+        {/* Language Selector Dropdown beside Notification Bell with SVG Icon */}
+        <div className="header-lang-wrapper" ref={langMenuRef}>
+          <button
+            type="button"
+            className={`header-lang-btn ${isLangOpen ? 'active' : ''}`}
+            onClick={() => setIsLangOpen((prev) => !prev)}
+            aria-label="Select Portal Language"
+            aria-expanded={isLangOpen}
+            title={`Select Language / भाषा चुनें (${currentLanguageObj?.name || 'English'})`}
+          >
+            <LanguagesIcon size={18} className="header-lang-svg" />
+            <span className="header-lang-pill">
+              <span className="header-lang-flag">{currentLanguageObj?.flag || '🌐'}</span>
+              <span className="header-lang-code">{currentLang.toUpperCase()}</span>
+            </span>
+            <ChevronDownIcon size={12} className={`header-lang-chevron ${isLangOpen ? 'open' : ''}`} />
+          </button>
+
+          {isLangOpen && (
+            <div className="header-lang-dropdown animate-fade-in" role="menu">
+              <div className="header-lang-dropdown-header">
+                <div className="header-lang-dropdown-title">
+                  <LanguagesIcon size={16} color="#2563eb" />
+                  <span>{t('chooseLanguage', 'Choose Language / भाषा चुनें')}</span>
+                </div>
+                <span className="header-lang-dropdown-count">8 Regional Languages</span>
+              </div>
+
+              <div className="header-lang-list">
+                {languages.map((lang) => {
+                  const isSelected = currentLang === lang.lang;
+                  return (
+                    <button
+                      key={lang.code}
+                      type="button"
+                      role="menuitem"
+                      className={`header-lang-option ${isSelected ? 'selected' : ''}`}
+                      onClick={() => {
+                        setLanguage(lang.lang);
+                        setIsLangOpen(false);
+                      }}
+                    >
+                      <span className="lang-opt-flag">{lang.flag}</span>
+                      <div className="lang-opt-text">
+                        <span className="lang-opt-native">{lang.nativeName}</span>
+                        <span className="lang-opt-name">{lang.name}</span>
+                      </div>
+                      {isSelected && (
+                        <span className="lang-opt-check">
+                          <CheckCircleIcon size={16} color="#2563eb" />
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Existing Notification Bell Icon */}
         <div className="notif-wrapper" ref={notifMenuRef}>
           <button
             className="notif-bell-btn"
@@ -318,9 +387,9 @@ function TopHeader({
           {isNotificationsOpen && (
             <div className="notif-dropdown">
               <div className="notif-header">
-                <span className="notif-title">Active Emergency Alerts</span>
+                <span className="notif-title">{t('activeAlerts', 'Active Emergency Alerts')}</span>
                 <span className={`notif-count ${alertCount > 0 ? 'active' : 'safe'}`}>
-                  {alertCount > 0 ? `${alertCount} Active` : '0 Active'}
+                  {alertCount > 0 ? `${alertCount} ${t('active', 'Active')}` : `0 ${t('active', 'Active')}`}
                 </span>
               </div>
 
@@ -335,16 +404,16 @@ function TopHeader({
                           {alert.tag && <span className="notif-tag-pill">{alert.tag}</span>}
                         </div>
                         <p>{alert.description}</p>
-                        <span className="notif-time">{alert.time || 'Live Telemetry'}</span>
+                        <span className="notif-time">{alert.time || t('telemetrySync', 'Live Telemetry')}</span>
                       </div>
                     </div>
                   ))
                 ) : (
                   <div className="notif-empty-state">
                     <CheckCircleIcon size={26} color="#16a34a" />
-                    <div className="notif-empty-title">All Parameters Safe</div>
+                    <div className="notif-empty-title">{t('allSafe', 'All Parameters Safe')}</div>
                     <p className="notif-empty-text">
-                      Thermal stress indices for {selectedLocation?.name || 'this location'} are within normal baseline thresholds. No mandatory emergency alert active.
+                      {t('safeBaseline', `Thermal stress indices for ${selectedLocation?.name || 'this location'} are within normal baseline thresholds. No mandatory emergency alert active.`)}
                     </p>
                   </div>
                 )}
@@ -356,7 +425,7 @@ function TopHeader({
                   if (onOpenAlerts) onOpenAlerts();
                 }}
               >
-                Open Full Alerts &amp; Heat Action Center &rarr;
+                {t('viewAllAlerts', 'Open Full Alerts & Heat Action Center →')}
               </button>
             </div>
           )}
@@ -389,7 +458,7 @@ function TopHeader({
                     {currentUser?.name || (currentUser?.role === 'citizen' ? 'Public User #8204' : 'Officer #4102')}
                   </span>
                   <span className="user-dropdown-sub">
-                    {currentUser?.department || (currentUser?.role === 'citizen' ? 'Civic Safety Network' : 'Disaster Control Desk')}
+                    {currentUser?.role === 'citizen' ? t('userCitizen', 'Civic Safety Network') : t('emergencyOps', 'Disaster Control Desk')}
                   </span>
                   <span className="user-dropdown-email">
                     {currentUser?.email || (currentUser?.role === 'citizen' ? 'user8204@thermoguard.in' : 'officer4102@gov.in')}
@@ -399,7 +468,7 @@ function TopHeader({
 
               <div className="user-dropdown-badge-row">
                 <span className={`user-role-badge ${currentUser?.role || 'authority'}`}>
-                  {currentUser?.role === 'citizen' ? 'Citizen Verified Access' : 'Authorized Duty Officer'}
+                  {currentUser?.role === 'citizen' ? t('userCitizen', 'Citizen Verified Access') : t('userOfficer', 'Authorized Duty Officer')}
                 </span>
               </div>
 
@@ -413,7 +482,7 @@ function TopHeader({
                   }}
                 >
                   <LogOutIcon size={16} color="#dc2626" />
-                  <span>Log Out</span>
+                  <span>{t('logout', 'Log Out')}</span>
                 </button>
               )}
             </div>

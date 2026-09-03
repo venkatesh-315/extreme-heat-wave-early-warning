@@ -1,8 +1,10 @@
 import React from 'react';
 import { InfoIcon } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './ModelConfidenceCard.css';
 
 function ModelConfidenceCard({ confidence = 89, lastUpdated }) {
+  const { t } = useLanguage();
   const displayTime = lastUpdated || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
   // SVG calculation for circular gauge
@@ -10,11 +12,17 @@ function ModelConfidenceCard({ confidence = 89, lastUpdated }) {
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (confidence / 100) * circumference;
 
+  const ratingText = confidence >= 85
+    ? t('conf_high', 'High Confidence')
+    : confidence >= 65
+    ? t('conf_mod', 'Moderate Confidence')
+    : t('conf_low', 'Low Confidence');
+
   return (
     <div className="card model-confidence-card" id="model-confidence-card">
       <div className="confidence-card-top">
         <h3 className="card-heading">
-          Model Confidence
+          {t('card_confidence_title', 'Model Confidence')}
           <span className="info-tooltip-wrap" title="Machine learning model prediction certainty score across multi-ensemble numerical weather models">
             <InfoIcon size={14} />
           </span>
@@ -49,9 +57,9 @@ function ModelConfidenceCard({ confidence = 89, lastUpdated }) {
 
         {/* Text Block */}
         <div className="confidence-text-block">
-          <div className="conf-rating-title">High Confidence</div>
-          <p className="conf-desc">Model accuracy is high for this forecast.</p>
-          <div className="conf-timestamp">Last Updated: {displayTime}</div>
+          <div className="conf-rating-title">{ratingText}</div>
+          <p className="conf-desc">{t('conf_desc', 'Model accuracy is high for this forecast.')}</p>
+          <div className="conf-timestamp">{t('updated_label', 'Last Updated:')} {displayTime}</div>
         </div>
       </div>
     </div>

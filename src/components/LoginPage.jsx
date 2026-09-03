@@ -15,10 +15,13 @@ import {
   SmartphoneIcon,
   KeyRoundIcon,
   AlertTriangleIcon,
-  CheckIcon
+  CheckIcon,
+  LanguagesIcon,
+  GlobeIcon
 } from './icons';
 import { loginWithCredentials } from '../services/authService';
 import DepartmentDropdown from './DepartmentDropdown';
+import { useLanguage } from '../context/LanguageContext';
 import './LoginPage.css';
 
 const AUTHORITY_DEPARTMENTS = [
@@ -42,6 +45,10 @@ const CITIZEN_LOCATIONS = [
 ];
 
 function LoginPage({ onLoginSuccess }) {
+  const { currentLang, currentLanguageObj, setLanguage, hasPrompted, markLanguagePrompted, t } = useLanguage();
+  const [showLangModal, setShowLangModal] = useState(() => !hasPrompted);
+  const [selectedModalLang, setSelectedModalLang] = useState(() => (currentLang === 'hi' ? 'hi' : 'en'));
+
   const [role, setRole] = useState('authority'); // 'authority' | 'citizen'
   const [isLoading, setIsLoading] = useState(false);
   const [roleTransitioning, setRoleTransitioning] = useState(false);
@@ -218,6 +225,94 @@ function LoginPage({ onLoginSuccess }) {
 
   return (
     <div className={`thermoguard-login-screen role-${role}`}>
+      {/* 1. New User Language Selection Pop-up Modal (Hindi and English) */}
+      {showLangModal && (
+        <div
+          className="login-lang-modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="login-lang-modal-title"
+        >
+          <div className="login-lang-modal-card">
+            <div className="login-lang-modal-header">
+              <div className="login-lang-modal-icon-badge">
+                <LanguagesIcon size={28} color="#2563eb" />
+              </div>
+              <h2 id="login-lang-modal-title" className="login-lang-modal-title">
+                {selectedModalLang === 'hi' ? 'वेबसाइट भाषा चुनें' : 'Select Website Language'}
+              </h2>
+              <p className="login-lang-modal-sub">
+                {selectedModalLang === 'hi'
+                  ? 'थर्मोगार्ड पोर्टल का उपयोग करने के लिए अपनी पसंदीदा भाषा चुनें:'
+                  : 'Choose your preferred website language to proceed:'}
+              </p>
+            </div>
+
+            <div className="login-lang-options-grid">
+              {/* Hindi Option */}
+              <button
+                type="button"
+                className={`login-lang-card ${selectedModalLang === 'hi' ? 'selected' : ''}`}
+                onClick={() => setSelectedModalLang('hi')}
+                aria-pressed={selectedModalLang === 'hi'}
+              >
+                <div className="lang-card-top">
+                  <span className="lang-card-flag">🇮🇳</span>
+                  <span className="lang-card-badge">हिन्दी</span>
+                  <div className={`lang-card-radio ${selectedModalLang === 'hi' ? 'checked' : ''}`}>
+                    {selectedModalLang === 'hi' && <span className="radio-dot" />}
+                  </div>
+                </div>
+                <div className="lang-card-name">हिन्दी (Hindi)</div>
+                <p className="lang-card-desc">
+                  सभी मौसम चेतावनियां, लाइव टेलीमेट्री और कार्ययोजनाएं हिन्दी में देखें।
+                </p>
+              </button>
+
+              {/* English Option */}
+              <button
+                type="button"
+                className={`login-lang-card ${selectedModalLang === 'en' ? 'selected' : ''}`}
+                onClick={() => setSelectedModalLang('en')}
+                aria-pressed={selectedModalLang === 'en'}
+              >
+                <div className="lang-card-top">
+                  <span className="lang-card-flag">🌐</span>
+                  <span className="lang-card-badge">English</span>
+                  <div className={`lang-card-radio ${selectedModalLang === 'en' ? 'checked' : ''}`}>
+                    {selectedModalLang === 'en' && <span className="radio-dot" />}
+                  </div>
+                </div>
+                <div className="lang-card-name">English</div>
+                <p className="lang-card-desc">
+                  Access real-time heat telemetry, biometeorological alerts, and action plans in English.
+                </p>
+              </button>
+            </div>
+
+            <div className="login-lang-modal-footer">
+              <button
+                type="button"
+                className="login-lang-confirm-btn"
+                onClick={() => {
+                  setLanguage(selectedModalLang);
+                  markLanguagePrompted();
+                  setShowLangModal(false);
+                }}
+              >
+                <span>{selectedModalLang === 'hi' ? 'आगे बढ़ें (Continue)' : 'Continue'}</span>
+                <ArrowRightIcon size={18} />
+              </button>
+              <p className="login-lang-hint">
+                {selectedModalLang === 'hi'
+                  ? '💡 सूचना: आप हेडर में दिए गए भाषा आइकन से कभी भी 8 क्षेत्रीय भाषाओं में बदल सकते हैं।'
+                  : '💡 Tip: You can switch between 8 Indian regional languages anytime from the header language icon.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Split Left Hero Section */}
       <section className="login-hero-side">
         {/* Background Atmosphere Layers */}
@@ -239,20 +334,21 @@ function LoginPage({ onLoginSuccess }) {
               <ThermoGuardLogo size={38} />
             </div>
             <div className="hero-brand-text">
-              <span className="brand-name">THERMOGUARD</span>
-              <span className="brand-tagline">Extreme Heat Early Warning System</span>
+              <span className="brand-name">{t('appName', 'THERMOGUARD')}</span>
+              <span className="brand-tagline">{t('appTagline', 'Extreme Heat Early Warning System')}</span>
             </div>
           </div>
 
           {/* Main Headline & Description */}
           <div className="hero-headline-block">
             <h1 className="hero-title">
-              Forecasting <span className="text-heat-gradient">Extreme Heat.</span>
+              {t('login_hero_title1', 'Forecasting')}{' '}
+              <span className="text-heat-gradient">{t('login_hero_title2', 'Extreme Heat.')}</span>
               <br />
-              Protecting Every Life.
+              {t('login_hero_title3', 'Saving Lives.')}
             </h1>
             <p className="hero-subtitle">
-              AI-powered biometeorological intelligence for early heatwave detection, human thermal stress mapping, and hyper-local civic protection.
+              {t('login_hero_desc', 'AI-powered biometeorological intelligence for early heatwave detection, human thermal stress mapping, and hyper-local civic protection.')}
             </p>
           </div>
 
@@ -311,17 +407,32 @@ function LoginPage({ onLoginSuccess }) {
 
       {/* Split Right Auth Section */}
       <section className="login-auth-side">
+        {/* Quick Language Switcher on Login Screen */}
+        <button
+          type="button"
+          className="login-lang-trigger-btn"
+          onClick={() => {
+            setSelectedModalLang(currentLang === 'hi' ? 'hi' : 'en');
+            setShowLangModal(true);
+          }}
+          title="Change Website Language / भाषा बदलें"
+          aria-label="Change Website Language"
+        >
+          <LanguagesIcon size={16} color="#2563eb" />
+          <span>{currentLang === 'hi' ? 'हिन्दी (Hindi)' : currentLanguageObj?.name || 'English'}</span>
+        </button>
+
         {/* Central Auth Container */}
         <div className="auth-form-card">
           {/* Card Header */}
           <div className="auth-card-header">
             <h2 className="auth-welcome-title">
-              {role === 'authority' ? 'Authority Portal' : 'Citizen Heat Safety'}
+              {role === 'authority' ? t('login_tab_authority', 'Authority Portal') : t('login_tab_citizen', 'Citizen Heat Safety')}
             </h2>
             <p className="auth-welcome-desc">
               {role === 'authority'
-                ? 'Sign in to access disaster command desk, ward GIS & alert dispatch'
-                : 'Sign in to monitor live thermal stress, find cooling centers & get alerts'}
+                ? t('login_auth_badge', 'Sign in to access disaster command desk, ward GIS & alert dispatch')
+                : t('login_cit_badge', 'Sign in to monitor live thermal stress, find cooling centers & get alerts')}
             </p>
           </div>
 
@@ -354,7 +465,7 @@ function LoginPage({ onLoginSuccess }) {
               onClick={() => handleSwitchRole('authority')}
             >
               <Building2Icon size={18} />
-              <span>Authority Login</span>
+              <span>{t('login_tab_authority', 'Authority Login')}</span>
             </button>
 
             <button
@@ -366,7 +477,7 @@ function LoginPage({ onLoginSuccess }) {
               onClick={() => handleSwitchRole('citizen')}
             >
               <UsersIcon size={18} />
-              <span>Citizen Login</span>
+              <span>{t('login_tab_citizen', 'Citizen Login')}</span>
             </button>
           </div>
 
@@ -378,7 +489,7 @@ function LoginPage({ onLoginSuccess }) {
                 {/* Field 1: Officer ID / Official Email */}
                 <div className="auth-form-group">
                   <label htmlFor="auth-officer-id" className="auth-field-label">
-                    <span>Officer ID / Official Govt Email</span>
+                    <span>{t('login_field_officerId', 'Officer ID / Official Govt Email')}</span>
                     <span className="required-star">*</span>
                   </label>
                   <div className={`auth-input-wrapper ${errors.officerIdOrEmail ? 'has-error' : ''}`}>
@@ -389,7 +500,7 @@ function LoginPage({ onLoginSuccess }) {
                       id="auth-officer-id"
                       type="text"
                       className="auth-text-input"
-                      placeholder="e.g. officer.sharma@gov.in or AUTH-4102"
+                      placeholder={t('login_field_officerId_ph', 'e.g. officer4102@gov.in or AUTH-9921')}
                       value={authorityForm.officerIdOrEmail}
                       onChange={(e) => {
                         setAuthorityForm((prev) => ({ ...prev, officerIdOrEmail: e.target.value }));
@@ -406,7 +517,7 @@ function LoginPage({ onLoginSuccess }) {
                 {/* Field 2: Department / Jurisdiction Selector */}
                 <div className="auth-form-group dept-select-group">
                   <label htmlFor="auth-department" className="auth-field-label">
-                    <span>Jurisdiction / Department</span>
+                    <span>{t('login_field_department', 'Jurisdiction / Department')}</span>
                   </label>
                   <DepartmentDropdown
                     id="auth-department"
@@ -424,7 +535,7 @@ function LoginPage({ onLoginSuccess }) {
                 <div className="auth-form-group">
                   <div className="auth-label-row">
                     <label htmlFor="auth-passcode" className="auth-field-label">
-                      <span>Confidential Passcode</span>
+                      <span>{t('login_field_passcode', 'Confidential Passcode')}</span>
                       <span className="required-star">*</span>
                     </label>
                     <button
@@ -448,7 +559,7 @@ function LoginPage({ onLoginSuccess }) {
                       id="auth-passcode"
                       type={authorityForm.showPassword ? 'text' : 'password'}
                       className="auth-text-input"
-                      placeholder="Enter confidential passcode"
+                      placeholder={t('login_field_passcode_ph', 'Enter your access passcode')}
                       value={authorityForm.passcode}
                       onChange={(e) => {
                         setAuthorityForm((prev) => ({ ...prev, passcode: e.target.value }));
@@ -488,7 +599,7 @@ function LoginPage({ onLoginSuccess }) {
                       }
                     />
                     <span className="checkbox-custom" />
-                    <span className="checkbox-text">Authorized terminal (keep 24-hour command session)</span>
+                    <span className="checkbox-text">{t('login_field_remember', 'Authorized terminal (keep 24-hour command session)')}</span>
                   </label>
                 </div>
 
@@ -501,11 +612,11 @@ function LoginPage({ onLoginSuccess }) {
                   {isLoading ? (
                     <span className="btn-loading-state">
                       <span className="btn-spinner" />
-                      <span>Entering Authority Portal...</span>
+                      <span>{t('refreshing', 'Entering Authority Portal...')}</span>
                     </span>
                   ) : (
                     <span className="btn-label-state">
-                      <span>Enter Authority Portal</span>
+                      <span>{t('login_btn_auth', 'Enter Authority Portal')}</span>
                       <ArrowRightIcon size={18} />
                     </span>
                   )}
@@ -517,7 +628,7 @@ function LoginPage({ onLoginSuccess }) {
                 {/* Mobile Number Input with Country Code & Get OTP Button */}
                 <div className="auth-form-group">
                   <label htmlFor="citizen-phone" className="auth-field-label">
-                    <span>Mobile Phone Number</span>
+                    <span>{t('login_field_phone', 'Mobile Phone Number')}</span>
                     <span className="required-star">*</span>
                   </label>
                   <div className={`auth-input-wrapper phone-wrapper ${errors.phone ? 'has-error' : ''}`}>
@@ -528,7 +639,7 @@ function LoginPage({ onLoginSuccess }) {
                       id="citizen-phone"
                       type="tel"
                       className="auth-text-input phone-input"
-                      placeholder="98765 43210"
+                      placeholder={t('login_field_phone_ph', '98765 43210')}
                       maxLength={10}
                       value={citizenForm.phone}
                       onChange={(e) => {
@@ -544,7 +655,7 @@ function LoginPage({ onLoginSuccess }) {
                       onClick={handleSendOtp}
                       disabled={otpTimer > 0}
                     >
-                      {otpTimer > 0 ? `Resend in ${otpTimer}s` : otpSent ? 'Resend OTP' : 'Get OTP'}
+                      {otpTimer > 0 ? `${t('login_btn_resend_otp', 'Resend in')} ${otpTimer}s` : otpSent ? t('login_btn_resend_otp', 'Resend OTP') : t('login_btn_send_otp', 'Get OTP')}
                     </button>
                   </div>
                   {errors.phone && (
@@ -556,7 +667,7 @@ function LoginPage({ onLoginSuccess }) {
                 <div className="auth-form-group">
                   <div className="auth-label-row">
                     <label htmlFor="citizen-otp" className="auth-field-label">
-                      <span>6-Digit Verification OTP</span>
+                      <span>{t('login_field_otp', '6-Digit Verification OTP')}</span>
                       <span className="required-star">*</span>
                     </label>
                     {otpSent && (
@@ -574,7 +685,7 @@ function LoginPage({ onLoginSuccess }) {
                       id="citizen-otp"
                       type="text"
                       className="auth-text-input otp-input"
-                      placeholder="Enter 6-digit OTP (e.g. 849201)"
+                      placeholder={t('login_field_otp_ph', 'Enter 6-digit code (Use 123456 for demo)')}
                       maxLength={6}
                       value={citizenForm.otpCode}
                       onChange={(e) => {
@@ -593,7 +704,7 @@ function LoginPage({ onLoginSuccess }) {
                 {/* Primary Alert City / Zone Selector */}
                 <div className="auth-form-group loc-select-group">
                   <label htmlFor="citizen-location" className="auth-field-label">
-                    <span>Primary Heat Alert Zone</span>
+                    <span>{t('login_field_location', 'Primary Heat Alert Zone')}</span>
                   </label>
                   <DepartmentDropdown
                     id="citizen-location"
@@ -619,7 +730,7 @@ function LoginPage({ onLoginSuccess }) {
                     />
                     <span className="checkbox-custom citizen" />
                     <span className="checkbox-text">
-                      Send extreme heat warnings to my WhatsApp &amp; SMS alerts
+                      {t('login_field_optin', 'Send extreme heat warnings to my WhatsApp & SMS alerts')}
                     </span>
                   </label>
                 </div>
@@ -633,11 +744,11 @@ function LoginPage({ onLoginSuccess }) {
                   {isLoading ? (
                     <span className="btn-loading-state">
                       <span className="btn-spinner" />
-                      <span>Entering Citizen Portal...</span>
+                      <span>{t('refreshing', 'Entering Citizen Portal...')}</span>
                     </span>
                   ) : (
                     <span className="btn-label-state">
-                      <span>Enter Citizen Portal</span>
+                      <span>{t('login_btn_cit', 'Enter Citizen Portal')}</span>
                       <ArrowRightIcon size={18} />
                     </span>
                   )}

@@ -9,6 +9,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { InfoIcon } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './HealthImpactForecastCard.css';
 
 const CustomForecastTooltip = ({ active, payload, label }) => {
@@ -27,24 +28,26 @@ const CustomForecastTooltip = ({ active, payload, label }) => {
 };
 
 function HealthImpactForecastCard({ forecast = [] }) {
+  const { t } = useLanguage();
   // Use the live forecast array from Open-Meteo & IMD (5-day projection)
   const chartData = (forecast && forecast.length > 0)
     ? forecast.slice(0, 5).map((f, index) => {
         const mortality = f.mortalityRisk ?? (15 + index * 3);
         const hospitalization = Math.max(4, Math.round(mortality * 0.65 + ((f.temperature || 35) > 38 ? 6 : 2)));
+        const defaultDayLabel = index === 0 ? t('chart_day_today', 'Today') : index === 1 ? t('chart_day_tomorrow', 'Tomorrow') : `${t('stress_level_prefix', 'Day')} ${index + 1}`;
         return {
-          day: f.day || (index === 0 ? 'Today' : `Day ${index + 1}`),
+          day: defaultDayLabel,
           date: f.date || new Date(Date.now() + index * 86400000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
           mortality: mortality,
           hospitalization: hospitalization,
         };
       })
     : [
-        { day: 'Today', date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 14, hospitalization: 8 },
-        { day: 'Tomorrow', date: new Date(Date.now() + 86400000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 18, hospitalization: 11 },
-        { day: 'Day 3', date: new Date(Date.now() + 172800000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 22, hospitalization: 14 },
-        { day: 'Day 4', date: new Date(Date.now() + 259200000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 25, hospitalization: 17 },
-        { day: 'Day 5', date: new Date(Date.now() + 345600000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 21, hospitalization: 13 },
+        { day: t('chart_day_today', 'Today'), date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 14, hospitalization: 8 },
+        { day: t('chart_day_tomorrow', 'Tomorrow'), date: new Date(Date.now() + 86400000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 18, hospitalization: 11 },
+        { day: `${t('stress_level_prefix', 'Day')} 3`, date: new Date(Date.now() + 172800000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 22, hospitalization: 14 },
+        { day: `${t('stress_level_prefix', 'Day')} 4`, date: new Date(Date.now() + 259200000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 25, hospitalization: 17 },
+        { day: `${t('stress_level_prefix', 'Day')} 5`, date: new Date(Date.now() + 345600000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), mortality: 21, hospitalization: 13 },
       ];
 
   // Find peak days dynamically from real data
@@ -62,7 +65,7 @@ function HealthImpactForecastCard({ forecast = [] }) {
     <div className="card health-forecast-card" id="five-day-health-impact-forecast">
       <div className="forecast-card-top">
         <h3 className="card-heading">
-          5-Day Health Impact Forecast
+          {t('card_forecast_title', '5-Day Health Impact Forecast')}
           <span className="info-tooltip-wrap" title="Projected mortality and hospital admission surge based on thermal index trajectories">
             <InfoIcon size={14} />
           </span>
@@ -72,11 +75,11 @@ function HealthImpactForecastCard({ forecast = [] }) {
         <div className="forecast-chart-legend">
           <div className="legend-entry">
             <span className="legend-line red" />
-            <span>Mortality Risk (%)</span>
+            <span>{t('chart_mortality_risk', 'Mortality Risk (%)')}</span>
           </div>
           <div className="legend-entry">
             <span className="legend-line purple" />
-            <span>Hospitalization Risk (%)</span>
+            <span>{t('chart_hosp_risk', 'Hospitalization Risk (%)')}</span>
           </div>
         </div>
       </div>
@@ -116,7 +119,7 @@ function HealthImpactForecastCard({ forecast = [] }) {
             <Line
               type="monotone"
               dataKey="mortality"
-              name="Mortality Risk"
+              name={t('chart_mortality_risk', 'Mortality Risk')}
               stroke="#ef4444"
               strokeWidth={2.2}
               dot={{ r: 3.5, fill: '#ef4444', strokeWidth: 1.5, stroke: '#ffffff' }}
@@ -125,7 +128,7 @@ function HealthImpactForecastCard({ forecast = [] }) {
             <Line
               type="monotone"
               dataKey="hospitalization"
-              name="Hospitalization Risk"
+              name={t('chart_hosp_risk', 'Hospitalization Risk')}
               stroke="#8b5cf6"
               strokeWidth={2.2}
               dot={{ r: 3.5, fill: '#8b5cf6', strokeWidth: 1.5, stroke: '#ffffff' }}
@@ -138,15 +141,15 @@ function HealthImpactForecastCard({ forecast = [] }) {
       {/* Bottom Highlight Summary Stat Cards */}
       <div className="forecast-stat-boxes">
         <div className="highlight-stat-box red">
-          <div className="stat-box-label">Peak Mortality Risk</div>
+          <div className="stat-box-label">{t('chart_peak_mortality', 'Peak Mortality Risk')}</div>
           <div className="stat-box-val">+{peakMortalityItem.mortality}%</div>
-          <div className="stat-box-date">On {peakMortalityItem.date}</div>
+          <div className="stat-box-date">{t('chart_on', 'On')} {peakMortalityItem.date}</div>
         </div>
 
         <div className="highlight-stat-box purple">
-          <div className="stat-box-label">Peak Hospitalization Risk</div>
+          <div className="stat-box-label">{t('chart_peak_hosp', 'Peak Hospitalization Risk')}</div>
           <div className="stat-box-val">+{peakHospItem.hospitalization}%</div>
-          <div className="stat-box-date">On {peakHospItem.date}</div>
+          <div className="stat-box-date">{t('chart_on', 'On')} {peakHospItem.date}</div>
         </div>
       </div>
     </div>

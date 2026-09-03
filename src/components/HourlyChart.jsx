@@ -1,6 +1,7 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ActivityIcon, AlertTriangleIcon } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './HourlyChart.css';
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -19,6 +20,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 function HourlyChart({ data = [] }) {
+  const { t } = useLanguage();
   if (!data || data.length === 0) return null;
 
   const displayData = data.filter((_, i) => i % 2 === 0);
@@ -29,15 +31,15 @@ function HourlyChart({ data = [] }) {
         <div>
           <h3 className="section-title">
             <ActivityIcon size={18} color="#1e40af" />
-            <span>24-Hour Diurnal Thermal Profile</span>
+            <span>{t('hourly_title', '24-Hour Diurnal Thermal Profile')}</span>
           </h3>
-          <p className="section-desc">Hourly dry bulb temperature, WBGT, Heat Index, and humidity trajectory</p>
+          <p className="section-desc">{t('hourly_desc', 'Hourly dry bulb temperature, WBGT, Heat Index, and humidity trajectory')}</p>
         </div>
         <div className="chart-legend-row">
-          <span className="legend-item"><span className="dot" style={{ background: '#ea580c' }} /> Air Temp</span>
-          <span className="legend-item"><span className="dot" style={{ background: '#dc2626' }} /> Heat Index</span>
-          <span className="legend-item"><span className="dot" style={{ background: '#7c3aed' }} /> WBGT</span>
-          <span className="legend-item"><span className="dot" style={{ background: '#0284c7' }} /> Humidity %</span>
+          <span className="legend-item"><span className="dot" style={{ background: '#ea580c' }} /> {t('hourly_air_temp', 'Air Temp')}</span>
+          <span className="legend-item"><span className="dot" style={{ background: '#dc2626' }} /> {t('hourly_heat_index', 'Heat Index')}</span>
+          <span className="legend-item"><span className="dot" style={{ background: '#7c3aed' }} /> {t('hourly_wbgt', 'WBGT')}</span>
+          <span className="legend-item"><span className="dot" style={{ background: '#0284c7' }} /> {t('hourly_humidity', 'Humidity %')}</span>
         </div>
       </div>
 

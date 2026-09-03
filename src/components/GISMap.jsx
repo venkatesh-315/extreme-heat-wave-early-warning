@@ -17,6 +17,7 @@ import {
   AlertTriangleIcon,
   ShieldAlertIcon,
 } from './icons';
+import { useLanguage } from '../context/LanguageContext';
 import './GISMap.css';
 
 const getRiskColor = (risk) => {
@@ -52,6 +53,7 @@ const getRiskSvgIcon = (risk, color = '#ffffff', size = 14) => {
 };
 
 function GISMap({ location, wards = [], emergencyResources = [], focusedResource = null }) {
+  const { t } = useLanguage();
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const controlsRef = useRef(null);
@@ -536,7 +538,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             title="Toggle Thermal Stress Zones"
           >
             <FlameIcon size={14} />
-            <span>{location?.isState ? 'Districts' : 'Heat Zones'}</span>
+            <span>{location?.isState ? t('gis_layer_heat', 'Districts') : t('gis_layer_heat', 'Heat Zones')}</span>
           </button>
           <button
             type="button"
@@ -545,7 +547,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             title="Toggle Emergency Hospitals"
           >
             <HospitalIcon size={14} />
-            <span>Hospitals ({hospitalsCount})</span>
+            <span>{t('gis_layer_hospitals', 'Hospitals')} ({hospitalsCount})</span>
           </button>
           <button
             type="button"
@@ -554,7 +556,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             title="Toggle Cooling Shelters"
           >
             <ShelterIcon size={14} />
-            <span>Shelters ({sheltersCount})</span>
+            <span>{t('gis_layer_shelters', 'Shelters')} ({sheltersCount})</span>
           </button>
           <button
             type="button"
@@ -563,7 +565,7 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             title="Toggle Water Stations"
           >
             <WaterIcon size={14} />
-            <span>Water ({waterCount})</span>
+            <span>{t('gis_layer_water', 'Water')} ({waterCount})</span>
           </button>
 
           {isFullscreen && (
@@ -637,23 +639,23 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
 
           {/* Map Legend */}
           <div ref={legendRef} className="gis-floating-legend">
-            <span className="legend-head">Risk Scale:</span>
+            <span className="legend-head">{t('gis_risk_classification', 'Risk Scale')}:</span>
             <div className="legend-items">
               <span className="leg-dot safe" style={{ background: '#10b981', color: '#ffffff' }}>
                 <ShieldCheckIcon size={12} color="#ffffff" />
-                <span>&lt;26&deg; Safe</span>
+                <span>&lt;26&deg; {t('status_safe', 'Safe')}</span>
               </span>
               <span className="leg-dot caution" style={{ background: '#eab308', color: '#0f172a' }}>
                 <AlertTriangleIcon size={12} color="#0f172a" />
-                <span>26-28&deg; Caution</span>
+                <span>26-28&deg; {t('status_caution', 'Caution')}</span>
               </span>
               <span className="leg-dot alert" style={{ background: '#f97316', color: '#ffffff' }}>
                 <FlameIcon size={12} color="#ffffff" />
-                <span>28-32&deg; Alert</span>
+                <span>28-32&deg; {t('status_danger', 'Alert')}</span>
               </span>
               <span className="leg-dot danger" style={{ background: '#ef4444', color: '#ffffff' }}>
                 <ShieldAlertIcon size={12} color="#ffffff" />
-                <span>&gt;32&deg; Danger</span>
+                <span>&gt;32&deg; {t('status_extreme_danger', 'Danger')}</span>
               </span>
             </div>
           </div>
@@ -737,12 +739,12 @@ function GISMap({ location, wards = [], emergencyResources = [], focusedResource
             </button>
           </div>
           <div className="detail-grid-metrics">
-            <div className="detail-stat"><span>Wet-Bulb Globe (WBGT)</span><strong>{selectedWard.wbgt}&deg;C</strong></div>
-            <div className="detail-stat"><span>Dry Air Temp</span><strong>{selectedWard.temperature}&deg;C</strong></div>
-            <div className="detail-stat"><span>Heat Index</span><strong>{selectedWard.heatIndex}&deg;C</strong></div>
-            <div className="detail-stat"><span>Relative Humidity</span><strong>{selectedWard.humidity}%</strong></div>
-            <div className="detail-stat"><span>Mortality Vulnerability</span><strong style={{ color: getRiskColor(selectedWard.mortalityRisk) }}>{selectedWard.mortalityRisk}%</strong></div>
-            <div className="detail-stat"><span>Cooling Centers</span><strong>{selectedWard.coolingCenters} Active</strong></div>
+            <div className="detail-stat"><span>WBGT</span><strong>{selectedWard.wbgt}&deg;C</strong></div>
+            <div className="detail-stat"><span>{t('gis_air_temp', 'Dry Air Temp')}</span><strong>{selectedWard.temperature}&deg;C</strong></div>
+            <div className="detail-stat"><span>{t('hourly_heat_index', 'Heat Index')}</span><strong>{selectedWard.heatIndex}&deg;C</strong></div>
+            <div className="detail-stat"><span>{t('gis_rel_humidity', 'Relative Humidity')}</span><strong>{selectedWard.humidity}%</strong></div>
+            <div className="detail-stat"><span>{t('card_mortality_risk', 'Mortality Vulnerability')}</span><strong style={{ color: getRiskColor(selectedWard.mortalityRisk) }}>{selectedWard.mortalityRisk}%</strong></div>
+            <div className="detail-stat"><span>{t('gis_cooling_centers', 'Cooling Centers')}</span><strong>{selectedWard.coolingCenters} {t('active', 'Active')}</strong></div>
           </div>
         </div>
       )}

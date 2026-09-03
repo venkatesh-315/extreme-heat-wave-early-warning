@@ -12,6 +12,7 @@ import {
   ShieldAlertIcon,
 } from './icons';
 import { formatTemp } from '../services/weatherService';
+import { useLanguage } from '../context/LanguageContext';
 import './WardRiskMapCard.css';
 
 const RISK_CATEGORIES = [
@@ -35,6 +36,7 @@ const getWardRiskSvg = (risk, color = '#ffffff', size = 12) => {
 };
 
 function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
+  const { t } = useLanguage();
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const controlsRef = useRef(null);
@@ -256,15 +258,15 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
                   <div class="pm-value" style="color: ${spotColor};">${formattedWbgt}&deg;${tempUnit}</div>
                 </div>
                 <div class="pm-cell">
-                  <div class="pm-label">Air Temp</div>
+                  <div class="pm-label">${t('gis_air_temp', 'Air Temp')}</div>
                   <div class="pm-value text-dark">${formattedAirTemp}&deg;${tempUnit}</div>
                 </div>
                 <div class="pm-cell">
-                  <div class="pm-label">Heat Index</div>
+                  <div class="pm-label">${t('hourly_heat_index', 'Heat Index')}</div>
                   <div class="pm-value" style="color: ${spotColor};">${formattedHeatIndex}&deg;${tempUnit}</div>
                 </div>
                 <div class="pm-cell">
-                  <div class="pm-label">Mortality Risk</div>
+                  <div class="pm-label">${t('card_mortality_risk', 'Mortality Risk')}</div>
                   <div class="pm-value" style="color: ${spotColor};">${spot.mortalityRisk}%</div>
                 </div>
               </div>
@@ -347,7 +349,7 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
         <div className="ward-map-header">
           <div className="ward-title-group">
             <h3 className="card-heading">
-              Ward Level Risk Map
+              {t('card_ward_title', 'Ward Level Risk Map')}
               <button
                 className="info-tooltip-wrap explainer-btn"
                 onClick={() => setActiveCategoryModal(true)}
@@ -457,8 +459,8 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
                 <div className="modal-title-group">
                   <ShieldAlertIcon size={20} color="#dc2626" />
                   <div>
-                    <h3 className="modal-title">Ward Risk Index Guide (0–100)</h3>
-                    <p className="modal-sub">Significance &amp; Public Health Directives for Each Heat Level</p>
+                    <h3 className="modal-title">{t('card_ward_title', 'Ward Risk')} - {t('gis_risk_classification', 'Risk Classification')}</h3>
+                    <p className="modal-sub">{t('card_ward_sub', 'Significance & Public Health Directives for Each Heat Level')}</p>
                   </div>
                 </div>
                 <button className="modal-close-btn" onClick={() => setActiveCategoryModal(false)}>
@@ -476,8 +478,8 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
                         </span>
                         <strong className="cat-title-text">{cat.title}</strong>
                       </div>
-                      <div className="cat-desc-line"><strong>Significance:</strong> {cat.significance}</div>
-                      <div className="cat-action-line"><strong>Heat Action Plan:</strong> {cat.action}</div>
+                      <div className="cat-desc-line"><strong>{t('card_stress_title', 'Significance')}:</strong> {cat.significance}</div>
+                      <div className="cat-action-line"><strong>{t('tab_action', 'Heat Action Plan')}:</strong> {cat.action}</div>
                     </div>
                   ))}
                 </div>
@@ -485,7 +487,7 @@ function WardRiskMapCard({ location, wards = [], tempUnit = 'C' }) {
 
               <div className="modal-actions" style={{ justifyContent: 'flex-end', marginTop: '16px' }}>
                 <button className="btn btn-primary btn-sm" onClick={() => setActiveCategoryModal(false)}>
-                  Close Guide
+                  {t('gis_close', 'Close')}
                 </button>
               </div>
             </div>
