@@ -468,10 +468,10 @@ function App() {
             </div>
           )}
 
-          {/* 4. HEALTH IMPACT TAB (Historical & 2026 Mortality Trend & Hourly Profile) */}
+          {/* 4. HEALTH IMPACT TAB (Historical & Real-Time Mortality Trend & Hourly Profile) */}
           {activeTab === 'health' && hasData && (
             <div className="tab-view-container animate-fade-in">
-              <MortalityTrend mortalityRisk={thermalMetrics?.mortalityRisk} />
+              <MortalityTrend mortalityRisk={thermalMetrics?.mortalityRisk} currentTemp={weatherData?.temperature} />
               <div style={{ marginTop: '20px' }}>
                 <HourlyChart data={hourlyData} />
               </div>

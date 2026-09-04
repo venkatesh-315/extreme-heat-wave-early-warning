@@ -5,12 +5,15 @@ import { BarChartIcon, ThermometerIcon, UsersIcon, ShieldAlertIcon } from './ico
 import { useLanguage } from '../context/LanguageContext';
 import './MortalityTrend.css';
 
-function MortalityTrend({ mortalityRisk = 45 }) {
+function MortalityTrend({ mortalityRisk = 45, currentTemp = null }) {
   const { t } = useLanguage();
-  const projectedDeaths2026 = Math.round(2800 + (mortalityRisk - 40) * 18);
+  const currentYear = new Date().getFullYear();
+  const projectedDeaths = Math.max(750, Math.round(1600 + (mortalityRisk - 25) * 24));
+  const currentMaxTemp = currentTemp ? parseFloat(Number(currentTemp).toFixed(1)) : 36.5;
+
   const data = [
-    ...HISTORICAL_MORTALITY,
-    { year: 2026, deaths: projectedDeaths2026, avgMaxTemp: 46.5, projected: true },
+    ...HISTORICAL_MORTALITY.filter((d) => d.year < currentYear),
+    { year: currentYear, deaths: projectedDeaths, avgMaxTemp: currentMaxTemp, projected: true },
   ];
 
   return (
@@ -22,15 +25,15 @@ function MortalityTrend({ mortalityRisk = 45 }) {
             <span>{t('mort_analytics_badge', 'Climatological Vulnerability Analytics')}</span>
           </div>
           <h3 className="section-title">
-            {t('mort_title', 'Historical Heat Mortality & Summer 2026 Projections (India)')}
+            {t('mort_title', 'Historical Heat Mortality & Real-Time Projections (India)')}
           </h3>
           <p className="section-desc">
-            {t('mort_desc', 'National annual excess heat-induced fatalities and severe heatwave spells (2019–2026)')}
+            {t('mort_desc', `National annual excess heat-induced fatalities and real-time vulnerability index (2019–${currentYear})`)}
           </p>
         </div>
         <div className="proj-pill">
           <span className="proj-dot" />
-          <span>{t('mort_proj_prefix', 'Summer 2026 Projected:')} <strong>{projectedDeaths2026.toLocaleString()}</strong> {t('mort_casualties', 'casualties')}</span>
+          <span>{t('mort_proj_prefix', 'Real-Time Projected:')} <strong>{projectedDeaths.toLocaleString()}</strong> {t('mort_casualties', 'casualties')}</span>
         </div>
       </div>
 
@@ -43,7 +46,7 @@ function MortalityTrend({ mortalityRisk = 45 }) {
             <Tooltip
               contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
               labelStyle={{ color: '#0f172a', fontWeight: 700 }}
-              formatter={(v, _name, props) => [`${v.toLocaleString()} casualties`, props.payload.projected ? '2026 Projection' : 'Recorded Excess Casualties']}
+              formatter={(v, _name, props) => [`${v.toLocaleString()} casualties`, props.payload.projected ? `${currentYear} Real-Time Projection` : 'Recorded Excess Casualties']}
             />
             <ReferenceLine y={2000} stroke="#dc2626" strokeDasharray="4 3" label={{ value: 'National Severe Threshold (2,000)', fill: '#dc2626', fontSize: 10, position: 'top' }} />
             <Bar dataKey="deaths" radius={[4, 4, 0, 0]} maxBarSize={48}>
@@ -65,8 +68,8 @@ function MortalityTrend({ mortalityRisk = 45 }) {
           </div>
           <div className="ins-texts">
             <span className="ins-lbl">Severe Spells Trend</span>
-            <strong className="ins-val" style={{ color: '#dc2626' }}>21+ Spells in 2026</strong>
-            <span className="ins-sub">Up from 8 spells in 2019</span>
+            <strong className="ins-val" style={{ color: '#dc2626' }}>Active Season ({currentYear})</strong>
+            <span className="ins-sub">Real-time IMD alert monitoring</span>
           </div>
         </div>
 

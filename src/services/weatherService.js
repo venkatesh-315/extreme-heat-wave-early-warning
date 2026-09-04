@@ -1,6 +1,7 @@
 // ================================================================
 // Weather Service — Live Open-Meteo & IMD High-Resolution Meteorological Feed
-// Real-time Thermal Stress Indices & Summer 2026 Climate Models
+// Real-Time Thermal Stress Indices & Live Meteorological Models
+// Supports Real-Time Live Open-Meteo API (0.1° India Grid) and OpenWeatherMap fallback
 // ================================================================
 
 const STORAGE_KEY_SETTINGS = 'thermoguard_user_settings';
@@ -139,6 +140,7 @@ export async function fetchLiveWeatherData(lat, lon, cityId) {
         'apparent_temperature_max',
         'uv_index_max',
         'wind_speed_10m_max',
+        'shortwave_radiation_sum',
       ].join(','),
       timezone: 'Asia/Kolkata',
       forecast_days: '7',
@@ -168,14 +170,29 @@ function processApiWeatherData(apiData, lat, lon) {
   const hourly = apiData.hourly || {};
   const daily = apiData.daily || {};
 
-  const temp = current.temperature_2m ?? 42.4;
-  const humidity = current.relative_humidity_2m ?? 35;
-  const windSpeed = current.wind_speed_10m ?? 12.0; // km/h
+  const temp = current.temperature_2m != null ? current.temperature_2m : 31.0;
+  const humidity = current.relative_humidity_2m != null ? current.relative_humidity_2m : 50;
+  const windSpeed = current.wind_speed_10m != null ? current.wind_speed_10m : 10.0; // km/h
   const windSpeedMs = windSpeed / 3.6; // convert to m/s
-  const solarRadiation = Math.max(0, current.shortwave_radiation || current.direct_normal_irradiance || 850);
+
+  // Real-time solar irradiance calculation:
+  // Open-Meteo provides direct_normal_irradiance, shortwave_radiation, diffuse_radiation.
+  // 0 is valid for nighttime and heavily overcast conditions.
+  let solarRadiation = 0;
+  if (current.shortwave_radiation != null) {
+    solarRadiation = Math.max(0, current.shortwave_radiation);
+  } else if (current.direct_normal_irradiance != null) {
+    solarRadiation = Math.max(0, current.direct_normal_irradiance);
+  } else {
+    const curH = new Date().getHours();
+    solarRadiation = (curH >= 6 && curH <= 18)
+      ? Math.round(650 * Math.sin(((curH - 6) * Math.PI) / 12))
+      : 0;
+  }
+
   const dewPoint = current.dew_point_2m ?? calculateDewPoint(temp, humidity);
   const pressure = current.surface_pressure ?? 1000;
-  const uvIndex = current.uv_index ?? 10.5;
+  const uvIndex = current.uv_index ?? (solarRadiation > 100 ? 6.5 : 0);
   const cloudCover = current.cloud_cover ?? 10;
   const weatherCode = current.weather_code ?? 0;
 
@@ -187,20 +204,31 @@ function processApiWeatherData(apiData, lat, lon) {
   const stressCategory = getStressCategory(wbgt, temp);
   const imdAlert = getImdWarningLevel(temp, wbgt, lat);
 
-  // Hourly curve (next 24 hours)
+  // Hourly curve (next 24 hours starting from current real-time hour)
   const hourlyList = [];
   if (hourly.time && hourly.time.length >= 24) {
-    for (let i = 0; i < 24; i++) {
+    const nowMs = Date.now();
+    let startIdx = 0;
+    let minDiff = Infinity;
+    for (let i = 0; i < hourly.time.length; i++) {
+      const diff = Math.abs(new Date(hourly.time[i]).getTime() - nowMs);
+      if (diff < minDiff) {
+        minDiff = diff;
+        startIdx = i;
+      }
+    }
+    const endIdx = Math.min(hourly.time.length, startIdx + 24);
+    for (let i = startIdx; i < endIdx; i++) {
       const hTime = hourly.time[i];
-      const hTemp = hourly.temperature_2m[i] ?? temp;
-      const hHum = hourly.relative_humidity_2m[i] ?? humidity;
+      const hTemp = hourly.temperature_2m?.[i] ?? temp;
+      const hHum = hourly.relative_humidity_2m?.[i] ?? humidity;
       const hWind = (hourly.wind_speed_10m?.[i] ?? windSpeed) / 3.6;
       const hSolar = hourly.direct_normal_irradiance?.[i] ?? 0;
       const hHI = calculateHeatIndex(hTemp, hHum);
       const hWBGT = calculateWBGT(hTemp, hHum, hWind, hSolar);
 
       const dateObj = new Date(hTime);
-      const hourStr = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+      const hourStr = dateObj.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
 
       hourlyList.push({
         hour: hourStr,
@@ -214,16 +242,26 @@ function processApiWeatherData(apiData, lat, lon) {
     }
   }
 
-  // 7-day forecast
+  // 7-day forecast using actual Open-Meteo synoptic projection
   const forecastList = [];
   const dayNames = ['Today', 'Tomorrow', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
-  const totalDays = daily.time ? Math.min(daily.time.length, 7) : 5;
+  const totalDays = daily.time ? Math.min(daily.time.length, 7) : 7;
 
   for (let i = 0; i < totalDays; i++) {
-    const dTemp = daily.temperature_2m_max?.[i] ?? (temp + (i === 0 ? 0 : (Math.random() - 0.4) * 3));
-    const dHum = Math.max(15, Math.min(85, humidity + (Math.random() - 0.5) * 8));
-    const dWind = windSpeed;
-    const dSolar = solarRadiation;
+    const dTemp = daily.temperature_2m_max?.[i] ?? (i === 0 ? temp : temp + 0.8);
+    
+    // Calculate realistic daily average humidity from hourly data for this day if available
+    let dHum = humidity;
+    if (hourly.relative_humidity_2m && hourly.relative_humidity_2m.length >= (i + 1) * 24) {
+      const slice = hourly.relative_humidity_2m.slice(i * 24, (i + 1) * 24);
+      dHum = Math.round(slice.reduce((acc, v) => acc + v, 0) / slice.length);
+    }
+
+    const dWind = daily.wind_speed_10m_max?.[i] ?? windSpeed;
+    // Daily average solar radiation estimate: daily radiation sum in MJ/m² converted to daytime average W/m²
+    const radSumMj = daily.shortwave_radiation_sum?.[i];
+    const dSolar = radSumMj != null ? Math.round((radSumMj * 1e6) / (12 * 3600)) : (solarRadiation > 0 ? solarRadiation : 500);
+
     const dHI = calculateHeatIndex(dTemp, dHum);
     const dWBGT = calculateWBGT(dTemp, dHum, dWind / 3.6, dSolar);
     const dUTCI = calculateUTCI(dTemp, dHum, dWind / 3.6, dSolar);
@@ -369,24 +407,28 @@ function processOwmWeatherData(owmData, lat, lon) {
 function generatePresentDateLiveWeather(lat, lon, cityId) {
   const now = new Date();
   const currentHour = now.getHours();
+  const currentMonth = now.getMonth(); // 0 = Jan, 8 = Sep
   
   // Real geographical baseline estimations
   const isNorthWest = lat > 24 && lon < 78;
   const isCentral = lat >= 18 && lat <= 26 && lon >= 75 && lon <= 82;
   const isCoastal = (lon < 73.5 && lat < 22) || (lon > 83 && lat < 22) || (lat < 14);
 
-  let baseTemp = 36.5;
-  let baseHumidity = 48;
+  // Monthly climatological baseline for India (Jan-Dec)
+  const monthlyTemps = [23, 26, 31, 36, 39, 34, 30, 29, 29, 28, 26, 23];
+  const monthlyHums = [45, 40, 35, 30, 38, 65, 80, 82, 78, 65, 55, 50];
+  let baseTemp = monthlyTemps[currentMonth] || 30.0;
+  let baseHumidity = monthlyHums[currentMonth] || 60;
 
   if (isNorthWest) {
-    baseTemp = 38.5;
-    baseHumidity = 32;
+    baseTemp += 2.0;
+    baseHumidity -= 10;
   } else if (isCentral) {
-    baseTemp = 37.0;
-    baseHumidity = 42;
+    baseTemp += 1.0;
+    baseHumidity -= 5;
   } else if (isCoastal) {
-    baseTemp = 33.5;
-    baseHumidity = 76;
+    baseTemp -= 1.5;
+    baseHumidity += 18;
   }
 
   // Diurnal cycle adjustment based on current real-world hour
@@ -396,7 +438,7 @@ function generatePresentDateLiveWeather(lat, lon, cityId) {
 
   // Solar radiation based on current time of day
   const isDaylight = currentHour >= 6 && currentHour <= 18;
-  const solarRadiation = isDaylight ? Math.round(820 * Math.sin(((currentHour - 6) * Math.PI) / 12)) : 0;
+  const solarRadiation = isDaylight ? Math.round(650 * Math.sin(((currentHour - 6) * Math.PI) / 12)) : 0;
   const windSpeed = 14.2;
   const dewPoint = calculateDewPoint(currentLiveTemp, currentLiveHum);
 
@@ -412,7 +454,7 @@ function generatePresentDateLiveWeather(lat, lon, cityId) {
     const forecastDate = new Date(Date.now() + i * 86400000);
     const temp = parseFloat((baseTemp + (i === 0 ? diurnalTempOffset : (Math.sin(i) * 1.5))).toFixed(1));
     const hum = Math.max(15, Math.min(88, Math.round(baseHumidity + (Math.cos(i) * 4))));
-    const fSolar = 750;
+    const fSolar = 550;
     const fHI = calculateHeatIndex(temp, hum);
     const fWBGT = calculateWBGT(temp, hum, windSpeed / 3.6, fSolar);
     const fUTCI = calculateUTCI(temp, hum, windSpeed / 3.6, fSolar);

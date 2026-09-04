@@ -106,7 +106,7 @@ const MortalityGauge = ({ risk }) => {
             ? 'Significant risk of heat-related emergencies. Pre-position medical triage, hydration booths, and restrict manual outdoor work.'
             : risk >= 30
             ? 'Elevated thermal stress for vulnerable citizens. Preventive cooling and scheduled hydration breaks required.'
-            : 'Low mortality risk under current atmospheric conditions. Standard summer hydration advisory.'}
+            : 'Low mortality risk under current atmospheric conditions. Standard hydration advisory.'}
         </p>
       </div>
     </div>
@@ -125,7 +125,7 @@ function ThermalStressPanel({ thermalMetrics }) {
             <FlameIcon size={20} color="#ea580c" />
             <span>Human Thermal Stress &amp; Biometeorology Indices</span>
           </h3>
-          <p className="section-desc">Multi-parameter physiological heat burden evaluated for Summer 2026</p>
+          <p className="section-desc">Multi-parameter physiological heat burden evaluated from real-time meteorological observations</p>
         </div>
         <div
           className="stress-category-tag"

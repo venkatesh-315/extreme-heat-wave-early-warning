@@ -13,7 +13,7 @@ function Footer() {
               <span className="f-brand-title">HeatGuard India</span>
             </div>
             <p className="f-brand-desc">
-              National Extreme Heatwave Early Warning, Thermal Stress Biometeorology &amp; Emergency Response Portal (Summer 2026).
+              National Extreme Heatwave Early Warning, Thermal Stress Biometeorology &amp; Real-Time Emergency Response Portal.
             </p>
           </div>
 

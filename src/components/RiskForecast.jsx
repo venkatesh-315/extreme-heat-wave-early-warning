@@ -38,7 +38,7 @@ function RiskForecast({ forecast = [], location }) {
             <span>{t('fc_synoptic_title', '7-Day IMD Synoptic Outlook')}</span>
           </div>
           <h3 className="section-title">
-            {t('fc_summer_title', 'Summer 2026 Thermal Risk Forecast')} &mdash; {location?.name}
+            {t('fc_summer_title', 'Real-Time 7-Day Thermal Risk Forecast')} &mdash; {location?.name}
           </h3>
           <p className="section-desc">
             {t('fc_summer_desc', 'Day-by-day maximum temperature, humidity, WBGT, and mortality risk projections.')}
@@ -196,7 +196,7 @@ function RiskForecast({ forecast = [], location }) {
 
       {/* ISO & Warning Matrix Reference */}
       <div className="forecast-matrix-ref">
-        <h4 className="matrix-title">Heat Action Matrix Guidance (Summer 2026)</h4>
+        <h4 className="matrix-title">Heat Action Matrix Guidance (NDMA Protocols)</h4>
         <div className="matrix-chips">
           <div className="matrix-chip green">
             <span className="chip-badge">GREEN</span>

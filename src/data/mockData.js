@@ -1,5 +1,5 @@
 // ============================================================
-// Summer 2026 Indian Climatological Dataset & NDMA HAP Standards
+// Real-Time Indian Climatological Dataset & NDMA HAP Standards
 // Extreme Heatwave Early Warning & Emergency Response System
 // ============================================================
 
@@ -16,12 +16,12 @@ import {
 export const INDIAN_CITIES = CURATED_INDIAN_LOCATIONS;
 
 /**
- * Summer 2026 Baseline Reference Climatology
+ * Real-Time Reference Climatology & Operational Standards
  */
-export const SUMMER_2026_METEOROLOGY = {
-  seasonTitle: 'Summer 2026 Seasonal Heatwave Outlook',
-  duration: 'April – June 2026',
-  anomalyProjection: '+1.5°C to +3.5°C Above Long-Period Average (LPA)',
+export const REALTIME_METEOROLOGY = {
+  seasonTitle: 'National Heatwave & Real-Time Biometeorological Outlook',
+  duration: 'Continuous Live Synoptic Monitoring',
+  anomalyProjection: 'Live Thermal Stress Anomalies Against Long-Period Average (LPA)',
   activeHeatwaveSubdivisions: [
     'West Rajasthan (Phalodi, Barmer, Bikaner)',
     'East Rajasthan & Haryana-Delhi',
@@ -40,8 +40,11 @@ export const SUMMER_2026_METEOROLOGY = {
   },
 };
 
+// Backward-compatibility alias
+export const SUMMER_2026_METEOROLOGY = REALTIME_METEOROLOGY;
+
 /**
- * Historical Heatwave Mortality Trend (India, 2018–2026 Forecast)
+ * Historical Heatwave Mortality Trend (India, 2018–Present)
  */
 export const HISTORICAL_MORTALITY = [
   { year: 2019, deaths: 1270, avgMaxTemp: 43.8, peakWbgt: 33.4, severeSpells: 8 },
@@ -164,7 +167,7 @@ export const STATE_DISTRICT_REGIONS = {
     { name: 'Jalandhar District (Doaba Plain)', shortName: 'Jalandhar', type: 'Manufacturing & Commercial Island', lat: 31.3260, lon: 75.5762, tempDelta: 1.8, humDelta: 0, pop: '862,414' },
   ],
   haryana: [
-    { name: 'Hisar District (Thar Margin Heat Epicenter)', shortName: 'Hisar', type: 'Arid Sandy Plains & Extreme Summer Spells', lat: 29.1492, lon: 75.7217, tempDelta: 3.1, humDelta: -9, pop: '301,249' },
+    { name: 'Hisar District (Thar Margin Heat Epicenter)', shortName: 'Hisar', type: 'Arid Sandy Plains & Extreme Heat Spells', lat: 29.1492, lon: 75.7217, tempDelta: 3.1, humDelta: -9, pop: '301,249' },
     { name: 'Gurugram District (Millennium City)', shortName: 'Gurugram', type: 'High-Rise Glass & Concrete Urban Heat Island', lat: 28.4595, lon: 77.0266, tempDelta: 2.0, humDelta: -3, pop: '876,969' },
     { name: 'Faridabad District (Industrial Corridor)', shortName: 'Faridabad', type: 'Dense Industrial & Automotive Manufacturing', lat: 28.4089, lon: 77.3178, tempDelta: 2.4, humDelta: -4, pop: '1,414,050' },
     { name: 'Rohtak District (Central Haryana)', shortName: 'Rohtak', type: 'Agricultural Heat Plain', lat: 28.8955, lon: 76.6066, tempDelta: 2.2, humDelta: -5, pop: '374,292' },

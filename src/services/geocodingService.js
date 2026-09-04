@@ -3,7 +3,7 @@
 // Comprehensive Indian Cities & Districts Offline Fallback
 // ================================================================
 
-// Rich curated database of 100+ major Indian cities, district HQs & 2026 heatwave hotspots
+// Rich curated database of 100+ major Indian cities, district HQs & monitored heatwave hotspots
 export const CURATED_INDIAN_LOCATIONS = [
   // National Capital Region & North
   { id: 'del-ct', name: 'New Delhi (Central)', district: 'New Delhi', state: 'Delhi', lat: 28.6139, lon: 77.2090, population: 32941000, region: 'North', isHotspot: true },

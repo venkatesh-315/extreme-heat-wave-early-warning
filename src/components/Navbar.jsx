@@ -53,7 +53,7 @@ function Navbar({ isLive = true }) {
             <div className="brand-text">
               <div className="brand-name-row">
                 <span className="brand-name">HeatGuard India</span>
-                <span className="brand-badge">Summer 2026</span>
+                <span className="brand-badge">Real-Time Live</span>
               </div>
               <span className="brand-sub">Extreme Heatwave Early Warning &amp; Response Portal</span>
             </div>

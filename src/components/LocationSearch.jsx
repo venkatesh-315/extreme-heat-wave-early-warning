@@ -245,7 +245,7 @@ function LocationSearch({ onSelect, isCalculating, selectedLocation }) {
 
       {/* Quick Select Hotspot Chips */}
       <div className="hotspots-strip">
-        <span className="hotspots-title">Summer 2026 Hotspots:</span>
+        <span className="hotspots-title">Monitored Thermal Hotspots:</span>
         <div className="hotspots-pills">
           {quickHotspots.map((city) => (
             <button

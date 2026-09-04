@@ -16,7 +16,7 @@ import { useLanguage } from '../context/LanguageContext';
 import './WardRiskMapCard.css';
 
 const RISK_CATEGORIES = [
-  { id: 'low', label: 'Safe (0-20)', shortLabel: '0-20 Safe', range: '0–20', color: '#10b981', iconName: 'safe', title: 'Normal Summer', significance: 'Tolerable heat load. Routine hydration advised.', action: 'Standard advisory' },
+  { id: 'low', label: 'Safe (0-20)', shortLabel: '0-20 Safe', range: '0–20', color: '#10b981', iconName: 'safe', title: 'Normal Baseline', significance: 'Tolerable heat load. Routine hydration advised.', action: 'Standard advisory' },
   { id: 'moderate', label: 'Caution (20-40)', shortLabel: '20-40 Caution', range: '20–40', color: '#eab308', iconName: 'caution', title: 'Elevated Caution', significance: 'Increased hydration required; caution for infants & seniors.', action: 'Shaded rest spots' },
   { id: 'high', label: 'High Alert (40-60)', shortLabel: '40-60 Alert', range: '40–60', color: '#f97316', iconName: 'alert', title: 'Severe Heat Burden', significance: 'High risk of heat illness. 45m work / 15m rest cycles.', action: 'Enforce rest cycles' },
   { id: 'danger', label: 'Danger (60-100)', shortLabel: '60-100 Danger', range: '60–100', color: '#ef4444', iconName: 'danger', title: 'Dangerous Heatwave', significance: 'Halt outdoor manual labor 12:00 PM - 4:00 PM.', action: 'Cooling shelters open' },
