@@ -27,12 +27,50 @@
   align-items: center;
   gap: 12px;
   text-decoration: none;
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  margin: -6px -10px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  position: relative;
+  width: auto;
+}
+
+.sidebar-brand:hover {
+  background: #f8fafc;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(226, 232, 240, 0.7);
+}
+
+.sidebar-brand:hover .sidebar-logo-wrap {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.sidebar-brand:hover .brand-title {
+  color: #e11d48;
+}
+
+.sidebar-brand:hover .brand-tagline {
+  color: #334155;
+}
+
+.sidebar-brand:active {
+  transform: scale(0.97);
+}
+
+.sidebar-brand:focus-visible {
+  outline: 2px solid #e11d48;
+  outline-offset: 2px;
 }
 
 .sidebar-logo-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sidebar-brand-text {
@@ -47,6 +85,7 @@
   letter-spacing: 0.04em;
   color: #0f172a;
   line-height: 1.1;
+  transition: color 0.2s ease;
 }
 
 .brand-tagline {
@@ -56,6 +95,7 @@
   font-weight: 500;
   margin-top: 2px;
   letter-spacing: -0.01em;
+  transition: color 0.2s ease;
 }
 
 .sidebar-close-btn {

@@ -223,6 +223,26 @@ function LoginPage({ onLoginSuccess }) {
     }
   };
 
+  // Direct Entry to Dashboard on Project Name Click
+  const handleBrandClick = async () => {
+    setIsLoading(true);
+    try {
+      const user = await loginWithCredentials({
+        role: 'authority',
+        officerIdOrEmail: 'OFFICER-4102',
+        department: AUTHORITY_DEPARTMENTS[0],
+        rememberDevice: true
+      });
+      if (onLoginSuccess) {
+        onLoginSuccess(user);
+      }
+    } catch (err) {
+      console.error('Quick brand login error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className={`thermoguard-login-screen role-${role}`}>
       {/* 1. New User Language Selection Pop-up Modal (Hindi and English) */}
@@ -329,7 +349,13 @@ function LoginPage({ onLoginSuccess }) {
         {/* Hero Content Container */}
         <div className="hero-content-wrapper">
           {/* Top Brand Logo */}
-          <div className="hero-brand-header">
+          <button
+            type="button"
+            className="hero-brand-header"
+            onClick={handleBrandClick}
+            title={t('goToDashboard', 'Enter ThermoGuard Dashboard')}
+            aria-label={t('goToDashboard', 'Enter ThermoGuard Dashboard')}
+          >
             <div className="hero-logo-box">
               <ThermoGuardLogo size={38} />
             </div>
@@ -337,7 +363,7 @@ function LoginPage({ onLoginSuccess }) {
               <span className="brand-name">{t('appName', 'THERMOGUARD')}</span>
               <span className="brand-tagline">{t('appTagline', 'Extreme Heat Early Warning System')}</span>
             </div>
-          </div>
+          </button>
 
           {/* Main Headline & Description */}
           <div className="hero-headline-block">

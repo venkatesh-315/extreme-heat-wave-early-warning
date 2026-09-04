@@ -37,7 +37,16 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
       <aside className={`app-sidebar ${isOpen ? 'open' : ''}`}>
         {/* Top Brand Logo & Title */}
         <div className="sidebar-header">
-          <div className="sidebar-brand">
+          <button
+            type="button"
+            className="sidebar-brand"
+            onClick={() => {
+              onSelectTab('dashboard');
+              if (onClose) onClose();
+            }}
+            title={t('goToDashboard', 'Go to Dashboard')}
+            aria-label={t('goToDashboard', 'ThermoGuard - Return to Dashboard')}
+          >
             <div className="sidebar-logo-wrap">
               <ThermoGuardLogo size={32} />
             </div>
@@ -45,7 +54,7 @@ function Sidebar({ activeTab = 'dashboard', onSelectTab, isOpen = false, onClose
               <div className="brand-title">{t('appName', 'THERMOGUARD')}</div>
               <div className="brand-tagline">{t('appTagline', 'Heatwave Early Warning System')}</div>
             </div>
-          </div>
+          </button>
 
           {/* Close button for mobile */}
           <button className="sidebar-close-btn" onClick={onClose} aria-label="Close sidebar">

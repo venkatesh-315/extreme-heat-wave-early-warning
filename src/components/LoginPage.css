@@ -156,6 +156,40 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  margin: -6px -10px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  width: fit-content;
+}
+
+.hero-brand-header:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.hero-brand-header:hover .hero-logo-box {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.hero-brand-header:hover .brand-name {
+  color: #fda4af;
+}
+
+.hero-brand-header:active {
+  transform: scale(0.98);
+}
+
+.hero-brand-header:focus-visible {
+  outline: 2px solid #fda4af;
+  outline-offset: 2px;
 }
 
 .hero-logo-box {
@@ -163,6 +197,7 @@
   align-items: center;
   justify-content: center;
   filter: drop-shadow(0 4px 12px rgba(244, 63, 94, 0.4));
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-brand-text {
@@ -205,6 +240,7 @@
 .text-heat-gradient {
   background: linear-gradient(135deg, #fb923c 0%, #ea580c 45%, #dc2626 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
