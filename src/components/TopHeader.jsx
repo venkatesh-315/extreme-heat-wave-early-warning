@@ -286,15 +286,15 @@ function TopHeader({
           )}
         </div>
 
-        {/* Live Sync Status with Auto Refresh Setting */}
+        {/* Sync Status with Auto Refresh Setting */}
         <div className="header-status-strip">
           <button
             type="button"
             className={`refresh-btn-pill ${isRefreshing ? 'refreshing' : ''}`}
             onClick={onRefresh}
             disabled={isRefreshing}
-            title={isRefreshing ? 'Syncing live telemetry data...' : `Click to refresh live telemetry now (${refreshLabel})`}
-            aria-label={`Refresh live telemetry (${refreshLabel})`}
+            title={isRefreshing ? 'Syncing telemetry data...' : `Click to refresh telemetry now (${refreshLabel})`}
+            aria-label={`Refresh telemetry (${refreshLabel})`}
           >
             <RefreshCwIcon
               size={12}
@@ -305,10 +305,6 @@ function TopHeader({
               {isRefreshing ? t('refreshing', 'Refreshing...') : refreshLabel}
             </span>
           </button>
-          <span className="live-status-pill">
-            <span className="live-dot" />
-            <span>{t('live', 'Live')}</span>
-          </span>
         </div>
       </div>
 
